@@ -1,0 +1,158 @@
+diff --git a/lib/Driver/ToolChains/Bitrig.cpp b/lib/Driver/ToolChains/Bitrig.cpp
+index d8f541dfba..c7da5ef872 100644
+--- a/lib/Driver/ToolChains/Bitrig.cpp
++++ b/lib/Driver/ToolChains/Bitrig.cpp
+@@ -61,10 +61,10 @@ void bitrig::Linker::ConstructJob(Compilation &C, const JobAction &JA,
+     CmdArgs.push_back("-Bdynamic");
+     if (Args.hasArg(options::OPT_shared)) {
+       CmdArgs.push_back("-shared");
+-    } else {
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back("/usr/libexec/ld.so");
+-    }
++    } // else {
++    //   CmdArgs.push_back("-dynamic-linker");
++    //   CmdArgs.push_back("/usr/libexec/ld.so");
++    // }
+   }
+ 
+   if (Output.isFilename()) {
+diff --git a/lib/Driver/ToolChains/DragonFly.cpp b/lib/Driver/ToolChains/DragonFly.cpp
+index bd2c7fc6c4..46f27223fb 100644
+--- a/lib/Driver/ToolChains/DragonFly.cpp
++++ b/lib/Driver/ToolChains/DragonFly.cpp
+@@ -68,10 +68,10 @@ void dragonfly::Linker::ConstructJob(Compilation &C, const JobAction &JA,
+       CmdArgs.push_back("-export-dynamic");
+     if (Args.hasArg(options::OPT_shared))
+       CmdArgs.push_back("-Bshareable");
+-    else {
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back("/usr/libexec/ld-elf.so.2");
+-    }
++    // else {
++    //   CmdArgs.push_back("-dynamic-linker");
++    //   CmdArgs.push_back("/usr/libexec/ld-elf.so.2");
++    // }
+     CmdArgs.push_back("--hash-style=gnu");
+     CmdArgs.push_back("--enable-new-dtags");
+   }
+diff --git a/lib/Driver/ToolChains/FreeBSD.cpp b/lib/Driver/ToolChains/FreeBSD.cpp
+index c6626e922e..c2ac7b0679 100644
+--- a/lib/Driver/ToolChains/FreeBSD.cpp
++++ b/lib/Driver/ToolChains/FreeBSD.cpp
+@@ -153,10 +153,10 @@ void freebsd::Linker::ConstructJob(Compilation &C, const JobAction &JA,
+       CmdArgs.push_back("-export-dynamic");
+     if (Args.hasArg(options::OPT_shared)) {
+       CmdArgs.push_back("-Bshareable");
+-    } else {
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back("/libexec/ld-elf.so.1");
+-    }
++    } // else {
++    //   CmdArgs.push_back("-dynamic-linker");
++    //   CmdArgs.push_back("/libexec/ld-elf.so.1");
++    // }
+     if (ToolChain.getTriple().getOSMajorVersion() >= 9) {
+       if (Arch == llvm::Triple::arm || Arch == llvm::Triple::sparc ||
+           Arch == llvm::Triple::x86 || Arch == llvm::Triple::x86_64) {
+diff --git a/lib/Driver/ToolChains/Fuchsia.cpp b/lib/Driver/ToolChains/Fuchsia.cpp
+index b8757cf4aa..76dbda711d 100644
+--- a/lib/Driver/ToolChains/Fuchsia.cpp
++++ b/lib/Driver/ToolChains/Fuchsia.cpp
+@@ -77,10 +77,10 @@ void fuchsia::Linker::ConstructJob(Compilation &C, const JobAction &JA,
+     if (Args.hasArg(options::OPT_rdynamic))
+       CmdArgs.push_back("-export-dynamic");
+ 
+-    if (!Args.hasArg(options::OPT_shared)) {
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back(Args.MakeArgString(D.DyldPrefix + "ld.so.1"));
+-    }
++    // if (!Args.hasArg(options::OPT_shared)) {
++    //   CmdArgs.push_back("-dynamic-linker");
++    //   CmdArgs.push_back(Args.MakeArgString(D.DyldPrefix + "ld.so.1"));
++    // }
+   }
+ 
+   CmdArgs.push_back("-o");
+diff --git a/lib/Driver/ToolChains/Gnu.cpp b/lib/Driver/ToolChains/Gnu.cpp
+index d29d826b5f..3a14cde062 100644
+--- a/lib/Driver/ToolChains/Gnu.cpp
++++ b/lib/Driver/ToolChains/Gnu.cpp
+@@ -492,12 +492,12 @@ void tools::gnutools::Linker::ConstructJob(Compilation &C, const JobAction &JA,
+     if (Args.hasArg(options::OPT_rdynamic))
+       CmdArgs.push_back("-export-dynamic");
+ 
+-    if (!Args.hasArg(options::OPT_shared)) {
+-      const std::string Loader =
+-          D.DyldPrefix + ToolChain.getDynamicLinker(Args);
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back(Args.MakeArgString(Loader));
+-    }
++    // if (!Args.hasArg(options::OPT_shared)) {
++    //   const std::string Loader =
++    //       D.DyldPrefix + ToolChain.getDynamicLinker(Args);
++    //   CmdArgs.push_back("-dynamic-linker");
++    //   CmdArgs.push_back(Args.MakeArgString(Loader));
++    // }
+   }
+ 
+   CmdArgs.push_back("-o");
+diff --git a/lib/Driver/ToolChains/NetBSD.cpp b/lib/Driver/ToolChains/NetBSD.cpp
+index d7d3ad61df..6c86db18b7 100644
+--- a/lib/Driver/ToolChains/NetBSD.cpp
++++ b/lib/Driver/ToolChains/NetBSD.cpp
+@@ -125,11 +125,11 @@ void netbsd::Linker::ConstructJob(Compilation &C, const JobAction &JA,
+       CmdArgs.push_back("-export-dynamic");
+     if (Args.hasArg(options::OPT_shared)) {
+       CmdArgs.push_back("-Bshareable");
+-    } else {
+-      Args.AddAllArgs(CmdArgs, options::OPT_pie);
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back("/libexec/ld.elf_so");
+-    }
++    } // else {
++    //   Args.AddAllArgs(CmdArgs, options::OPT_pie);
++    //   CmdArgs.push_back("-dynamic-linker");
++    //   CmdArgs.push_back("/libexec/ld.elf_so");
++    // }
+   }
+ 
+   // Many NetBSD architectures support more than one ABI.
+diff --git a/lib/Driver/ToolChains/OpenBSD.cpp b/lib/Driver/ToolChains/OpenBSD.cpp
+index c5f266ec8f..126128d8ef 100644
+--- a/lib/Driver/ToolChains/OpenBSD.cpp
++++ b/lib/Driver/ToolChains/OpenBSD.cpp
+@@ -127,10 +127,10 @@ void openbsd::Linker::ConstructJob(Compilation &C, const JobAction &JA,
+     CmdArgs.push_back("-Bdynamic");
+     if (Args.hasArg(options::OPT_shared)) {
+       CmdArgs.push_back("-shared");
+-    } else {
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back("/usr/libexec/ld.so");
+-    }
++    } // else {
++    //   CmdArgs.push_back("-dynamic-linker");
++    //   CmdArgs.push_back("/usr/libexec/ld.so");
++    // }
+   }
+ 
+   if (Args.hasArg(options::OPT_nopie))
+diff --git a/lib/Driver/ToolChains/PS4CPU.cpp b/lib/Driver/ToolChains/PS4CPU.cpp
+index c1b8c3d660..6034be4f49 100644
+--- a/lib/Driver/ToolChains/PS4CPU.cpp
++++ b/lib/Driver/ToolChains/PS4CPU.cpp
+@@ -167,10 +167,10 @@ static void ConstructGoldLinkJob(const Tool &T, Compilation &C,
+     CmdArgs.push_back("--eh-frame-hdr");
+     if (Args.hasArg(options::OPT_shared)) {
+       CmdArgs.push_back("-Bshareable");
+-    } else {
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back("/libexec/ld-elf.so.1");
+-    }
++    } // else {
++    //   CmdArgs.push_back("-dynamic-linker");
++    //   CmdArgs.push_back("/libexec/ld-elf.so.1");
++    // }
+     CmdArgs.push_back("--enable-new-dtags");
+   }
+ 
