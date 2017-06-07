@@ -41,7 +41,6 @@ in stdenv.mkDerivation rec {
 
   unpackPhase = ''
     unpackFile ${src}
-    # cp --no-preserve=mode -r ${src} llvm
     mv llvm-${version}* llvm
     sourceRoot=$PWD/llvm
     unpackFile ${compiler-rt_src}
