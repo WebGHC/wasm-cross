@@ -26,6 +26,11 @@ let
     rev = version;
     sha256 = "0j2pcv5hg4pj5mr3zj6dis8dw8gyvlsq74yrp44bby4g8m191rjv";
   };
+  compiler-rt_src = fetch-llvm-mirror {
+    name = "compiler-rt";
+    rev = "fce320da7a80b1b0f2d1228b9be6a83280315d40";
+    sha256 = "1d01dk033mihg0bgpzysahf1mdbnx6kig62briyynmkxq2q9vv50";
+  };
   shlib = if stdenv.isDarwin then "dylib" else "so";
 
   # Used when creating a version-suffixed symlink of libLLVM.dylib
@@ -39,6 +44,8 @@ in stdenv.mkDerivation rec {
     # cp --no-preserve=mode -r ${src} llvm
     mv llvm-${version}* llvm
     sourceRoot=$PWD/llvm
+    unpackFile ${compiler-rt_src}
+    mv compiler-rt-* $sourceRoot/projects/compiler-rt
   '';
 
   outputs = [ "out" ] ++ stdenv.lib.optional enableSharedLibraries "lib";
@@ -48,8 +55,17 @@ in stdenv.mkDerivation rec {
 
   propagatedBuildInputs = [ ncurses zlib ];
 
+  # TSAN requires XPC on Darwin, which we have no public/free source files for. We can depend on the Apple frameworks
+  # to get it, but they're unfree. Since LLVM is rather central to the stdenv, we patch out TSAN support so that Hydra
+  # can build this. If we didn't do it, basically the entire nixpkgs on Darwin would have an unfree dependency and we'd
+  # get no binary cache for the entire platform. If you really find yourself wanting the TSAN, make this controllable by
+  # a flag and turn the flag off during the stdenv build.
+  postPatch = stdenv.lib.optionalString stdenv.isDarwin ''
+    substituteInPlace ./projects/compiler-rt/cmake/config-ix.cmake \
+      --replace 'set(COMPILER_RT_HAS_TSAN TRUE)' 'set(COMPILER_RT_HAS_TSAN FALSE)'
+  ''
   # Patch llvm-config to return correct library path based on --link-{shared,static}.
-  postPatch = stdenv.lib.optionalString (enableSharedLibraries) ''
+  + stdenv.lib.optionalString (enableSharedLibraries) ''
     substitute '${./llvm-outputs.patch}' ./llvm-outputs.patch --subst-var lib
     patch -p1 < ./llvm-outputs.patch
   '';
@@ -66,6 +82,7 @@ in stdenv.mkDerivation rec {
     "-DLLVM_BUILD_TESTS=ON"
     "-DLLVM_ENABLE_FFI=ON"
     "-DLLVM_ENABLE_RTTI=ON"
+    "-DCOMPILER_RT_INCLUDE_TESTS=OFF" # FIXME: requires clang source code
     "-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=WebAssembly"
   ] ++ stdenv.lib.optional enableSharedLibraries [
     "-DLLVM_LINK_LLVM_DYLIB=ON"

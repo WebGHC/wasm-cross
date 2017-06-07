@@ -11,7 +11,7 @@ let
     config = builtins.removeAttrs config [ "replaceStdenv" ];
   };
 in bootStages ++ [
-  (vanillaPackages: let llvmPackages = vanillaPackages.callPackage (import ../llvm-head) { cross = crossSystem; }; in {
+  (vanillaPackages: let llvmPackages = vanillaPackages.callPackage (import ../llvm-head) {}; in {
     buildPlatform = localSystem;
     hostPlatform = localSystem;
     targetPlatform = crossSystem;

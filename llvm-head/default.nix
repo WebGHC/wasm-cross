@@ -9,10 +9,9 @@
 , wrapCC
 , darwin
 , ccWrapperFun
-, cross ? null
 }:
 let
-  callPackage = newScope (self // { inherit stdenv cmake libxml2 python2 isl release_version version fetch-llvm-mirror cross; });
+  callPackage = newScope (self // { inherit stdenv cmake libxml2 python2 isl release_version version fetch-llvm-mirror; });
 
   rev = "301591";
   release_version = "5.0.0";
@@ -35,11 +34,6 @@ let
     inherit (url) sha256;
   };
 
-  compiler-rt_src = fetch-llvm-mirror {
-    name = "compiler-rt";
-    rev = "fce320da7a80b1b0f2d1228b9be6a83280315d40";
-    sha256 = "1d01dk033mihg0bgpzysahf1mdbnx6kig62briyynmkxq2q9vv50";
-  };
   clang-tools-extra_src = fetch-llvm-mirror {
     name = "clang-tools-extra";
     rev = "ba02ce5651e843a93c54e0e319a8887c2292ea8f";
@@ -47,8 +41,6 @@ let
   };
 
   self = {
-    compiler-rt = callPackage ./compiler-rt.nix { inherit compiler-rt_src; };
-
     llvm = callPackage ./llvm.nix {
       inherit stdenv;
     };
