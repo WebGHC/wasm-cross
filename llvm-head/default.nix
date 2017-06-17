@@ -17,18 +17,6 @@ let
   release_version = "5.0.0";
   version = "r" + rev; # differentiating these is important for rc's
 
-# stdenv.mkDerivation {
-#   name = "llvm";
-#   version = "head";
-#   src = fetchsvn {
-#     url = "http://llvm.org/svn/llvm-project/llvm/trunk";
-#     rev = "301576";
-#     sha256 = "12an2ns3yn7shnpkrnan5zlmjd0wbzaf15xjvad7arw1kkgkhcpi";
-#   };
-
-#   buildInputs = [cmake python];
-# }
-  
   fetch-llvm-mirror = url: fetchurl {
     url = "https://github.com/llvm-mirror/${url.name}/archive/${url.rev}.tar.gz";
     inherit (url) sha256;
