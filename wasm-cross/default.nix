@@ -2,7 +2,7 @@
   crossSystem = {
     config = "wasm32-unknown-none-unknown";
     arch = "wasm32";
-    libc = "musl";
+    libc = null;
     openssl.system = "linux-generic64";
   };
   stdenvStages = import ./cross.nix;
