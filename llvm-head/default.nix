@@ -29,6 +29,12 @@ let
   };
 
   self = {
+    compiler-rt_src = fetch-llvm-mirror {
+      name = "compiler-rt";
+      rev = "fce320da7a80b1b0f2d1228b9be6a83280315d40";
+      sha256 = "1d01dk033mihg0bgpzysahf1mdbnx6kig62briyynmkxq2q9vv50";
+    };
+
     llvm = callPackage ./llvm.nix {
       inherit stdenv;
     };

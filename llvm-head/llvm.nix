@@ -17,6 +17,7 @@
 , debugVersion ? false
 , enableSharedLibraries ? true
 , darwin
+, compiler-rt_src
 }:
 
 let
@@ -25,11 +26,6 @@ let
     name = "llvm";
     rev = version;
     sha256 = "0j2pcv5hg4pj5mr3zj6dis8dw8gyvlsq74yrp44bby4g8m191rjv";
-  };
-  compiler-rt_src = fetch-llvm-mirror {
-    name = "compiler-rt";
-    rev = "fce320da7a80b1b0f2d1228b9be6a83280315d40";
-    sha256 = "1d01dk033mihg0bgpzysahf1mdbnx6kig62briyynmkxq2q9vv50";
   };
   shlib = if stdenv.isDarwin then "dylib" else "so";
 
@@ -83,6 +79,13 @@ in stdenv.mkDerivation rec {
     "-DLLVM_ENABLE_RTTI=ON"
     "-DCOMPILER_RT_INCLUDE_TESTS=OFF" # FIXME: requires clang source code
     "-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=WebAssembly"
+
+    # http://lists.llvm.org/pipermail/llvm-dev/2016-May/099179.html
+    # https://reviews.llvm.org/D19742
+    # http://llvm.org/docs/HowToCrossCompileLLVM.html
+    # "-DLLVM_BUILD_EXTERNAL_COMPILER_RT=On"
+    # "-DDCOMPILER_RT_DEFAULT_TARGET_ARCH=_"
+    # "-DDCOMPILER_RT_DEFAULT_TARGET_TRIPLE=_"
   ] ++ stdenv.lib.optional enableSharedLibraries [
     "-DLLVM_LINK_LLVM_DYLIB=ON"
   ] ++ stdenv.lib.optional (!isDarwin)
