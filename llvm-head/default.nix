@@ -24,15 +24,15 @@ let
 
   clang-tools-extra_src = fetch-llvm-mirror {
     name = "clang-tools-extra";
-    rev = "ba02ce5651e843a93c54e0e319a8887c2292ea8f";
-    sha256 = "1v6mzl581cfs5naa1lyng3lvn4na71sqrs3x0qflsqd18nazlrsz";
+    rev = "05cb0e144a998cc4a016097e50ca8090e7ac7b5a";
+    sha256 = "0wdjk7z6gi9znsswzw956jsdsl6gb54n99ck4pybjkm0jdjik40k";
   };
 
   self = {
     compiler-rt_src = fetch-llvm-mirror {
       name = "compiler-rt";
-      rev = "fce320da7a80b1b0f2d1228b9be6a83280315d40";
-      sha256 = "1d01dk033mihg0bgpzysahf1mdbnx6kig62briyynmkxq2q9vv50";
+      rev = "9cbbe014c4d99e31fce00f40cfbecf3799872d2e";
+      sha256 = "05ndndq8sp317ig2fh88xvm6ps7whf5sy9slwfkl0s88m2k79jjp";
     };
 
     llvm = callPackage ./llvm.nix {

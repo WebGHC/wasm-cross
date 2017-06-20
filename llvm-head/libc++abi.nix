@@ -1,13 +1,13 @@
 { stdenv, cmake, fetch-llvm-mirror, libcxx, libunwind, llvm }:
 
-let version = "700fa3562ffeb4e6416bb07fa731ea98105604d3";
+let version = "96504b12c3792a2d0ca56f581525ace06ceda9d3";
 in stdenv.mkDerivation {
   name = "libc++abi-${version}";
 
   src = fetch-llvm-mirror {
     name = "libcxxabi";
     rev = version;
-    sha256 = "1fsxzyhfc6mrwnbssn5sxp1s8d6v9q2w0iwym02nsgqacy3h1825";
+    sha256 = "0d21lhm0hrq2yp2m4dlmpd5y4v8mmc53ijric1cigq049m124kin";
   };
 
   buildInputs = [ cmake ] ++ stdenv.lib.optional (!stdenv.isDarwin && !stdenv.isFreeBSD) libunwind;
