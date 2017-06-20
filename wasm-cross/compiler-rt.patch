@@ -1,0 +1,31 @@
+diff --git a/lib/builtins/CMakeLists.txt b/lib/builtins/CMakeLists.txt
+index 6556e7ac6..55abb032b 100644
+--- a/lib/builtins/CMakeLists.txt
++++ b/lib/builtins/CMakeLists.txt
+@@ -68,7 +68,6 @@ set(GENERIC_SOURCES
+   divti3.c
+   divtf3.c
+   divxc3.c
+-  eprintf.c
+   extendsfdf2.c
+   extendhfsf2.c
+   ffsdi2.c
+@@ -107,7 +106,6 @@ set(GENERIC_SOURCES
+   floatuntidf.c
+   floatuntisf.c
+   floatuntixf.c
+-  int_util.c
+   lshrdi3.c
+   lshrti3.c
+   moddi3.c
+@@ -194,7 +192,9 @@ option(COMPILER_RT_EXCLUDE_ATOMIC_BUILTIN
+ if(NOT COMPILER_RT_BAREMETAL_BUILD)
+   set(GENERIC_SOURCES
+     ${GENERIC_SOURCES}
+-    emutls.c 
++    emutls.c
++    eprintf.c
++    int_util.c
+     enable_execute_stack.c)
+ endif()
+ 

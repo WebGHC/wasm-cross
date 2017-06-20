@@ -17,11 +17,14 @@ in bootStages ++ [
   # Build Packages
   (vanillaPackages: let
     llvmPackages = vanillaPackages.callPackage (import ../llvm-head) {};
-    my-binutils = with llvmPackages; vanillaPackages.runCommand "binutils" { nativeBuildInputs = [ llvm lld ]; } ''
+    my-binutils = with llvmPackages; vanillaPackages.runCommand "binutils" { propogatedNativeBuildInputs = [ llvm lld ]; } ''
       mkdir -p $out/bin
-      ln -s ${lld}/bin/lld $out/bin/ld
-      for prog in ${lld}/bin/* ${llvm}/bin/*; do # */
-        ln -s $prog $out/bin/$(basename $prog)
+      ln -s ${lld}/bin/lld $out/bin/${crossSystem.config}-ld
+      for prog in ${lld}/bin/*; do # */
+        ln -s $prog $out/bin/${crossSystem.config}-$(basename $prog)
+      done
+      for prog in ${llvm}/bin/llvm-*; do
+        ln -s $prog $out/bin/${crossSystem.config}-$(echo $(basename $prog) | sed -e "s|llvm-||")
       done
     '';
   in {
@@ -85,6 +88,7 @@ in bootStages ++ [
         compiler-rt = stdenvNoLibc.mkDerivation {
           name = "compiler-rt";
           src = toolPackages.my-llvmPackages.compiler-rt_src;
+          patches = [ ./compiler-rt.patch ];
           nativeBuildInputs = [ toolPackages.cmake ];
           cmakeFlags = [
             "-DLLVM_CONFIG_PATH=${toolPackages.my-llvmPackages.llvm}/bin/llvm-config"
@@ -92,7 +96,8 @@ in bootStages ++ [
             "-DCMAKE_C_COMPILER_WORKS=1"
             "-DCMAKE_CXX_COMPILER_WORKS=1"
             "--target" "../lib/builtins"
-            "-DCMAKE_SYSTEM_NAME=Generic"
+            "-DCOMPILER_RT_BAREMETAL_BUILD=TRUE"
+            "-DCOMPILER_RT_EXCLUDE_ATOMIC_BUILTIN=TRUE"
           ];
         };
       };
