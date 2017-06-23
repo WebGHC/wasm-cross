@@ -2,7 +2,7 @@
 , localSystem, crossSystem, config, overlays
 }:
 
-assert crossSystem.config == "wasm32-unknown-none-unknown";
+# assert crossSystem.config == "wasm32-unknown-none-unknown"; # "aarch64-unknown-linux-gnu"
 
 let
   bootStages = import "${(import ../nixpkgs {}).path}/pkgs/stdenv" {
