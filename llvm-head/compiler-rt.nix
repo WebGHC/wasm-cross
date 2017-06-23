@@ -32,4 +32,9 @@ stdenv.mkDerivation {
     substituteInPlace ./projects/compiler-rt/cmake/config-ix.cmake \
       --replace 'set(COMPILER_RT_HAS_TSAN TRUE)' 'set(COMPILER_RT_HAS_TSAN FALSE)'
   '';
+
+  installPhase = ''
+    mkdir -p $out/lib
+    mv lib/*/*.a $out/lib/libcompiler_rt.a
+  '';
 }

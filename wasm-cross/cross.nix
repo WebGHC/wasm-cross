@@ -25,7 +25,26 @@ in bootStages ++ [
     allowCustomOverrides = true;
     stdenv = vanillaPackages.stdenv.override (oldStdenv: {
       overrides = self: super: let
-        my-binutils = with self.llvmPackages_HEAD; vanillaPackages.runCommand "binutils" { propogatedNativeBuildInputs = [ llvm lld ]; } ''
+        mkClang = { ccFlags ? "", libc ? null, extraPackages ? [] }: self.wrapCCCross {
+          name = "clang-cross-wrapper";
+          cc = self.llvmPackages_HEAD.clang-unwrapped;
+          inherit libc extraPackages binutils;
+          extraBuildCommands = ''
+            echo "-target ${crossSystem.config} -nostdinc -nostdinc++ -nostartfiles -nodefaultlibs ${ccFlags}" >> $out/nix-support/cc-cflags
+
+            echo 'export CC=${crossSystem.config}-cc' >> $out/nix-support/setup-hook
+            echo 'export CXX=${crossSystem.config}-c++' >> $out/nix-support/setup-hook
+          '';
+        };
+        mkStdenv = cc: self.makeStdenvCross {
+          inherit (self) stdenv;
+          buildPlatform = localSystem;
+          hostPlatform = crossSystem;
+          targetPlatform = crossSystem;
+          inherit cc;
+        };
+
+        binutils = with self.llvmPackages_HEAD; vanillaPackages.runCommand "binutils" { propogatedNativeBuildInputs = [ llvm lld ]; } ''
           mkdir -p $out/bin
           for prog in ${lld}/bin/*; do
             ln -s $prog $out/bin/${crossSystem.config}-$(basename $prog)
@@ -38,62 +57,40 @@ in bootStages ++ [
           ln -s ${lld}/bin/lld $out/bin/ld
           ln -s ${lld}/bin/lld $out/bin/${crossSystem.config}-ld
         '';
+
+        clangCross-noHeaders = mkClang {};
+        clangCross-noLibc = mkClang { ccFlags = "-isystem ${musl-cross-headers}/include"; };
+        clangCross = mkClang {
+          libc = musl-cross;
+          extraPackages = [ compiler-rt ];
+        };
+
+        stdenvNoHeaders = mkStdenv clangCross-noHeaders;
+        stdenvNoLibc = mkStdenv clangCross-noLibc;
+
         musl-cross_src = self.fetchFromGitHub {
           owner = "jfbastien";
           repo = "musl";
           rev = "30965616cdc35471639b521a5492d702a91c7a31";
           sha256 = "0iql75473wh5fh73136wb13ncyzl17m9jb3yk090r9crg46zcp16";
         };
-        stdenvBadCC = self.makeStdenvCross {
-          inherit (self) stdenv;
-          buildPlatform = localSystem;
-          hostPlatform = crossSystem;
-          targetPlatform = crossSystem;
-          inherit (self.stdenv) cc;
-        };
-        stdenvNoLibc = self.makeStdenvCross {
-          inherit (self) stdenv;
-          buildPlatform = localSystem;
-          hostPlatform = crossSystem;
-          targetPlatform = crossSystem;
-          cc = my-clangCross-noLibc;
-        };
-        musl-cross-headers = stdenvBadCC.mkDerivation {
+        musl-cross-headers = stdenvNoHeaders.mkDerivation {
           name = "musl-cross-headers";
           patches = [ ./musl.patch ];
           src = musl-cross_src;
           buildPhase = "make install-headers ";
           installTargets = [ "install-headers" ];
         };
-        compiler-rt = (self.__targetPackages.llvmPackages_HEAD.override { stdenv = stdenvNoLibc; }).compiler-rt;
-        my-clangCross-noLibc = self.wrapCCCross {
-          name = "clang-cross-wrapper";
-          cc = self.llvmPackages_HEAD.clang-unwrapped;
-          binutils = my-binutils;
-          libc = null;
-          noLibc = true;
-          extraBuildCommands = ''
-            echo "-target ${crossSystem.config} -nostdinc -nostdinc++ -nostartfiles -nodefaultlibs -isystem ${musl-cross-headers}/include" >> $out/nix-support/cc-cflags
-
-            echo 'export CC=${crossSystem.config}-cc' >> $out/nix-support/setup-hook
-            echo 'export CXX=${crossSystem.config}-c++' >> $out/nix-support/setup-hook
-          '';
+        musl-cross = stdenvNoLibc.mkDerivation {
+          name = "musl-cross";
+          patches = [ ./musl.patch ];
+          src = musl-cross_src;
+          buildInputs = [ compiler-rt ];
         };
-        my-clangCross = self.wrapCCCross {
-          name = "clang-cross-wrapper";
-          cc = self.llvmPackages_HEAD.clang-unwrapped;
-          binutils = my-binutils;
-          # libc = musl-cross;
-          libc = null;
-          extraPackages = [ compiler-rt ];
-          extraBuildCommands = ''
-            echo "-target ${crossSystem.config} -nostdinc -nostdinc++ -nostartfiles -nodefaultlibs" >> $out/nix-support/cc-cflags
 
-            echo 'export CC=${crossSystem.config}-cc' >> $out/nix-support/setup-hook
-            echo 'export CXX=${crossSystem.config}-c++' >> $out/nix-support/setup-hook
-          '';
-        };
-      in oldStdenv.overrides self super // { inherit my-clangCross; };
+        llvmPackages-cross-noLibc = self.__targetPackages.llvmPackages_HEAD.override { stdenv = stdenvNoLibc; };
+        inherit (llvmPackages-cross-noLibc) compiler-rt;
+      in oldStdenv.overrides self super // { inherit clangCross musl-cross compiler-rt; };
     });
   })
 
@@ -110,7 +107,7 @@ in bootStages ++ [
       buildPlatform = localSystem;
       hostPlatform = crossSystem;
       targetPlatform = crossSystem;
-      cc = toolPackages.my-clangCross;
+      cc = toolPackages.clangCross;
     };
   })
 
