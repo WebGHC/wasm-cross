@@ -59,7 +59,7 @@ in bootStages ++ [
         '';
 
         clangCross-noHeaders = mkClang {};
-        clangCross-noLibc = mkClang { ccFlags = "-isystem ${musl-cross-headers}/include"; };
+        clangCross-noLibc = mkClang { ccFlags = "-isystem ${musl-cross-headers}/include -I ${libcxx-headers}/include -v"; };
         clangCross = mkClang {
           libc = musl-cross;
           extraPackages = [ compiler-rt ];
@@ -89,7 +89,13 @@ in bootStages ++ [
         };
 
         llvmPackages-cross-noLibc = self.__targetPackages.llvmPackages_HEAD.override { stdenv = stdenvNoLibc; };
-        inherit (llvmPackages-cross-noLibc) compiler-rt;
+        inherit (llvmPackages-cross-noLibc) compiler-rt libunwind;
+
+        libcxx-headers = self.runCommand "libcxx-headers" {} ''
+          unpackFile ${self.llvmPackages_HEAD.libcxx.src}
+          mkdir -p $out
+          mv libcxx*/include $out
+        '';
       in oldStdenv.overrides self super // { inherit clangCross musl-cross compiler-rt; };
     });
   })

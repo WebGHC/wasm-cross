@@ -63,6 +63,8 @@ let
   libraries = {
     compiler-rt = callPackage ./compiler-rt.nix { inherit compiler-rt_src; };
 
+    libunwind = callPackage ./libunwind.nix {};
+
     libcxx = callPackage ./libc++ {};
 
     libcxxabi = callPackage ./libc++abi.nix {};

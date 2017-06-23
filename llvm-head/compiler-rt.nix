@@ -35,6 +35,6 @@ stdenv.mkDerivation {
 
   installPhase = ''
     mkdir -p $out/lib
-    mv lib/*/*.a $out/lib/libcompiler_rt.a
+    mv lib/*/libclang_rt.builtins-*.a $out/lib/libcompiler_rt.a
   '';
 }
