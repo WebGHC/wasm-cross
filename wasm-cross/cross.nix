@@ -62,7 +62,7 @@ in bootStages ++ [
         clangCross-noLibc = mkClang { ccFlags = "-isystem ${musl-cross-headers}/include -I ${libcxx-headers}/include -v"; };
         clangCross = mkClang {
           libc = musl-cross;
-          extraPackages = [ compiler-rt ];
+          extraPackages = [ compiler-rt libunwind libcxxabi libcxx ];
         };
 
         stdenvNoHeaders = mkStdenv clangCross-noHeaders;
@@ -90,6 +90,8 @@ in bootStages ++ [
 
         llvmPackages-cross-noLibc = self.__targetPackages.llvmPackages_HEAD.override { stdenv = stdenvNoLibc; };
         inherit (llvmPackages-cross-noLibc) compiler-rt libunwind;
+        libcxxabi = llvmPackages-cross-noLibc.libcxxabi.override { inherit libunwind; };
+        libcxx = llvmPackages-cross-noLibc.libcxx.override { inherit libcxxabi; };
 
         libcxx-headers = self.runCommand "libcxx-headers" {} ''
           unpackFile ${self.llvmPackages_HEAD.libcxx.src}

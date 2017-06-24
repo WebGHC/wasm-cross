@@ -1,4 +1,4 @@
-{ stdenv, cmake, fetch-llvm-mirror, libcxx, libunwind, llvm }:
+{ stdenv, cmake, fetch-llvm-mirror, libunwind, llvm, hostPlatform }:
 
 let version = "96504b12c3792a2d0ca56f581525ace06ceda9d3";
 in stdenv.mkDerivation {
@@ -10,16 +10,14 @@ in stdenv.mkDerivation {
     sha256 = "0d21lhm0hrq2yp2m4dlmpd5y4v8mmc53ijric1cigq049m124kin";
   };
 
-  buildInputs = [ cmake ] ++ stdenv.lib.optional (!stdenv.isDarwin && !stdenv.isFreeBSD) libunwind;
+  nativeBuildInputs = [ cmake ];
 
-  postUnpack = ''
-    # TODO
-    unpackFile ${libcxx.src}
-    unpackFile ${llvm.src}
-    export cmakeFlags="-DLLVM_PATH=$PWD/$(ls -d llvm-*) -DLIBCXXABI_LIBCXX_PATH=$PWD/$(ls -d libcxx-*)"
-  '' + stdenv.lib.optionalString stdenv.isDarwin ''
-    export TRIPLE=x86_64-apple-darwin
-  '';
+  buildInputs = stdenv.lib.optional (!stdenv.isDarwin && !stdenv.isFreeBSD) libunwind;
+
+  cmakeFlags = [
+    "-DLLVM_CONFIG_PATH=${llvm}/bin/llvm-config"
+    "-DLIBCXXABI_DEFAULT_TARGET_TRIPLE=${hostPlatform.config}"
+  ];
 
   installPhase = if stdenv.isDarwin
     then ''
