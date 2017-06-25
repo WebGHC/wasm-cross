@@ -10,6 +10,7 @@
 , ccWrapperFun
 , buildTools
 , lib
+, runCommand
 }:
 let
   callPackage = newScope (buildTools.tools // libraries // {
@@ -66,6 +67,12 @@ let
     compiler-rt = callPackage ./compiler-rt.nix { inherit compiler-rt_src; };
 
     libunwind = callPackage ./libunwind.nix {};
+
+    libcxx-headers = runCommand "libcxx-headers" {} ''
+      unpackFile ${libraries.libcxx.src}
+      mkdir -p $out
+      mv libcxx*/include $out
+    '';
 
     libcxx = callPackage ./libc++ {};
 
