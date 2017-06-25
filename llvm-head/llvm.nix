@@ -10,7 +10,6 @@
 , libxml2
 , valgrind
 , ncurses
-# , version
 , release_version
 , zlib
 , libcxxabi
