@@ -23,4 +23,8 @@ stdenv.mkDerivation {
     "-DLIBUNWIND_TARGET_TRIPLE=${hostPlatform.config}"
   ]
   ++ lib.optional (hostPlatform != buildPlatform) "-DLLVM_NO_OLD_LIBSTDCXX=TRUE";
+
+  postInstall = ''
+    cp -r ../include $out
+  '';
 }
