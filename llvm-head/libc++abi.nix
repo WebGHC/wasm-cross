@@ -1,4 +1,12 @@
-{ stdenv, cmake, fetch-llvm-mirror, libunwind, llvm, hostPlatform }:
+{ stdenv
+, cmake
+, fetch-llvm-mirror
+, libunwind
+, llvm
+, hostPlatform
+, buildPlatform
+, lib
+}:
 
 let version = "96504b12c3792a2d0ca56f581525ace06ceda9d3";
 in stdenv.mkDerivation {
@@ -17,6 +25,8 @@ in stdenv.mkDerivation {
   cmakeFlags = [
     "-DLLVM_CONFIG_PATH=${llvm}/bin/llvm-config"
     "-DLIBCXXABI_DEFAULT_TARGET_TRIPLE=${hostPlatform.config}"
+  ] ++ lib.optionals (hostPlatform != buildPlatform) [
+    "-DUNIX=TRUE" # TODO: Figure out what this is about
   ];
 
   installPhase = if stdenv.isDarwin

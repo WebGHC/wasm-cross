@@ -16,13 +16,11 @@ stdenv.mkDerivation {
   nativeBuildInputs = [ cmake ];
   cmakeFlags = [
     "-DLLVM_CONFIG_PATH=${llvm}/bin/llvm-config"
-    "-DUNIX=TRUE" # TODO: Figure out what this is about
-    # "-DLIBUNWIND_ENABLE_SHARED=FALSE"
-    # "-DCMAKE_CROSS_SYSTEM=Linux"
-    # "-DCMAKE_TARGET_SUPPORTS_SHARED_LIBS=TRUE"
     "-DLIBUNWIND_TARGET_TRIPLE=${hostPlatform.config}"
-  ]
-  ++ lib.optional (hostPlatform != buildPlatform) "-DLLVM_NO_OLD_LIBSTDCXX=TRUE";
+  ] ++ lib.optionals (hostPlatform != buildPlatform) [
+    "-DLLVM_NO_OLD_LIBSTDCXX=TRUE"
+    "-DUNIX=TRUE" # TODO: Figure out what this is about
+  ];
 
   postInstall = ''
     cp -r ../include $out
