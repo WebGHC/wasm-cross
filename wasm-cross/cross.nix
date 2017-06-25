@@ -30,7 +30,7 @@ in bootStages ++ [
           cc = self.llvmPackages_HEAD.clang-unwrapped;
           inherit libc extraPackages binutils;
           extraBuildCommands = ''
-            echo "-target ${crossSystem.config} -nostdinc -nostdinc++ -nostartfiles -nodefaultlibs ${ccFlags}" >> $out/nix-support/cc-cflags
+            echo "-target ${crossSystem.config} -nostdinc -nostartfiles -nodefaultlibs ${ccFlags}" >> $out/nix-support/cc-cflags
 
             echo 'export CC=${crossSystem.config}-cc' >> $out/nix-support/setup-hook
             echo 'export CXX=${crossSystem.config}-c++' >> $out/nix-support/setup-hook
@@ -59,10 +59,10 @@ in bootStages ++ [
         '';
 
         clangCross-noHeaders = mkClang {};
-        clangCross-noLibc = mkClang { ccFlags = "-isystem ${musl-cross-headers}/include -I ${libcxx-headers}/include -v"; };
+        clangCross-noLibc = mkClang { ccFlags = "-isystem ${musl-cross-headers}/include"; }; # -I ${llvmPackages-cross-noLibc.libcxx-headers}/include -v
         clangCross = mkClang {
           libc = musl-cross;
-          extraPackages = [ compiler-rt libunwind libcxxabi libcxx ];
+          extraPackages = [ compiler-rt ];
         };
 
         stdenvNoHeaders = mkStdenv clangCross-noHeaders;
@@ -89,15 +89,7 @@ in bootStages ++ [
         };
 
         llvmPackages-cross-noLibc = self.__targetPackages.llvmPackages_HEAD.override { stdenv = stdenvNoLibc; };
-        inherit (llvmPackages-cross-noLibc) compiler-rt libunwind;
-        libcxxabi = llvmPackages-cross-noLibc.libcxxabi.override { inherit libunwind; };
-        libcxx = llvmPackages-cross-noLibc.libcxx.override { inherit libcxxabi; };
-
-        libcxx-headers = self.runCommand "libcxx-headers" {} ''
-          unpackFile ${self.llvmPackages_HEAD.libcxx.src}
-          mkdir -p $out
-          mv libcxx*/include $out
-        '';
+        inherit (llvmPackages-cross-noLibc) compiler-rt; # libunwind;
       in oldStdenv.overrides self super // { inherit clangCross musl-cross compiler-rt; };
     });
   })
