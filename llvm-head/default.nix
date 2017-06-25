@@ -12,7 +12,9 @@
 , lib
 }:
 let
-  callPackage = newScope (buildTools // { inherit stdenv cmake libxml2 python2 isl release_version fetch-llvm-mirror; });
+  callPackage = newScope (buildTools.tools // libraries // {
+    inherit stdenv cmake libxml2 python2 isl release_version fetch-llvm-mirror;
+  });
 
   release_version = "5.0.0";
 
