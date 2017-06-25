@@ -6,7 +6,7 @@
       llvmPackages_HEAD = self.callPackage ./llvm-head { buildTools = self.buildPackages.llvmPackages_HEAD; };
     })];
   };
-  nixpkgsWasmArgs = wasm-cross-self.nixpkgsArgs // {};
+  nixpkgsCrossArgs = wasm-cross-self.nixpkgsArgs // {};
   nixpkgs = import ./nixpkgs wasm-cross-self.nixpkgsArgs;
-  nixpkgsWasm = import ./wasm-cross wasm-cross-self.nixpkgsWasmArgs;
+  nixpkgsCross = import ./wasm-cross wasm-cross-self.nixpkgsCrossArgs;
 })
