@@ -65,7 +65,7 @@ let
         if hostPlatform != targetPlatform
         then "${targetPlatform.config}-"
         else "";
-    in with tools; runCommand "binutils" { propogatedNativeBuildInputs = [ llvm lld ]; } (''
+    in with tools; runCommand "binutils" { propogatedNativeBuildInputs = [ llvm lld ]; } ''
       mkdir -p $out/bin
       for prog in ${lld}/bin/*; do
         ln -s $prog $out/bin/${prefix}$(basename $prog)
@@ -76,11 +76,7 @@ let
 
       ln -s ${lld}/bin/lld $out/bin/${prefix}ld
       ln -s ${lld}/bin/lld $out/bin/${prefix}ld.gold # TODO: Figure out the ld.gold thing for GHC
-    '' + lib.optionalString (hostPlatform != targetPlatform) ''
-      ln -s ${lld}/bin/lld $out/bin/ld
-      ln -s ${llvm}/bin/llvm-ar $out/bin/ar
-      ln -s ${llvm}/bin/llvm-ranlib $out/bin/ranlib
-    '');
+    '';
   };
 
   libraries = {

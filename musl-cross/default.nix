@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, lib, enableSharedLibraries ? true }:
+{ stdenv, fetchFromGitHub, lib, enableSharedLibraries ? true, buildPlatform, hostPlatform }:
 
 stdenv.mkDerivation ({
   name = "musl";
@@ -11,4 +11,6 @@ stdenv.mkDerivation ({
   patches = [ ./musl.patch ];
 } // lib.optionalAttrs (!enableSharedLibraries) {
   configureFlags = "--disable-shared --enable-static";
+} // lib.optionalAttrs (hostPlatform != buildPlatform) {
+  CROSS_COMPILE = "${hostPlatform.config}-";
 })
