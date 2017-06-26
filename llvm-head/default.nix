@@ -11,10 +11,11 @@
 , buildTools
 , lib
 , runCommand
+, enableSharedLibraries ? true
 }:
 let
   callPackage = newScope (buildTools.tools // libraries // {
-    inherit stdenv cmake libxml2 python2 isl release_version fetch-llvm-mirror;
+    inherit stdenv cmake libxml2 python2 isl release_version fetch-llvm-mirror enableSharedLibraries;
   });
 
   release_version = "5.0.0";

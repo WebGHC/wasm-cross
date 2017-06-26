@@ -14,7 +14,7 @@
 , zlib
 , libcxxabi
 , debugVersion ? false
-, enableSharedLibraries ? true
+, enableSharedLibraries
 , darwin
 }:
 

@@ -7,6 +7,7 @@
 , buildPlatform
 , libcxx-headers
 , lib
+, enableSharedLibraries
 }:
 
 let version = "96504b12c3792a2d0ca56f581525ace06ceda9d3";
@@ -44,14 +45,14 @@ in stdenv.mkDerivation {
       install -d 755 $out/include
       install -m 644 ../include/*.h $out/include
     ''
-    else if hostPlatform == buildPlatform then ''
+    else if enableSharedLibraries then ''
       install -d -m 755 $out/include $out/lib
       install -m 644 lib/libc++abi.so.1.0 $out/lib
       install -m 644 ../include/*.h $out/include
       ln -s libc++abi.so.1.0 $out/lib/libc++abi.so
       ln -s libc++abi.so.1.0 $out/lib/libc++abi.so.1
     ''
-    else '' # TODO: Figure out a more reasonable way of handling shared vs static
+    else ''
       install -d -m 755 $out/include $out/lib
       install -m 644 ../include/*.h $out/include
       install -m 644 lib/libc++abi.a $out/lib
