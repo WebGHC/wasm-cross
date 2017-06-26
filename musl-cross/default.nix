@@ -1,6 +1,6 @@
 { stdenv, fetchFromGitHub, lib, enableSharedLibraries ? true }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation ({
   name = "musl";
   src = fetchFromGitHub {
     owner = "jfbastien";
@@ -10,5 +10,5 @@ stdenv.mkDerivation {
   };
   patches = [ ./musl.patch ];
 } // lib.optionalAttrs (!enableSharedLibraries) {
-  configureFlags = "--enable-static";
-}
+  configureFlags = "--disable-shared --enable-static";
+})
