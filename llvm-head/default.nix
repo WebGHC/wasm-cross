@@ -30,14 +30,8 @@ let
     sha256 = "0wdjk7z6gi9znsswzw956jsdsl6gb54n99ck4pybjkm0jdjik40k";
   };
 
-  compiler-rt_src = fetch-llvm-mirror {
-    name = "compiler-rt";
-    rev = "9cbbe014c4d99e31fce00f40cfbecf3799872d2e";
-    sha256 = "05ndndq8sp317ig2fh88xvm6ps7whf5sy9slwfkl0s88m2k79jjp";
-  };
-
   tools = {
-    llvm = callPackage ./llvm.nix { inherit compiler-rt_src; };
+    llvm = callPackage ./llvm.nix {};
 
     clang-unwrapped = callPackage ./clang {
       inherit clang-tools-extra_src;
@@ -64,7 +58,7 @@ let
   };
 
   libraries = {
-    compiler-rt = callPackage ./compiler-rt.nix { inherit compiler-rt_src; };
+    compiler-rt = callPackage ./compiler-rt.nix {};
 
     libunwind = callPackage ./libunwind.nix {};
 

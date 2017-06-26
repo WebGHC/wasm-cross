@@ -2,7 +2,6 @@
 , fetch-llvm-mirror
 , cmake
 , llvm
-, compiler-rt_src
 , lib
 , hostPlatform
 , buildPlatform
@@ -11,11 +10,12 @@
 
 stdenv.mkDerivation {
   name = "compiler-rt";
-  src = compiler-rt_src;
+  src = fetch-llvm-mirror {
+    name = "compiler-rt";
+    rev = "9cbbe014c4d99e31fce00f40cfbecf3799872d2e";
+    sha256 = "05ndndq8sp317ig2fh88xvm6ps7whf5sy9slwfkl0s88m2k79jjp";
+  };
   nativeBuildInputs = [ cmake python ];
-  # postInstall = ''
-  #   mv $out/lib/generic/libclang_rt.builtins-*.a $out/lib/libgcc.a
-  # '';
   cmakeFlags = [
     "-DLLVM_CONFIG_PATH=${llvm}/bin/llvm-config"
     "-DCOMPILER_RT_DEFAULT_TARGET_TRIPLE=${hostPlatform.config}"
@@ -33,6 +33,7 @@ stdenv.mkDerivation {
       --replace 'set(COMPILER_RT_HAS_TSAN TRUE)' 'set(COMPILER_RT_HAS_TSAN FALSE)'
   '';
 
+  # TODO: Install sanitizers
   installPhase = ''
     mkdir -p $out/lib
     mv lib/*/libclang_rt.builtins-*.a $out/lib/libcompiler_rt.a

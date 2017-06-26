@@ -16,7 +16,6 @@
 , debugVersion ? false
 , enableSharedLibraries ? true
 , darwin
-, compiler-rt_src
 }:
 
 let
@@ -38,8 +37,6 @@ in stdenv.mkDerivation rec {
     unpackFile ${src}
     mv llvm-${version}* llvm
     sourceRoot=$PWD/llvm
-    unpackFile ${compiler-rt_src}
-    mv compiler-rt-* $sourceRoot/projects/compiler-rt
   '';
 
   outputs = [ "out" ] ++ stdenv.lib.optional enableSharedLibraries "lib";
@@ -49,17 +46,7 @@ in stdenv.mkDerivation rec {
 
   propagatedBuildInputs = [ ncurses zlib ];
 
-  # TSAN requires XPC on Darwin, which we have no public/free source files for. We can depend on the Apple frameworks
-  # to get it, but they're unfree. Since LLVM is rather central to the stdenv, we patch out TSAN support so that Hydra
-  # can build this. If we didn't do it, basically the entire nixpkgs on Darwin would have an unfree dependency and we'd
-  # get no binary cache for the entire platform. If you really find yourself wanting the TSAN, make this controllable by
-  # a flag and turn the flag off during the stdenv build.
-  postPatch = stdenv.lib.optionalString stdenv.isDarwin ''
-    substituteInPlace ./projects/compiler-rt/cmake/config-ix.cmake \
-      --replace 'set(COMPILER_RT_HAS_TSAN TRUE)' 'set(COMPILER_RT_HAS_TSAN FALSE)'
-  ''
-  # Patch llvm-config to return correct library path based on --link-{shared,static}.
-  + stdenv.lib.optionalString (enableSharedLibraries) ''
+  postPatch = stdenv.lib.optionalString (enableSharedLibraries) ''
     substitute '${./llvm-outputs.patch}' ./llvm-outputs.patch --subst-var lib
     patch -p1 < ./llvm-outputs.patch
   '';
@@ -76,15 +63,7 @@ in stdenv.mkDerivation rec {
     "-DLLVM_BUILD_TESTS=ON"
     "-DLLVM_ENABLE_FFI=ON"
     "-DLLVM_ENABLE_RTTI=ON"
-    "-DCOMPILER_RT_INCLUDE_TESTS=OFF" # FIXME: requires clang source code
     "-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=WebAssembly"
-
-    # http://lists.llvm.org/pipermail/llvm-dev/2016-May/099179.html
-    # https://reviews.llvm.org/D19742
-    # http://llvm.org/docs/HowToCrossCompileLLVM.html
-    # "-DLLVM_BUILD_EXTERNAL_COMPILER_RT=On"
-    # "-DDCOMPILER_RT_DEFAULT_TARGET_ARCH=_"
-    # "-DDCOMPILER_RT_DEFAULT_TARGET_TRIPLE=_"
   ] ++ stdenv.lib.optional enableSharedLibraries [
     "-DLLVM_LINK_LLVM_DYLIB=ON"
   ] ++ stdenv.lib.optional (!isDarwin)
