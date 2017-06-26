@@ -28,7 +28,8 @@ in bootStages ++ [
         mkClang = { ccFlags ? "", libc ? null, extraPackages ? [] }: self.wrapCCCross {
           name = "clang-cross-wrapper";
           cc = self.llvmPackages_HEAD.clang-unwrapped;
-          inherit libc extraPackages binutils;
+          binutils = self.llvmPackages_HEAD.llvm-binutils;
+          inherit libc extraPackages;
           extraBuildCommands = ''
             echo "-target ${crossSystem.config} -nostdinc -nostartfiles -nodefaultlibs ${ccFlags}" >> $out/nix-support/cc-cflags
 
@@ -43,22 +44,6 @@ in bootStages ++ [
           targetPlatform = crossSystem;
           inherit cc;
         };
-
-        binutils = with self.llvmPackages_HEAD; vanillaPackages.runCommand "binutils" { propogatedNativeBuildInputs = [ llvm lld ]; } ''
-          mkdir -p $out/bin
-          for prog in ${lld}/bin/*; do
-            ln -s $prog $out/bin/${crossSystem.config}-$(basename $prog)
-          done
-          for prog in ${llvm}/bin/llvm-*; do
-            ln -s $prog $out/bin/${crossSystem.config}-$(echo $(basename $prog) | sed -e "s|llvm-||")
-          done
-
-          ln -s ${llvm}/bin/llvm-ar $out/bin/ar
-          ln -s ${llvm}/bin/llvm-ranlib $out/bin/ranlib
-          ln -s ${lld}/bin/lld $out/bin/ld
-          ln -s ${lld}/bin/lld $out/bin/${crossSystem.config}-ld
-          ln -s ${lld}/bin/lld $out/bin/${crossSystem.config}-ld.gold
-        ''; # TODO: Figure out the ld.gold thing for GHC
 
         clangCross-noLibc = mkClang {};
         clangCross-noCompilerRt = mkClang {
