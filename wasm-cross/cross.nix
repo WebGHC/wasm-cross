@@ -54,13 +54,16 @@ in bootStages ++ [
           done
 
           ln -s ${llvm}/bin/llvm-ar $out/bin/ar
+          ln -s ${llvm}/bin/llvm-ranlib $out/bin/ranlib
           ln -s ${lld}/bin/lld $out/bin/ld
           ln -s ${lld}/bin/lld $out/bin/${crossSystem.config}-ld
-        '';
+          ln -s ${lld}/bin/lld $out/bin/${crossSystem.config}-ld.gold
+        ''; # TODO: Figure out the ld.gold thing for GHC
 
         clangCross-noHeaders = mkClang {};
         clangCross-noLibc = mkClang { ccFlags = "-isystem ${musl-cross-headers}/include"; }; # -I ${llvmPackages-cross-noLibc.libcxx-headers}/include -v
         clangCross = mkClang {
+          ccFlags = "-lc";
           libc = musl-cross;
           extraPackages = [ compiler-rt ];
         };
@@ -84,6 +87,7 @@ in bootStages ++ [
         musl-cross = stdenvNoLibc.mkDerivation {
           name = "musl-cross";
           patches = [ ./musl.patch ];
+          configureFlags = "--enable-static";
           src = musl-cross_src;
           buildInputs = [ compiler-rt ];
         };
