@@ -5,6 +5,7 @@
 , llvm
 , hostPlatform
 , buildPlatform
+, libcxx-headers
 , lib
 }:
 
@@ -24,7 +25,8 @@ in stdenv.mkDerivation {
 
   cmakeFlags = [
     "-DLLVM_CONFIG_PATH=${llvm}/bin/llvm-config"
-    "-DLIBCXXABI_DEFAULT_TARGET_TRIPLE=${hostPlatform.config}"
+    "-DLIBCXXABI_TARGET_TRIPLE=${hostPlatform.config}"
+    "-DLIBCXXABI_LIBCXX_INCLUDES=${libcxx-headers}"
   ] ++ lib.optionals (hostPlatform != buildPlatform) [
     "-DUNIX=TRUE" # TODO: Figure out what this is about
   ];
@@ -42,12 +44,17 @@ in stdenv.mkDerivation {
       install -d 755 $out/include
       install -m 644 ../include/*.h $out/include
     ''
-    else ''
+    else if hostPlatform == buildPlatform then ''
       install -d -m 755 $out/include $out/lib
       install -m 644 lib/libc++abi.so.1.0 $out/lib
       install -m 644 ../include/*.h $out/include
       ln -s libc++abi.so.1.0 $out/lib/libc++abi.so
       ln -s libc++abi.so.1.0 $out/lib/libc++abi.so.1
+    ''
+    else '' # TODO: Figure out a more reasonable way of handling shared vs static
+      install -d -m 755 $out/include $out/lib
+      install -m 644 ../include/*.h $out/include
+      install -m 644 lib/libc++abi.a $out/lib
     '';
 
   meta = {
