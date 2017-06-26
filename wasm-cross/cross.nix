@@ -60,40 +60,30 @@ in bootStages ++ [
           ln -s ${lld}/bin/lld $out/bin/${crossSystem.config}-ld.gold
         ''; # TODO: Figure out the ld.gold thing for GHC
 
-        clangCross-noHeaders = mkClang {};
-        clangCross-noLibc = mkClang { ccFlags = "-isystem ${musl-cross-headers}/include"; }; # -I ${llvmPackages-cross-noLibc.libcxx-headers}/include -v
+        clangCross-noLibc = mkClang {};
+        clangCross-noCompilerRt = mkClang {
+          ccFlags = "-lc";
+          libc = musl-cross;
+        };
         clangCross = mkClang {
           ccFlags = "-lc";
           libc = musl-cross;
           extraPackages = [ compiler-rt ];
         };
 
-        stdenvNoHeaders = mkStdenv clangCross-noHeaders;
         stdenvNoLibc = mkStdenv clangCross-noLibc;
+        stdenvNoCompilerRt = mkStdenv clangCross-noCompilerRt;
 
-        musl-cross_src = self.fetchFromGitHub {
-          owner = "jfbastien";
-          repo = "musl";
-          rev = "30965616cdc35471639b521a5492d702a91c7a31";
-          sha256 = "0iql75473wh5fh73136wb13ncyzl17m9jb3yk090r9crg46zcp16";
-        };
-        musl-cross-headers = stdenvNoHeaders.mkDerivation {
-          name = "musl-cross-headers";
-          patches = [ ./musl.patch ];
-          src = musl-cross_src;
-          buildPhase = "make install-headers ";
-          installTargets = [ "install-headers" ];
-        };
-        musl-cross = stdenvNoLibc.mkDerivation {
-          name = "musl-cross";
-          patches = [ ./musl.patch ];
-          configureFlags = "--enable-static";
-          src = musl-cross_src;
-          buildInputs = [ compiler-rt ];
+        musl-cross = self.__targetPackages.callPackage ../musl-cross {
+          enableSharedLibraries = false;
+          stdenv = stdenvNoLibc;
         };
 
-        llvmPackages-cross-noLibc = self.__targetPackages.llvmPackages_HEAD.override { stdenv = stdenvNoLibc; };
-        inherit (llvmPackages-cross-noLibc) compiler-rt; # libunwind;
+        llvmPackages-cross = self.__targetPackages.llvmPackages_HEAD.override {
+          stdenv = stdenvNoCompilerRt;
+          enableSharedLibraries = false;
+        };
+        inherit (llvmPackages-cross) compiler-rt;
       in oldStdenv.overrides self super // { inherit clangCross musl-cross compiler-rt; };
     });
   })
