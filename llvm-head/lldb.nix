@@ -13,14 +13,14 @@
 , darwin
 }:
 
-let version = "c24a6485dc61113eaadeb03fc8f8b908996b4962";
+let version = "aee33c33e51e3e427df460e48e277fc401c8f86c";
 in stdenv.mkDerivation {
   name = "lldb-${version}";
 
   src = fetch-llvm-mirror {
     name = "lldb";
     rev = version;
-    sha256 = "06hdily2sw7vvw39hijyrq3kyx1871zs02xz3dxz92mp42mzashf";
+    sha256 = "11jwaq9jq830x1mzvgi66dkdi5k2rgkzpqsgnfa48nc6m6n0wndp";
   };
 
   patchPhase = ''

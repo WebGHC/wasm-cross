@@ -2,11 +2,11 @@
 
 let
   gcc = if stdenv.cc.isGNU then stdenv.cc.cc else stdenv.cc.cc.gcc;
-  version = "cdc846bf68eaeabea7f515b0daa3657777924c0f";
+  version = "9b79aecc27490fd2c84b2ff10e8f15d2c139fbb5";
   src = fetch-llvm-mirror {
     name = "clang";
     rev = version;
-    sha256 = "0yy3crkkwzxll48rdl3j8kiq7jlb3cx3dgznmirjxavxf0q2s0rd";
+    sha256 = "1lgh0nwklk31rzfcs0d9qb1majx9f88h9g4x7pld2zr5h9wy0vd4";
   };
   self = stdenv.mkDerivation {
     name = "clang-${version}";

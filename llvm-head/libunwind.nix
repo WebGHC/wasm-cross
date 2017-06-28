@@ -11,8 +11,8 @@ stdenv.mkDerivation {
   name = "libunwind";
   src = fetch-llvm-mirror {
     name = "libunwind";
-    rev = "da5936d515cf12d2776a336a928940471147244d";
-    sha256 = "0sbgy1qmggyijb4axksm6chiq3ymyaay5ndjidbf6qq9s0ad1ybd";
+    rev = "41f982e5887185b904a456e20dfcd58e6be6cc19";
+    sha256 = "17b1fy09rgbrbn1i6hfzabf4a8bppj46zx651sjbhc0cgfdlhq6q";
   };
   nativeBuildInputs = [ cmake ];
   buildInputs = [ libcxx-headers ];

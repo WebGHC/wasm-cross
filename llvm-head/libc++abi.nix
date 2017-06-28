@@ -10,14 +10,14 @@
 , enableSharedLibraries
 }:
 
-let version = "96504b12c3792a2d0ca56f581525ace06ceda9d3";
+let version = "3d356fdcaba603a67f0855d9d88392efac51afe0";
 in stdenv.mkDerivation {
   name = "libc++abi-${version}";
 
   src = fetch-llvm-mirror {
     name = "libcxxabi";
     rev = version;
-    sha256 = "0d21lhm0hrq2yp2m4dlmpd5y4v8mmc53ijric1cigq049m124kin";
+    sha256 = "00m4rzihmw5qhcfxcq4zv8ws98ql8jqnp606vaw7ndjq066ql1ix";
   };
 
   nativeBuildInputs = [ cmake ];

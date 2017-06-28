@@ -1,13 +1,13 @@
 { lib, stdenv, fetch-llvm-mirror, cmake, llvm, libcxxabi, fixDarwinDylibNames }:
 
-let version = "b47a9bc6c40a06aeaec76262e056b8bd1a5203ec";
+let version = "a028f3c8d991a37385d5d91945b926f08bfd9c26";
 in stdenv.mkDerivation rec {
   name = "libc++-${version}";
 
   src = fetch-llvm-mirror {
     name = "libcxx";
     rev = version;
-    sha256 = "0fby2xcc7354c9m1qai2ha36dc1wvm301bcn1x2wr6h8zbldyg58";
+    sha256 = "0dif81c3cpf7cz64s19vday5gp6w4h4xgj58sxy26i3dnb4h33v6";
   };
 
   postUnpack = ''

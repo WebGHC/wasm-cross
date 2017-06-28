@@ -29,8 +29,8 @@ let
 
   clang-tools-extra_src = fetch-llvm-mirror {
     name = "clang-tools-extra";
-    rev = "05cb0e144a998cc4a016097e50ca8090e7ac7b5a";
-    sha256 = "0wdjk7z6gi9znsswzw956jsdsl6gb54n99ck4pybjkm0jdjik40k";
+    rev = "001f8ed8982b8fc0bf9d9f433c96d291ae651596";
+    sha256 = "1nqydjvd57nfq5mx3fni2asifm86aa5vh4csj3p8qhi87hrwcqp4";
   };
 
   tools = {

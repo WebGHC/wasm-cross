@@ -19,11 +19,11 @@
 }:
 
 let
-  version = "9c490091f2ff9286c76e9c490f05ff744a60b0c8";
+  version = "af639e8d6c4fccccba2707ba4aae33aa02d87a3e";
   src = fetch-llvm-mirror {
     name = "llvm";
     rev = version;
-    sha256 = "1aqgr3rc9b42hvq49kss3bkq360v1d91ai30f2jvigd09qv74y3r";
+    sha256 = "0h3dxblpb4sdaff5r7bqinka08gr42paa54zy41kdkwrfz4x059c";
   };
   shlib = if stdenv.isDarwin then "dylib" else "so";
 
