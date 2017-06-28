@@ -1,4 +1,4 @@
-{ stdenv, lib, buildEnv, buildPackages }:
+{ stdenv, lib, buildEnv, buildPackages, src }:
 
 let
   binaryen = buildPackages.callPackage ./binaryen.nix {};
@@ -9,7 +9,7 @@ let
   };
 in stdenv.mkDerivation {
   name = "musl";
-  src = lib.cleanSource ./musl;
+  inherit src;
   phases = ["unpackPhase" "buildPhase" "installPhase"];
   nativeBuildInputs = [buildPackages.python binaryen clang-llvm];
 
