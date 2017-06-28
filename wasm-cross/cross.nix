@@ -59,7 +59,8 @@ in bootStages ++ [
         stdenvNoLibc = mkStdenv clangCross-noLibc;
         stdenvNoCompilerRt = mkStdenv clangCross-noCompilerRt;
 
-        musl-cross = self.__targetPackages.callPackage ../musl-wasm32.nix {
+        musl-cross = self.__targetPackages.callPackage ../musl-cross.nix {
+          enableSharedLibraries = false;
           stdenv = stdenvNoLibc;
         };
 

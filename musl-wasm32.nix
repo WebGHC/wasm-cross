@@ -7,7 +7,7 @@ let
     paths = [ stdenv.cc.cc stdenv.cc.cc.llvm ];
     pathsToLink = [ "/bin" ];
   };
-in stdenv.mkDerivation ({
+in stdenv.mkDerivation {
   name = "musl";
   src = lib.cleanSource ./musl;
   phases = ["unpackPhase" "buildPhase" "installPhase"];
@@ -24,4 +24,4 @@ in stdenv.mkDerivation ({
     cp -r ./include/* $out/include
     cp -r ./arch/wasm32/* $out/include
   '';
-})
+}
