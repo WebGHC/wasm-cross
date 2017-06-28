@@ -1,7 +1,6 @@
-{ stdenv, fetchFromGitHub, lib, enableSharedLibraries ? true, buildPlatform, hostPlatform, buildEnv, buildPackages }:
+{ stdenv, lib, enableSharedLibraries ? true, buildPlatform, hostPlatform }:
 
-let binaryen = buildPackages.callPackage ./binaryen.nix {};
-in stdenv.mkDerivation ({
+stdenv.mkDerivation ({
   name = "musl";
   src = lib.cleanSource ./musl;
 } // lib.optionalAttrs (!enableSharedLibraries) {
