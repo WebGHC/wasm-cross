@@ -1,19 +1,19 @@
 { stdenv
-, fetch-llvm-mirror
+, fetchFromGitHub
 , cmake
 , zlib
 , llvm
 , python
 }:
 
-let version = "6ce12b83c0e9c6158c480ef3d9654999947aa1b8";
-in stdenv.mkDerivation {
-  name = "lld-${version}";
+stdenv.mkDerivation {
+  name = "lld";
 
-  src = fetch-llvm-mirror {
-    name = "lld";
-    rev = version;
-    sha256 = "1d6v53lnsnwgb9df706i5q3dww9mg6ib6mh3scdys2hdvpzr5h6g";
+  src = fetchFromGitHub {
+    owner = "WebGHC";
+    repo = "lld";
+    rev = "5d6fe333454fff48bfef8185580ac3d30265caa9";
+    sha256 = "0nb83v2rns253aici9d1gfi8k1wq7xsrsp7dilrii55ap7awdlf1";
   };
 
   buildInputs = [ cmake llvm ];
