@@ -1,6 +1,6 @@
 { ... } @ args: import ../nixpkgs (args // {
   # crossSystem = {
-  #   config = "wasm32-unknown-none-unknown";
+  #   config = "wasm32-unknown-none-wasm";
   #   arch = "wasm32";
   #   libc = null;
   #   openssl.system = "linux-generic64";
