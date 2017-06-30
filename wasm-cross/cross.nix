@@ -68,7 +68,7 @@ in bootStages ++ [
           stdenv = stdenvNoCompilerRt;
           enableSharedLibraries = false;
         };
-        inherit (llvmPackages-cross) compiler-rt;
+        compiler-rt = llvmPackages-cross.compiler-rt.override { baremetal = true; };
       in oldStdenv.overrides self super // { inherit clangCross musl-cross compiler-rt; };
     });
   })

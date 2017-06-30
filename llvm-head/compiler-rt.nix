@@ -6,6 +6,7 @@
 , hostPlatform
 , buildPlatform
 , python
+, baremetal ? false
 }:
 
 stdenv.mkDerivation {
@@ -21,7 +22,8 @@ stdenv.mkDerivation {
     "-DCOMPILER_RT_DEFAULT_TARGET_TRIPLE=${hostPlatform.config}"
   ]
   # TODO: Figure out how to build sanitizers, etc. when cross compiling
-  ++ lib.optionals (hostPlatform != buildPlatform) [ "--target" "../lib/builtins" ];
+  ++ lib.optionals (hostPlatform != buildPlatform) [ "--target" "../lib/builtins" ]
+  ++ lib.optionals baremetal ["-DCOMPILER_RT_BAREMETAL_BUILD=TRUE" "-DCOMPILER_RT_EXCLUDE_ATOMIC_BUILTIN=TRUE" "-DCMAKE_C_COMPILER_WORKS=1"];
 
   # TSAN requires XPC on Darwin, which we have no public/free source files for. We can depend on the Apple frameworks
   # to get it, but they're unfree. Since LLVM is rather central to the stdenv, we patch out TSAN support so that Hydra
