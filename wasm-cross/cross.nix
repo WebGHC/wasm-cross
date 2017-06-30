@@ -51,7 +51,8 @@ in bootStages ++ [
           libc = musl-cross;
         };
         clangCross = mkClang {
-          ccFlags = "-lc";
+          # TODO: Should not have to add compiler-rt to the library path. Should be handled by extraPackages.
+          ccFlags = "-L${compiler-rt}/lib -lc -lcompiler_rt";
           libc = musl-cross;
           extraPackages = [ compiler-rt ];
         };
