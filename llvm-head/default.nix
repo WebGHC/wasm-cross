@@ -70,7 +70,7 @@ let
       for prog in ${lld}/bin/*; do
         ln -s $prog $out/bin/${prefix}$(basename $prog)
       done
-      for prog in ${llvm}/bin/llvm-*; do
+      for prog in ${llvm}/bin/*; do
         ln -s $prog $out/bin/${prefix}$(echo $(basename $prog) | sed -e "s|llvm-||")
       done
 
