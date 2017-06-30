@@ -2,18 +2,17 @@
 
 let
   gcc = if stdenv.cc.isGNU then stdenv.cc.cc else stdenv.cc.cc.gcc;
-  version = "9b79aecc27490fd2c84b2ff10e8f15d2c139fbb5";
   src = fetch-llvm-mirror {
     name = "clang";
-    rev = version;
-    sha256 = "1lgh0nwklk31rzfcs0d9qb1majx9f88h9g4x7pld2zr5h9wy0vd4";
+    rev = "4803aff743e866df42dd12fd37093bf2b4af42ac";
+    sha256 = "1wql9amq3vsyhl2i5fz965ahkj35wijq4l4vpycwzylcpy1bsg9k";
   };
   self = stdenv.mkDerivation {
-    name = "clang-${version}";
+    name = "clang";
 
     unpackPhase = ''
       unpackFile ${src}
-      mv clang-${version}* clang
+      mv clang* clang
       # cp --no-preserve=mode -r ${src} clang
       sourceRoot=$PWD/clang
       unpackFile ${clang-tools-extra_src}

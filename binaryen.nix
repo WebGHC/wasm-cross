@@ -5,8 +5,8 @@ stdenv.mkDerivation {
   src = fetchFromGitHub {
     owner = "WebAssembly";
     repo = "binaryen";
-    rev = "21e08eeef1ccc489cd06495e4370e1dffccfe088";
-    sha256 = "1zyjkjnwg9q7xmk5a6fxmpf925yixbdpz3ia6k00iby3219c3v7s";
+    rev = "e488da5adbef2613c08fe205db5b79b1765a4af3";
+    sha256 = "0sk6gs2gx1fwksif47b5pcb7z4x1mdmbh284k90qapy86g071gg2";
   };
   nativeBuildInputs = [ cmake ];
 }

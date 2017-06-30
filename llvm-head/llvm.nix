@@ -19,11 +19,10 @@
 }:
 
 let
-  version = "af639e8d6c4fccccba2707ba4aae33aa02d87a3e";
   src = fetch-llvm-mirror {
     name = "llvm";
-    rev = version;
-    sha256 = "0h3dxblpb4sdaff5r7bqinka08gr42paa54zy41kdkwrfz4x059c";
+    rev = "dc482f3f63c835384e8c2a9ed9af95310b74747e";
+    sha256 = "0pdx0xnj9pg8fdvxrd9ghrx29cm42z7z7jpyjyr37332bjl0mk8a";
   };
   shlib = if stdenv.isDarwin then "dylib" else "so";
 
@@ -31,11 +30,11 @@ let
   shortVersion = with stdenv.lib;
     concatStringsSep "." (take 2 (splitString "." release_version));
 in stdenv.mkDerivation rec {
-  name = "llvm-${version}";
+  name = "llvm";
 
   unpackPhase = ''
     unpackFile ${src}
-    mv llvm-${version}* llvm
+    mv llvm* llvm
     sourceRoot=$PWD/llvm
   '';
 

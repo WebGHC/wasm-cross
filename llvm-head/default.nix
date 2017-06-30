@@ -33,8 +33,8 @@ let
 
   clang-tools-extra_src = fetch-llvm-mirror {
     name = "clang-tools-extra";
-    rev = "001f8ed8982b8fc0bf9d9f433c96d291ae651596";
-    sha256 = "1nqydjvd57nfq5mx3fni2asifm86aa5vh4csj3p8qhi87hrwcqp4";
+    rev = "a6eb96204517e0cb6051a1456b6f4e4a925ed194";
+    sha256 = "18ap6kng86j3p0gc07l0pq1km4cqwnzhl4gxfd482fm8xkqmnyj4";
   };
 
   tools = {

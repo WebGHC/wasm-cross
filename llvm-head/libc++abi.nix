@@ -10,13 +10,12 @@
 , enableSharedLibraries
 }:
 
-let version = "3d356fdcaba603a67f0855d9d88392efac51afe0";
-in stdenv.mkDerivation {
+stdenv.mkDerivation {
   name = "libc++abi-${version}";
 
   src = fetch-llvm-mirror {
     name = "libcxxabi";
-    rev = version;
+    rev = "3d356fdcaba603a67f0855d9d88392efac51afe0";
     sha256 = "00m4rzihmw5qhcfxcq4zv8ws98ql8jqnp606vaw7ndjq066ql1ix";
   };
 
