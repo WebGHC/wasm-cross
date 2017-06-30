@@ -12,8 +12,8 @@ stdenv.mkDerivation {
   src = fetchFromGitHub {
     owner = "WebGHC";
     repo = "lld";
-    rev = "5d6fe333454fff48bfef8185580ac3d30265caa9";
-    sha256 = "0nb83v2rns253aici9d1gfi8k1wq7xsrsp7dilrii55ap7awdlf1";
+    rev = "c46f84251c0ebfa238f72c1841f219d27c12ad0a";
+    sha256 = "1ddgmgf11n2q23j0glhj4awky021gja43cnk2dyb30ih8m7406y0";
   };
 
   buildInputs = [ cmake llvm ];
