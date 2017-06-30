@@ -16,7 +16,11 @@
 , targetPlatform
 }:
 let
-  callPackage = newScope (buildTools.tools // libraries // {
+  callLibrary = newScope (buildTools.tools // libraries // {
+    inherit stdenv cmake libxml2 python2 isl release_version fetch-llvm-mirror enableSharedLibraries;
+  });
+
+  callTool = newScope (tools // libraries // {
     inherit stdenv cmake libxml2 python2 isl release_version fetch-llvm-mirror enableSharedLibraries;
   });
 
@@ -34,9 +38,9 @@ let
   };
 
   tools = {
-    llvm = callPackage ./llvm.nix {};
+    llvm = callTool ./llvm.nix {};
 
-    clang-unwrapped = callPackage ./clang {
+    clang-unwrapped = callTool ./clang {
       inherit clang-tools-extra_src;
     };
 
@@ -55,9 +59,9 @@ let
 
     libcxxStdenv = overrideCC stdenv tools.libcxxClang;
 
-    lld = callPackage ./lld.nix {};
+    lld = callTool ./lld.nix {};
 
-    lldb = callPackage ./lldb.nix {};
+    lldb = callTool ./lldb.nix {};
 
     # Bad binutils based on LLVM
     llvm-binutils = let
@@ -80,9 +84,9 @@ let
   };
 
   libraries = {
-    compiler-rt = callPackage ./compiler-rt.nix {};
+    compiler-rt = callLibrary ./compiler-rt.nix {};
 
-    libunwind = callPackage ./libunwind.nix {};
+    libunwind = callLibrary ./libunwind.nix {};
 
     libcxx-headers = runCommand "libcxx-headers" {} ''
       unpackFile ${libraries.libcxx.src}
@@ -90,9 +94,9 @@ let
       mv libcxx*/include $out
     '';
 
-    libcxx = callPackage ./libc++ {};
+    libcxx = callLibrary ./libc++ {};
 
-    libcxxabi = callPackage ./libc++abi.nix {};
+    libcxxabi = callLibrary ./libc++abi.nix {};
   };
 
 in { inherit tools libraries; } // tools // libraries
