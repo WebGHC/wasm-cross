@@ -5,7 +5,7 @@
 # assert crossSystem.config == "wasm32-unknown-none-unknown"; # "aarch64-unknown-linux-gnu"
 
 let
-  bootStages = import "${(import ../nixpkgs {}).path}/pkgs/stdenv" {
+  bootStages = import "${(import ./nixpkgs {}).path}/pkgs/stdenv" {
     inherit lib localSystem overlays;
     crossSystem = null;
     # Ignore custom stdenvs when cross compiling for compatability
@@ -60,7 +60,7 @@ in bootStages ++ [
         stdenvNoLibc = mkStdenv clangCross-noLibc;
         stdenvNoCompilerRt = mkStdenv clangCross-noCompilerRt;
 
-        musl-cross = self.__targetPackages.callPackage ../musl-cross.nix {
+        musl-cross = self.__targetPackages.callPackage ./musl-cross.nix {
           enableSharedLibraries = false;
           stdenv = stdenvNoLibc;
         };

@@ -1,4 +1,4 @@
-(import ./nixpkgs {}).lib.makeExtensible (wasm-cross-self: {
+(import ./nixpkgs {}).lib.makeExtensible (project: {
   nixpkgsArgs = {
     overlays = [(self: super: {
       cmake-hello-world = self.callPackage ./cmake-hello-world {};
@@ -8,7 +8,19 @@
       llvmPackages = self.llvmPackages_HEAD;
     })];
   };
-  nixpkgsCrossArgs = wasm-cross-self.nixpkgsArgs // {};
-  nixpkgs = import ./nixpkgs wasm-cross-self.nixpkgsArgs;
-  nixpkgsCross = import ./wasm-cross wasm-cross-self.nixpkgsCrossArgs;
+  nixpkgsCrossArgs = project.nixpkgsArgs // {};
+
+  nixpkgs = import ./nixpkgs project.nixpkgsArgs;
+  nixpkgsWasm = import ./nixpkgs (project.nixpkgsCrossArgs // {
+    crossSystem = {
+      config = "wasm32-unknown-none-wasm";
+      arch = "wasm32";
+      libc = null;
+    };
+    stdenvStages = import ./cross.nix;
+  });
+  nixpkgsArm = import ./nixpkgs (project.nixpkgsCrossArgs // {
+    crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix").aarch64-multiplatform;
+    stdenvStages = import ./cross.nix;
+  });
 })
