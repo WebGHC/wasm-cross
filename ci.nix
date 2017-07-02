@@ -1,7 +1,10 @@
 {}:
 
-let wasm-cross = import ./.;
-in [
-  wasm-cross.nixpkgsArm.stdenv.cc
-  wasm-cross.nixpkgsWasm.stdenv.cc
+with import ./.;
+[
+  nixpkgsArm.stdenv.cc
+  nixpkgsWasm.stdenv.cc
+
+  nixpkgsArm.fib-example
+  nixpkgsWasm.fib-example
 ]

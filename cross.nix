@@ -25,17 +25,25 @@ in bootStages ++ [
     allowCustomOverrides = true;
     stdenv = vanillaPackages.stdenv.override (oldStdenv: {
       overrides = self: super: let
-        mkClang = { ccFlags ? "", libc ? null, extraPackages ? [] }: self.wrapCCCross {
+        mkClang = { ldFlags ? null, libc ? null, extraPackages ? [] }: self.wrapCCCross {
           name = "clang-cross-wrapper";
           cc = self.llvmPackages_HEAD.clang-unwrapped;
           binutils = self.llvmPackages_HEAD.llvm-binutils;
           inherit libc extraPackages;
           extraBuildCommands = ''
-            echo "-target ${crossSystem.config} -nostdinc -nostartfiles -nodefaultlibs ${ccFlags}" >> $out/nix-support/cc-cflags
+            echo "-target ${crossSystem.config} -nostdinc -nodefaultlibs -nostartfiles" >> $out/nix-support/cc-cflags
+            # TODO: Build start files so entry isn't main
+            echo "-entry=main" >> $out/nix-support/cc-ldflags
 
             echo 'export CC=${crossSystem.config}-cc' >> $out/nix-support/setup-hook
             echo 'export CXX=${crossSystem.config}-c++' >> $out/nix-support/setup-hook
-          '';
+          '' + (self.lib.optionalString (libc != null) ''
+            echo "-lc" >> $out/nix-support/libc-ldflags
+          '') + (self.lib.optionalString (ldFlags != null) ''
+            echo "${ldFlags}" >> $out/nix-support/cc-ldflags
+          '') + (self.lib.optionalString (crossSystem.arch == "wasm32") ''
+            echo "--allow-undefined-file=${./wasm.syms}" >> $out/nix-support/cc-ldflags
+          '');
         };
         mkStdenv = cc: self.makeStdenvCross {
           inherit (self) stdenv;
@@ -47,12 +55,11 @@ in bootStages ++ [
 
         clangCross-noLibc = mkClang {};
         clangCross-noCompilerRt = mkClang {
-          ccFlags = "-lc";
           libc = musl-cross;
         };
         clangCross = mkClang {
           # TODO: Should not have to add compiler-rt to the library path. Should be handled by extraPackages.
-          ccFlags = "-L${compiler-rt}/lib -lc -lcompiler_rt";
+          ldFlags = "-L${compiler-rt}/lib -lcompiler_rt";
           libc = musl-cross;
           extraPackages = [ compiler-rt ];
         };
