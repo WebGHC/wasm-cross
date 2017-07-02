@@ -1,8 +1,6 @@
 (import ./nixpkgs {}).lib.makeExtensible (project: {
   nixpkgsArgs = {
     overlays = [(self: super: {
-      cmake-hello-world = self.callPackage ./cmake-hello-world {};
-
       fib-example = self.callPackage ./fib-example {};
 
       llvmPackages_HEAD = self.callPackage ./llvm-head { buildTools = self.buildPackages.llvmPackages_HEAD; };
