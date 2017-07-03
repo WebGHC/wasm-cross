@@ -11,7 +11,7 @@
 }:
 
 stdenv.mkDerivation {
-  name = "libc++abi-${version}";
+  name = "libc++abi";
 
   src = fetch-llvm-mirror {
     name = "libcxxabi";
@@ -26,7 +26,7 @@ stdenv.mkDerivation {
   cmakeFlags = [
     "-DLLVM_CONFIG_PATH=${llvm}/bin/llvm-config"
     "-DLIBCXXABI_TARGET_TRIPLE=${hostPlatform.config}"
-    "-DLIBCXXABI_LIBCXX_INCLUDES=${libcxx-headers}"
+    "-DLIBCXXABI_LIBCXX_INCLUDES=${libcxx-headers}/include"
   ] ++ lib.optionals (hostPlatform != buildPlatform) [
     "-DUNIX=TRUE" # TODO: Figure out what this is about
   ];

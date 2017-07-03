@@ -13,8 +13,8 @@ stdenv.mkDerivation {
   name = "compiler-rt";
   src = fetch-llvm-mirror {
     name = "compiler-rt";
-    rev = "f0fdf665b4d351c308557383fadae7828660f499";
-    sha256 = "1gc9fb1i5kh162xmh672czbvn3sri4rv91qbwjvk0dlynd47dgl0";
+    rev = "6ee59ff2a0b91f2224d38adb3fdb2dd5aefc107b";
+    sha256 = "0cpaj1k2a622pimm5c5y2xdrkxhqzqrvl81dl8qlr91zxr2jn9fg";
   };
   nativeBuildInputs = [ cmake python ];
   cmakeFlags = [

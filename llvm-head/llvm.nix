@@ -21,8 +21,8 @@
 let
   src = fetch-llvm-mirror {
     name = "llvm";
-    rev = "dc482f3f63c835384e8c2a9ed9af95310b74747e";
-    sha256 = "0pdx0xnj9pg8fdvxrd9ghrx29cm42z7z7jpyjyr37332bjl0mk8a";
+    rev = "0e6595164d3920a968de274d3b0590a710fad3b2";
+    sha256 = "1402ssaz0px7gqxsvy87sag9hq4rw2cp8gnwagm648a3ccvh5vfd";
   };
   shlib = if stdenv.isDarwin then "dylib" else "so";
 

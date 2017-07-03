@@ -4,8 +4,8 @@ let
   gcc = if stdenv.cc.isGNU then stdenv.cc.cc else stdenv.cc.cc.gcc;
   src = fetch-llvm-mirror {
     name = "clang";
-    rev = "4803aff743e866df42dd12fd37093bf2b4af42ac";
-    sha256 = "1wql9amq3vsyhl2i5fz965ahkj35wijq4l4vpycwzylcpy1bsg9k";
+    rev = "58123a81df74bcd2051b11f77a6a38277764a0d7";
+    sha256 = "061xnjyby1lbrwj4idx63mnfyg51r6c3qz04m98pyw4k9ikdwfp6";
   };
   self = stdenv.mkDerivation {
     name = "clang";

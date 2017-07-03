@@ -2,6 +2,8 @@
 
 with import ./.;
 [
+  nixpkgs.llvmPackages_HEAD
+
   nixpkgsArm.stdenv.cc
   nixpkgsWasm.stdenv.cc
 

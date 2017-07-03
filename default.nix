@@ -6,6 +6,19 @@
       llvmPackages_HEAD = self.callPackage ./llvm-head { buildTools = self.buildPackages.llvmPackages_HEAD; };
 
       llvmPackages = self.llvmPackages_HEAD;
+
+      # https://github.com/NixOS/nixpkgs/pull/27072
+      swig = super.swig.overrideDerivation (drv: rec {
+        name = "swig-${version}";
+        version = "3.0.12";
+
+        src = self.fetchFromGitHub {
+          owner = "swig";
+          repo = "swig";
+          rev = "rel-${version}";
+          sha256 = "1wyffskbkzj5zyhjnnpip80xzsjcr3p0q5486z3wdwabnysnhn8n";
+        };
+      });
     })];
   };
   nixpkgsCrossArgs = project.nixpkgsArgs // {};

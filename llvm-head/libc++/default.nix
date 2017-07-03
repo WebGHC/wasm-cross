@@ -5,8 +5,8 @@ stdenv.mkDerivation rec {
 
   src = fetch-llvm-mirror {
     name = "libcxx";
-    rev = "4438e211a728650ba767344a8f8448ab0be56357";
-    sha256 = "1zpig458rsgaslh3csxl0bbflbj3mwnb4hllp9fgp76ckr0ravzq";
+    rev = "c5247b417b993968ee625d9181b5ab7eb332ad41";
+    sha256 = "1shwv511y2li3jbrjs7fcpaj8mx6x7mzdjvyxkwry8gx9x90fvmp";
   };
 
   postUnpack = ''
