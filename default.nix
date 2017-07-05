@@ -26,7 +26,7 @@
   nixpkgs = import ./nixpkgs project.nixpkgsArgs;
   nixpkgsWasm = import ./nixpkgs (project.nixpkgsCrossArgs // {
     crossSystem = {
-      config = "wasm32-unknown-none-wasm";
+      config = "wasm32-unknown-unknown-wasm";
       arch = "wasm32";
       libc = null;
     };
