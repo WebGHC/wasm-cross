@@ -31,6 +31,13 @@ arbitrary LLVM targets.
    cross system using `compiler-rt` as the runtime, and
    `musl-cross.nix` as the `libc`. The final stage uses a `stdenv`
    that will target the cross system by default.
+4. `./fib-example` is a simple C program that returns a fibonacci
+   calculation. The goal of this program is to demonstrate that a
+   CMake project can be built for WebAssembly with relative ease. A
+   secondary goal is to show that this requires minimal porting work,
+   such that a project designed for arbitrary cross compilation to
+   platforms such as Arm can be built for WebAssembly without changing
+   the build system.
 
 ### Notes
 
