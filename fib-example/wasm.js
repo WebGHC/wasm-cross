@@ -12,23 +12,25 @@ function fetchAndInstantiate(url, importObject) {
 
 var importObject = {
     "env": {
-        "__syscall_cp": () => {throw "NYI"},
-        "__lockfile": () => {throw "NYI"},
-        "__unlockfile": () => {throw "NYI"},
-        "pthread_self": () => {throw "NYI"},
-        "__syscall1": () => {throw "NYI"},
-        "__mmap": () => {throw "NYI"},
-        "__syscall0": () => {throw "NYI"},
-        "__syscall3": () => {throw "NYI"},
-        "abort": () => {throw "NYI"},
-        "__mremap": () => {throw "NYI"},
-        "__munmap": () => {throw "NYI"},
-        "__madvise": () => {throw "NYI"},
+        "__eqtf2": () => {throw "NYI"},
+        "__extenddftf2": () => {throw "NYI"},
+        "__fixtfsi": () => {throw "NYI"},
+        "__fixunstfsi": () => {throw "NYI"},
+        "__floatsitf": () => {throw "NYI"},
+        "__floatunsitf": () => {throw "NYI"},
+        "getenv": () => {throw "NYI"},
         "__lock": () => {throw "NYI"},
+        "__map_file": () => {throw "NYI"},
+        "__netf2": () => {throw "NYI"},
+        "sbrk": () => {throw "NYI"},
+        "__stack_chk_fail": () => {throw "NYI"},
+        "__stack_chk_guard": () => {throw "NYI"},
+        "__syscall140": () => {throw "NYI"},
+        "__syscall146": () => {throw "NYI"},
+        "__syscall6": () => {throw "NYI"},
+        "__syscall91": () => {throw "NYI"},
         "__unlock": () => {throw "NYI"},
-        "_Exit": () => {throw "NYI"},
-        "__syscall5": () => {throw "NYI"},
-        "__stdio_write": () => {throw "NYI"}
+        "__unordtf2": () => {throw "NYI"},
     }
 };
 

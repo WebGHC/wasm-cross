@@ -25,7 +25,7 @@ in bootStages ++ [
     allowCustomOverrides = true;
     stdenv = vanillaPackages.stdenv.override (oldStdenv: {
       overrides = self: super: let
-        mkClang = { ldFlags ? null, libc ? null, extraPackages ? [] }: self.wrapCCCross {
+        mkClang = { ldFlags ? null, libc ? null, extraPackages ? [], syms ? null }: self.wrapCCCross {
           name = "clang-cross-wrapper";
           cc = self.llvmPackages_HEAD.clang-unwrapped;
           binutils = self.llvmPackages_HEAD.llvm-binutils;
@@ -41,8 +41,8 @@ in bootStages ++ [
             echo "-lc" >> $out/nix-support/libc-ldflags
           '') + (self.lib.optionalString (ldFlags != null) ''
             echo "${ldFlags}" >> $out/nix-support/cc-ldflags
-          '') + (self.lib.optionalString (crossSystem.arch == "wasm32") ''
-            echo "--allow-undefined-file=${./wasm.syms}" >> $out/nix-support/cc-ldflags
+          '') + (self.lib.optionalString (syms != null) ''
+            echo "--allow-undefined-file=${syms}" >> $out/nix-support/cc-ldflags
           '');
         };
         mkStdenv = cc: self.makeStdenvCross {
@@ -62,6 +62,16 @@ in bootStages ++ [
           ldFlags = "-L${compiler-rt}/lib -lcompiler_rt";
           libc = musl-cross;
           extraPackages = [ compiler-rt ];
+          syms = if crossSystem.arch != "wasm32" then null else stdenvNoLibc.mkDerivation {
+            name = "wasm.syms";
+            phases = ["buildPhase"];
+            buildPhase = ''
+              $NM ${musl-cross}/lib/libc.a -u --just-symbol-name | grep -v ":\$" | grep -Fvxf <($NM ${musl-cross}/lib/libc.a -g -just-symbol-name | grep -v ":\$") | sort -u > $out
+              echo exit >> $out
+              echo signal >> $out
+              echo system >> $out
+            '';
+          };
         };
 
         stdenvNoLibc = mkStdenv clangCross-noLibc;
