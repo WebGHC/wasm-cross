@@ -100,7 +100,14 @@ in bootStages ++ [
     selfBuild = false;
     stdenv = toolPackages.makeStdenvCross {
       inherit (toolPackages) stdenv;
-      overrides = self: super: {};
+      overrides = self: super: {
+        ncurses = (super.ncurses.override { androidMinimal = true; }).overrideDerivation (drv: {
+          patches = drv.patches or [] ++ [./ncurses.patch];
+          hardeningDisable = drv.hardeningDisable or [] ++ ["pic"];
+          configureFlags = drv.configureFlags or [] ++ ["--disable-shared" "--enable-static"];
+          dontDisableStatic = true;
+        });
+      };
       buildPlatform = localSystem;
       hostPlatform = crossSystem;
       targetPlatform = crossSystem;
