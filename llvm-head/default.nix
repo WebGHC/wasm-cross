@@ -17,25 +17,23 @@
 }:
 let
   callLibrary = newScope (buildTools.tools // libraries // {
-    inherit stdenv cmake libxml2 python2 isl release_version fetch-llvm-mirror enableSharedLibraries;
+    inherit stdenv cmake libxml2 python2 isl release_version fetch-llvm-mirror enableSharedLibraries sources;
   });
 
   callTool = newScope (tools // libraries // {
-    inherit stdenv cmake libxml2 python2 isl release_version fetch-llvm-mirror enableSharedLibraries;
+    inherit stdenv cmake libxml2 python2 isl release_version fetch-llvm-mirror enableSharedLibraries sources;
   });
 
-  release_version = "5.0.0";
+  sources = callLibrary ./sources.nix {};
+
+  release_version = "6.0.0";
 
   fetch-llvm-mirror = url: fetchurl {
     url = "https://github.com/llvm-mirror/${url.name}/archive/${url.rev}.tar.gz";
     inherit (url) sha256;
   };
 
-  clang-tools-extra_src = fetch-llvm-mirror {
-    name = "clang-tools-extra";
-    rev = "68cef18a32a356abc0e6f88c5d298bad5894b695";
-    sha256 = "0bv8kib7a4z87nlblxys4sa33n9m39qmrmbsbw04nqx4r56ckhw9";
-  };
+  clang-tools-extra_src = sources.clang-tools-extra;
 
   tools = {
     llvm = callTool ./llvm.nix {};

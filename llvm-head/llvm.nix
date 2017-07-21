@@ -1,5 +1,5 @@
 { stdenv
-, fetch-llvm-mirror
+, sources
 , fetchpatch
 , perl
 , groff
@@ -19,11 +19,7 @@
 }:
 
 let
-  src = fetch-llvm-mirror {
-    name = "llvm";
-    rev = "e7b6244965e058022e686d697a6c02e871720b39";
-    sha256 = "0v56vqn7ww8m0mk74cikscri0g3cq2rhrh9pzh1fxj8w2sggh8r0";
-  };
+  src = sources.llvm;
   shlib = if stdenv.isDarwin then "dylib" else "so";
 
   # Used when creating a version-suffixed symlink of libLLVM.dylib

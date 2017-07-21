@@ -1,5 +1,5 @@
 { stdenv
-, fetch-llvm-mirror
+, sources
 , cmake
 , llvm
 , hostPlatform
@@ -9,11 +9,7 @@
 }:
 stdenv.mkDerivation {
   name = "libunwind";
-  src = fetch-llvm-mirror {
-    name = "libunwind";
-    rev = "41f982e5887185b904a456e20dfcd58e6be6cc19";
-    sha256 = "17b1fy09rgbrbn1i6hfzabf4a8bppj46zx651sjbhc0cgfdlhq6q";
-  };
+  src = sources.libunwind;
   nativeBuildInputs = [ cmake ];
   buildInputs = [ libcxx-headers ];
   cmakeFlags = [

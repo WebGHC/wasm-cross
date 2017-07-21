@@ -1,12 +1,8 @@
-{ stdenv, fetch-llvm-mirror, cmake, libxml2, libedit, llvm, release_version, clang-tools-extra_src, python }:
+{ stdenv, sources, cmake, libxml2, libedit, llvm, release_version, clang-tools-extra_src, python }:
 
 let
   gcc = if stdenv.cc.isGNU then stdenv.cc.cc else stdenv.cc.cc.gcc;
-  src = fetch-llvm-mirror {
-    name = "clang";
-    rev = "972c81b9ec5e4b5a19c18dc9a45bf95d5ba6c857";
-    sha256 = "07q4f5zq0rricqzpjqclww6n0m57cg10jywjz2yf6dn34c5cs2ia";
-  };
+  src = sources.clang;
   self = stdenv.mkDerivation {
     name = "clang";
 

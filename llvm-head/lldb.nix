@@ -1,5 +1,5 @@
 { stdenv
-, fetch-llvm-mirror
+, sources
 , cmake
 , zlib
 , ncurses
@@ -16,11 +16,7 @@
 stdenv.mkDerivation {
   name = "lldb";
 
-  src = fetch-llvm-mirror {
-    name = "lldb";
-    rev = "2c1c35fe6142dbe2019bba8027da6d53af8361de";
-    sha256 = "1zylfscs5xqvymlcwmmrqw75wi9ph2j190shwl036xwypczg4x3h";
-  };
+  src = sources.lldb;
 
   patchPhase = ''
     # Fix up various paths that assume llvm and clang are installed in the same place

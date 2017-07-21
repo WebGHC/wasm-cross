@@ -4,19 +4,25 @@
 , zlib
 , llvm
 , python
+, libxml2
+# , sources
 }:
 
 stdenv.mkDerivation {
   name = "lld";
 
+  # src = sources.lld;
+
   src = fetchFromGitHub {
     owner = "WebGHC";
     repo = "lld";
-    rev = "77520876ee4f0c76f03468f375e9f91171a15dcc";
-    sha256 = "1gd9d2hirvzvqpj7kjg96sr3ga3a942gyr5dsi9jy33xp3xvzcmz";
+    rev = "56a0a0e7eb2c72fbdcf5912255232742443738dd";
+    sha256 = "0i43n1lr5i119nn8gfw2f6vzlqkgj763rppw194byy83qqsjn110";
   };
 
-  buildInputs = [ cmake llvm ];
+  nativeBuildInputs = [ cmake ];
+
+  buildInputs = [ llvm libxml2 ];
 
   outputs = [ "out" "dev" ];
 

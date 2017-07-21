@@ -1,13 +1,9 @@
-{ lib, stdenv, fetch-llvm-mirror, cmake, llvm, libcxxabi, fixDarwinDylibNames }:
+{ lib, stdenv, sources, cmake, llvm, libcxxabi, fixDarwinDylibNames }:
 
 stdenv.mkDerivation rec {
   name = "libc++";
 
-  src = fetch-llvm-mirror {
-    name = "libcxx";
-    rev = "c5247b417b993968ee625d9181b5ab7eb332ad41";
-    sha256 = "1shwv511y2li3jbrjs7fcpaj8mx6x7mzdjvyxkwry8gx9x90fvmp";
-  };
+  src = sources.libcxx;
 
   postUnpack = ''
     # TODO

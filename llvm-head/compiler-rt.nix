@@ -1,5 +1,5 @@
 { stdenv
-, fetch-llvm-mirror
+, sources
 , cmake
 , llvm
 , lib
@@ -11,11 +11,7 @@
 
 stdenv.mkDerivation {
   name = "compiler-rt";
-  src = fetch-llvm-mirror {
-    name = "compiler-rt";
-    rev = "6ee59ff2a0b91f2224d38adb3fdb2dd5aefc107b";
-    sha256 = "0cpaj1k2a622pimm5c5y2xdrkxhqzqrvl81dl8qlr91zxr2jn9fg";
-  };
+  src = sources.compiler-rt;
   nativeBuildInputs = [ cmake python ];
   cmakeFlags = [
     "-DLLVM_CONFIG_PATH=${llvm}/bin/llvm-config"
