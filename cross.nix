@@ -87,7 +87,10 @@ in bootStages ++ [
           enableSharedLibraries = false;
         };
         compiler-rt = llvmPackages-cross.compiler-rt.override { baremetal = true; };
-      in oldStdenv.overrides self super // { inherit clangCross musl-cross compiler-rt; };
+      in oldStdenv.overrides self super // {
+        inherit clangCross musl-cross compiler-rt;
+        binutils = self.llvmPackages_HEAD.llvm-binutils;
+      };
     });
   })
 
@@ -104,7 +107,7 @@ in bootStages ++ [
         ncurses = (super.ncurses.override { androidMinimal = true; }).overrideDerivation (drv: {
           patches = drv.patches or [] ++ [./ncurses.patch];
           hardeningDisable = drv.hardeningDisable or [] ++ ["pic"];
-          configureFlags = drv.configureFlags or [] ++ ["--disable-shared" "--enable-static"];
+          configureFlags = drv.configureFlags or [] ++ ["--disable-shared" "--enable-static" "--without-progs" "--without-tests"];
           dontDisableStatic = true;
         });
       };
