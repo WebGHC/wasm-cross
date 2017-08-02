@@ -1,47 +1,47 @@
 { fetch-llvm-mirror }: {
   llvm = fetch-llvm-mirror {
     name = "llvm";
-    rev = "3fa112e64591985e38b8eba2d7da91e8af32e48d";
-    sha256 = "1953167di1ipbp34x2qg2dasfy50n7rw31fmh0z8fyp1yrz29vac";
+    rev = "6e8db40d6507e45266435f69b304808aa7e31ea0";
+    sha256 = "0f0aizzcvqhgw3sf5x3ln0mjyrky79rya8p7125hi7488q9viiw3";
   };
   clang = fetch-llvm-mirror {
     name = "clang";
-    rev = "9d04204d2a2c73b58e8a8d20bcb4f514da273ca3";
-    sha256 = "1lzjpnzp7rbxkfnxj9sq7il5lgyhbnw75l4s20qny4zjpxwbsif8";
+    rev = "af1df2901bedeb6092c08745d00bfdb0e3a247af";
+    sha256 = "1cxiz1bqbnc9xgm2qshavqqps1g8p7xyawj5dsiy1wc2d0fhdlb6";
   };
   lld = fetch-llvm-mirror {
     name = "lld";
-    rev = "bf23124dcec48c6be9d66cc10572cca1475b738d";
-    sha256 = "1z5x6a5f6qipk6z97qa0ppxxc4lhcxjqg50dv0xpwykj946f60pv";
+    rev = "2a5edfd318c5bb8d5a691e4c1903a8793274afec";
+    sha256 = "1wynvmfyh9dr1nvxzaqwsi7hmyr05x6cwvwrj486v7g28hrswsck";
   };
   clang-tools-extra = fetch-llvm-mirror {
     name = "clang-tools-extra";
-    rev = "54c46b27ee3c2c784fa06266f6ed6b9e16c85388";
-    sha256 = "06by23yzjjx4ajyzvb74p9vpdr0nab37clasp35r7qpcxrf1lc4b";
+    rev = "87ee00199a004cd81c09133c6899a0a75f874816";
+    sha256 = "0jnlkqhjk8d62idkihwkw1bnzlllq1fk25mw0d97c85vd23ni75m";
   };
   compiler-rt = fetch-llvm-mirror {
     name = "compiler-rt";
-    rev = "ecbdaaaa7a191059b66291b93f6874e7189e4ed9";
-    sha256 = "1x40r0v24ix509z733pylgi6380a1q37jzjbw16jqcxwbsz8gb5a";
+    rev = "73ea55e16c3724f1ea0caa30a34aad7427dd36f7";
+    sha256 = "0wj0m7jmkycarmxw50gz26qriic2v7j6knwajfgspq02wjarx9il";
   };
   libcxx = fetch-llvm-mirror {
     name = "libcxx";
-    rev = "d08ba82b09f62a34c5f0b22a4acdba607df8313e";
-    sha256 = "0kzpdbhs5zxy6dl4wrdri6pv72l2fgw314w9zsigyvs2qgh364hx";
+    rev = "4876a73b0a667032d66cee0e8e4d4a5d4083bf3b";
+    sha256 = "13vwdcah2ymdfbh428xdakhgxqvjkavnd5qzr1d7j4b2asiypjc6";
   };
   libcxxabi = fetch-llvm-mirror {
     name = "libcxxabi";
-    rev = "139ba7b511399914f830bc4f286c1f4c256e7dea";
-    sha256 = "1nqqb9fvm12558kg8wvc2sq2lbz3gnm7dhsp2y3z8gc468nfnb8z";
+    rev = "b90082274531c38eb75bb5d30aac876d338004ea";
+    sha256 = "1731qw9s7plam7k94n0s2lfkvf9l58q7zczyiss9jlkfdl71z03y";
   };
   libunwind = fetch-llvm-mirror {
     name = "libunwind";
-    rev = "82c7974db48aeaa36b51e364ba5a5cd25b3f4f54";
-    sha256 = "1b38vzbk40q1yf5ww9rlj9nhz2p428ixx8k4jb1005xrghxhpsik";
+    rev = "36c1a03b74e1eddbbc844b08dcf74c94556613ea";
+    sha256 = "1lanhm49f1ybvbcq8va5f2zycm0abkwzp0ynlpsgxym26v24a14b";
   };
   lldb = fetch-llvm-mirror {
     name = "lldb";
-    rev = "97acfd7105f23494e4a96a1d203b2a196ee3e8d0";
-    sha256 = "0ac5pv95cs4qn73k44r734xg51x9iq2r7iwbg6xb1ggnfpv5kb0y";
+    rev = "a47a6a9e9335f4a3204ac64cd7160763dd5bea4c";
+    sha256 = "18xz28c6vya7h8m0ss1x42z9vj7zs8isp1g82lj71glrzcal4wa1";
   };
 }

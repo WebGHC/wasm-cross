@@ -1,22 +1,3 @@
-diff --git a/lib/Driver/ToolChains/Bitrig.cpp b/lib/Driver/ToolChains/Bitrig.cpp
-index d8f541dfba..c7da5ef872 100644
---- a/lib/Driver/ToolChains/Bitrig.cpp
-+++ b/lib/Driver/ToolChains/Bitrig.cpp
-@@ -61,10 +61,10 @@ void bitrig::Linker::ConstructJob(Compilation &C, const JobAction &JA,
-     CmdArgs.push_back("-Bdynamic");
-     if (Args.hasArg(options::OPT_shared)) {
-       CmdArgs.push_back("-shared");
--    } else {
--      CmdArgs.push_back("-dynamic-linker");
--      CmdArgs.push_back("/usr/libexec/ld.so");
--    }
-+    } // else {
-+    //   CmdArgs.push_back("-dynamic-linker");
-+    //   CmdArgs.push_back("/usr/libexec/ld.so");
-+    // }
-   }
- 
-   if (Output.isFilename()) {
 diff --git a/lib/Driver/ToolChains/DragonFly.cpp b/lib/Driver/ToolChains/DragonFly.cpp
 index bd2c7fc6c4..46f27223fb 100644
 --- a/lib/Driver/ToolChains/DragonFly.cpp

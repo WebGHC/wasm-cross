@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -e
+
+repos=(llvm clang lld clang-tools-extra compiler-rt libcxx libcxxabi libunwind lldb)
+
+mkdir -p llvm-mirror
+
+echo "{ fetch-llvm-mirror }: {"
+
+for repo in ${repos[@]}; do
+    if [ ! -d llvm-mirror/$repo ]; then
+	git clone -q git@github.com:llvm-mirror/$repo llvm-mirror/$repo
+    fi
+
+    GIT="git --work-tree llvm-mirror/$repo --git-dir llvm-mirror/$repo/.git"
+
+    if [ x$1 != x"--dont-pull" ]; then
+	$GIT pull -q
+    fi
+    rev=$($GIT rev-parse HEAD)
+    sha=$(nix-prefetch-url https://github.com/llvm-mirror/$repo/archive/$rev.tar.gz)
+    echo "  $repo = fetch-llvm-mirror {"
+    echo "    name = \"$repo\";"
+    echo "    rev = \"$rev\";"
+    echo "    sha256 = \"$sha\";"
+    echo "  };"
+done
+
+echo "}"
