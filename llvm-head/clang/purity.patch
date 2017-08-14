@@ -37,24 +37,34 @@ index c6626e922e..c2ac7b0679 100644
        if (Arch == llvm::Triple::arm || Arch == llvm::Triple::sparc ||
            Arch == llvm::Triple::x86 || Arch == llvm::Triple::x86_64) {
 diff --git a/lib/Driver/ToolChains/Fuchsia.cpp b/lib/Driver/ToolChains/Fuchsia.cpp
-index b8757cf4aa..76dbda711d 100644
+index 368a8bc998..a23f24a517 100644
 --- a/lib/Driver/ToolChains/Fuchsia.cpp
 +++ b/lib/Driver/ToolChains/Fuchsia.cpp
-@@ -77,10 +77,10 @@ void fuchsia::Linker::ConstructJob(Compilation &C, const JobAction &JA,
-     if (Args.hasArg(options::OPT_rdynamic))
-       CmdArgs.push_back("-export-dynamic");
+@@ -78,15 +78,15 @@ void fuchsia::Linker::ConstructJob(Compilation &C, const JobAction &JA,
+   else if (Args.hasArg(options::OPT_shared))
+     CmdArgs.push_back("-shared");
  
--    if (!Args.hasArg(options::OPT_shared)) {
--      CmdArgs.push_back("-dynamic-linker");
--      CmdArgs.push_back(Args.MakeArgString(D.DyldPrefix + "ld.so.1"));
--    }
-+    // if (!Args.hasArg(options::OPT_shared)) {
-+    //   CmdArgs.push_back("-dynamic-linker");
-+    //   CmdArgs.push_back(Args.MakeArgString(D.DyldPrefix + "ld.so.1"));
-+    // }
-   }
+-  if (!Args.hasArg(options::OPT_shared)) {
+-    std::string Dyld = D.DyldPrefix;
+-    if (ToolChain.getSanitizerArgs().needsAsanRt() &&
+-        ToolChain.getSanitizerArgs().needsSharedAsanRt())
+-      Dyld += "asan/";
+-    Dyld += "ld.so.1";
+-    CmdArgs.push_back("-dynamic-linker");
+-    CmdArgs.push_back(Args.MakeArgString(Dyld));
+-  }
++  // if (!Args.hasArg(options::OPT_shared)) {
++  //   std::string Dyld = D.DyldPrefix;
++  //   if (ToolChain.getSanitizerArgs().needsAsanRt() &&
++  //       ToolChain.getSanitizerArgs().needsSharedAsanRt())
++  //     Dyld += "asan/";
++  //   Dyld += "ld.so.1";
++  //   CmdArgs.push_back("-dynamic-linker");
++  //   CmdArgs.push_back(Args.MakeArgString(Dyld));
++  // }
  
    CmdArgs.push_back("-o");
+   CmdArgs.push_back(Output.getFilename());
 diff --git a/lib/Driver/ToolChains/Gnu.cpp b/lib/Driver/ToolChains/Gnu.cpp
 index d29d826b5f..3a14cde062 100644
 --- a/lib/Driver/ToolChains/Gnu.cpp

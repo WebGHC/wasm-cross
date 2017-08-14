@@ -1,20 +1,11 @@
-{ stdenv, sources, cmake, libxml2, libedit, llvm, release_version, clang-tools-extra_src, python }:
+{ stdenv, sources, cmake, libxml2, libedit, llvm, release_version, python }:
 
 let
   gcc = if stdenv.cc.isGNU then stdenv.cc.cc else stdenv.cc.cc.gcc;
-  src = sources.clang;
   self = stdenv.mkDerivation {
     name = "clang";
 
-    unpackPhase = ''
-      unpackFile ${src}
-      mv clang* clang
-      # cp --no-preserve=mode -r ${src} clang
-      sourceRoot=$PWD/clang
-      unpackFile ${clang-tools-extra_src}
-      mv clang-tools-extra-* $sourceRoot/tools/extra
-      # cp --no-preserve=mode -r ${clang-tools-extra_src} $sourceRoot/tools/extra
-    '';
+    src = sources.clang;
 
     buildInputs = [ cmake libedit libxml2 llvm python ];
 
@@ -25,7 +16,7 @@ let
     (stdenv.lib.optional stdenv.isLinux "-DGCC_INSTALL_PREFIX=${gcc}") ++
     (stdenv.lib.optional (stdenv.cc.libc != null) "-DC_INCLUDE_DIRS=${stdenv.cc.libc}/include");
 
-    patches = [ ./purity.patch ];
+    patches = [ ./purity.patch ./wasm-lld.patch ];
 
     postPatch = ''
       sed -i -e 's/DriverArgs.hasArg(options::OPT_nostdlibinc)/true/' lib/Driver/ToolChains/*.cpp

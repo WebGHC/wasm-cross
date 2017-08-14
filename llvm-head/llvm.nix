@@ -19,7 +19,6 @@
 }:
 
 let
-  src = sources.llvm;
   shlib = if stdenv.isDarwin then "dylib" else "so";
 
   # Used when creating a version-suffixed symlink of libLLVM.dylib
@@ -28,11 +27,7 @@ let
 in stdenv.mkDerivation rec {
   name = "llvm";
 
-  unpackPhase = ''
-    unpackFile ${src}
-    mv llvm* llvm
-    sourceRoot=$PWD/llvm
-  '';
+  src = sources.llvm;
 
   outputs = [ "out" ] ++ stdenv.lib.optional enableSharedLibraries "lib";
 
@@ -103,8 +98,6 @@ in stdenv.mkDerivation rec {
   checkTarget = "check-all";
 
   enableParallelBuilding = true;
-
-  passthru.src = src;
 
   meta = {
     description = "Collection of modular and reusable compiler and toolchain technologies";

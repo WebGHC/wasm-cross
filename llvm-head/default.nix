@@ -17,30 +17,21 @@
 }:
 let
   callLibrary = newScope (buildTools.tools // libraries // {
-    inherit stdenv cmake libxml2 python2 isl release_version fetch-llvm-mirror enableSharedLibraries sources;
+    inherit stdenv cmake libxml2 python2 isl release_version enableSharedLibraries sources;
   });
 
   callTool = newScope (tools // libraries // {
-    inherit stdenv cmake libxml2 python2 isl release_version fetch-llvm-mirror enableSharedLibraries sources;
+    inherit stdenv cmake libxml2 python2 isl release_version enableSharedLibraries sources;
   });
 
   sources = callLibrary ./sources.nix {};
 
   release_version = "6.0.0";
 
-  fetch-llvm-mirror = url: fetchurl {
-    url = "https://github.com/llvm-mirror/${url.name}/archive/${url.rev}.tar.gz";
-    inherit (url) sha256;
-  };
-
-  clang-tools-extra_src = sources.clang-tools-extra;
-
   tools = {
     llvm = callTool ./llvm.nix {};
 
-    clang-unwrapped = callTool ./clang {
-      inherit clang-tools-extra_src;
-    };
+    clang-unwrapped = callTool ./clang {};
 
     clang = wrapCC tools.clang-unwrapped;
 
@@ -89,7 +80,7 @@ let
     libcxx-headers = runCommand "libcxx-headers" {} ''
       unpackFile ${libraries.libcxx.src}
       mkdir -p $out
-      mv libcxx*/include $out
+      cp -r libcxx*/include $out
     '';
 
     libcxx = callLibrary ./libc++ {};
