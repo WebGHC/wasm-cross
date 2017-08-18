@@ -45,12 +45,20 @@ in bootStages ++ [
             echo "--allow-undefined" >> $out/nix-support/cc-ldflags
           '');
         };
-        mkStdenv = cc: self.makeStdenvCross {
+        mkStdenv = cc: let x = (self.makeStdenvCross {
           inherit (self) stdenv;
           buildPlatform = localSystem;
           hostPlatform = crossSystem;
           targetPlatform = crossSystem;
           inherit cc;
+        });
+        in x //  {
+          mkDerivation = args: x.mkDerivation (args // {
+            hardeningDisable = args.hardeningDisable or [] ++ ["pic" "stackprotector"];
+            dontDisableStatic = true;
+            configureFlags = args.configureFlags or [] ++ ["--enable-static" "--disable-shared"];
+          });
+          isStatic = true;
         };
 
         clangCross-noLibc = mkClang {};
@@ -96,9 +104,7 @@ in bootStages ++ [
       overrides = self: super: {
         ncurses = (super.ncurses.override { androidMinimal = true; }).overrideDerivation (drv: {
           patches = drv.patches or [] ++ [./ncurses.patch];
-          hardeningDisable = drv.hardeningDisable or [] ++ ["pic"];
-          configureFlags = drv.configureFlags or [] ++ ["--disable-shared" "--enable-static" "--without-progs" "--without-tests"];
-          dontDisableStatic = true;
+          configureFlags = drv.configureFlags or [] ++ ["--without-progs" "--without-tests"];
         });
       };
       buildPlatform = localSystem;
