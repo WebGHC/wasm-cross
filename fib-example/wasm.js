@@ -16,6 +16,7 @@ function fetchAndInstantiate(url, importObject) {
 
 fetchAndInstantiate("fib", importObject).then(function(instance) {
     console.log(instance.exports.main);
-    console.log(instance.exports.main());
-    console.log(instance.exports.fib(7));
+
+    document.body.innerHTML = "<p>" + String(instance.exports.fib(7))
+	+ "</p><p>" + String(instance.exports.main()) + "</p>";
 });
