@@ -3,6 +3,7 @@
 with import ./.;
 [
   nixpkgs.llvmPackages_HEAD
+  nixpkgs.binaryen
 
   nixpkgsArm.stdenv.cc
   nixpkgsWasm.stdenv.cc
