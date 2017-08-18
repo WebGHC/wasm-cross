@@ -2,20 +2,20 @@
   clang = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "clang";
-    rev = "7602b13a8e8b5656afd6327d112b76b39f836e5b";
-    sha256 = "12m0mvbpi5abnd76alx6m0dis0558skjnykfci20fq9fc4ssib19";
+    rev = "7db24143e836a8d389bffec055f32df55a6c081c";
+    sha256 = "1z1jzk2kbiy5s7flkihpsx6jrfaq0hq2r9m53x1r072yfz5w7v4l";
   };
   libcxxabi = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "libcxxabi";
-    rev = "7de232a3f6f6b6d5f2892b689095fb13d732bbcb";
+    rev = "b157fdd968a4e1093645ec7c65213736c4bc7ea6";
     sha256 = "1jqjgkfsfqjf6j4laqn88qjm7dmnfw50xwdp7y4qgrvhlzynz66g";
   };
   llvm = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "llvm";
-    rev = "ec9eb8644dce597eba339778b5db74dd54181a42";
-    sha256 = "12jb0p6mi7prz8s9108b9sfjyxd5cspk3fvcjdq4z67rjxr5h94b";
+    rev = "cb8d6dea184609512650a6c599ef851518027954";
+    sha256 = "1qkqyqh7gprb54phav9ap46aw78qjqxjb1j4vlmi2san5mw9gqgv";
   };
   libcxx = fetchFromGitHub {
     owner = "llvm-mirror";
@@ -26,14 +26,14 @@
   lldb = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "lldb";
-    rev = "92f8a27dbf9c9c64558f7b22cd298c31288266a3";
-    sha256 = "04kg4ymiaij7j4wqs8drnnbqqg1xppsbmhr3nz196sl4layppxv7";
+    rev = "ec3c23cb370a881bf2074d4eee85e03f88f2d149";
+    sha256 = "1jrjz2y1zikqrs8gx90bbcj2hml1rl8nw1qm16bsrxkqz69h9fp9";
   };
   clang-tools-extra = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "clang-tools-extra";
-    rev = "4d2e5ec3c7eb64b1b1f941b761cd702e01c3783f";
-    sha256 = "0x4zamgm1fhjy1vfdip1whncg8r3z2b5sw38jb2f3dagl0wmf9kp";
+    rev = "2f301f50187ede4b9b8c7456ac4a67b9f7418004";
+    sha256 = "03zad73mz13cv4c4iabax3p4bg7n5izm6zwwvmpw1rqjbd1ifr5w";
   };
   libunwind = fetchFromGitHub {
     owner = "llvm-mirror";
@@ -44,13 +44,13 @@
   compiler-rt = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "compiler-rt";
-    rev = "83dafd31d45ad9648dfde40206ebc33cd71af735";
-    sha256 = "094l95hakc012bcqpknhmwhkmi06l1wafpzmsj3qmkkbjk3gpgyz";
+    rev = "4a6d122a262547d4c6978bc6c87a9d417109fe61";
+    sha256 = "0qbwgi5mgbhcqzzwfarhhgfgdrhk7hsk0n9izin697r295fhsk4a";
   };
   lld = fetchFromGitHub {
     owner = "WebAssembly";
     repo = "lld";
-    rev = "b66cb81fe15c7ad8767a21a1e7830ee839776aff";
-    sha256 = "06hjh09v5zj9bv6mr9548may6zz0kvg0ck7n92jpwifwvmigy1pd";
+    rev = "196bcc693535ab48f9e0fd95bd10b712f3431b61";
+    sha256 = "02ipvmw5v51ggm0ypwq8zmd5xxw7z4s0dq25d5hjjph42rhgrwzp";
   };
 }
