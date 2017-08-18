@@ -56,7 +56,10 @@ in bootStages ++ [
           mkDerivation = args: x.mkDerivation (args // {
             hardeningDisable = args.hardeningDisable or [] ++ ["all"];
             dontDisableStatic = true;
-            configureFlags = args.configureFlags or [] ++ ["--enable-static" "--disable-shared"];
+            configureFlags = let
+              flags = args.configureFlags or [];
+            in
+              (if builtins.isString flags then [flags] else flags) ++ ["--enable-static" "--disable-shared"];
           });
           isStatic = true;
         };
