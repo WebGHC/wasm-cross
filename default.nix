@@ -7,6 +7,8 @@
 
       llvmPackages = self.llvmPackages_HEAD;
 
+      binaryen = self.callPackage ./binaryen.nix {};
+
       # https://github.com/NixOS/nixpkgs/pull/27072
       swig = super.swig.overrideDerivation (drv: rec {
         name = "swig-${version}";
