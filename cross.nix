@@ -54,7 +54,7 @@ in bootStages ++ [
         });
         in x //  {
           mkDerivation = args: x.mkDerivation (args // {
-            hardeningDisable = args.hardeningDisable or [] ++ ["pic" "stackprotector"];
+            hardeningDisable = args.hardeningDisable or [] ++ ["all"];
             dontDisableStatic = true;
             configureFlags = args.configureFlags or [] ++ ["--enable-static" "--disable-shared"];
           });
