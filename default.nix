@@ -23,7 +23,9 @@
       });
     })];
   };
-  nixpkgsCrossArgs = project.nixpkgsArgs // {};
+  nixpkgsCrossArgs = project.nixpkgsArgs // {
+    stdenvStages = import ./cross.nix;
+  };
 
   nixpkgs = import ./nixpkgs project.nixpkgsArgs;
   nixpkgsWasm = import ./nixpkgs (project.nixpkgsCrossArgs // {
@@ -32,10 +34,11 @@
       arch = "wasm32";
       libc = null;
     };
-    stdenvStages = import ./cross.nix;
   });
   nixpkgsArm = import ./nixpkgs (project.nixpkgsCrossArgs // {
     crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix").aarch64-multiplatform;
-    stdenvStages = import ./cross.nix;
+  });
+  nixpkgsNative = import ./nixpkgs (project.nixpkgsCrossArgs // {
+    # crossSystem = project.nixpkgs.hostPlatform;
   });
 })

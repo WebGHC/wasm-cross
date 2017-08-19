@@ -11,6 +11,7 @@ let
     # Ignore custom stdenvs when cross compiling for compatability
     config = builtins.removeAttrs config [ "replaceStdenv" ];
   };
+  targetSystem = if crossSystem == null then localSystem else crossSystem;
 
 in bootStages ++ [
 
@@ -18,38 +19,51 @@ in bootStages ++ [
   (vanillaPackages: {
     buildPlatform = localSystem;
     hostPlatform = localSystem;
-    targetPlatform = crossSystem;
+    targetPlatform = targetSystem;
     inherit config overlays;
     selfBuild = false;
     # It's OK to change the built-time dependencies
     allowCustomOverrides = true;
     stdenv = vanillaPackages.stdenv.override (oldStdenv: {
       overrides = self: super: let
-        mkClang = { ldFlags ? null, libc ? null, extraPackages ? [] }: self.wrapCCCross {
-          name = "clang-cross-wrapper";
-          cc = self.llvmPackages_HEAD.clang-unwrapped;
-          binutils = self.llvmPackages_HEAD.llvm-binutils;
-          inherit libc extraPackages;
-          extraBuildCommands = ''
-            echo "-target ${crossSystem.config} -nostdinc -nodefaultlibs -nostartfiles" >> $out/nix-support/cc-cflags
-            # TODO: Build start files so entry isn't main
-            echo "-entry=main" >> $out/nix-support/cc-ldflags
+        mkClang = { ldFlags ? null, libc ? null, extraPackages ? [] }:
+          if localSystem != targetSystem
+          then self.wrapCCCross {
+            name = "clang-cross-wrapper";
+            cc = self.llvmPackages_HEAD.clang-unwrapped;
+            binutils = self.llvmPackages_HEAD.llvm-binutils;
+            inherit libc extraPackages;
+            extraBuildCommands = ''
+              echo "-target ${targetSystem.config} -nostdinc -nodefaultlibs -nostartfiles" >> $out/nix-support/cc-cflags
+              # TODO: Build start files so entry isn't main
+              echo "-entry=main" >> $out/nix-support/cc-ldflags
 
-            echo 'export CC=${crossSystem.config}-cc' >> $out/nix-support/setup-hook
-            echo 'export CXX=${crossSystem.config}-c++' >> $out/nix-support/setup-hook
-          '' + (self.lib.optionalString (libc != null) ''
-            echo "-lc" >> $out/nix-support/libc-ldflags
-          '') + (self.lib.optionalString (ldFlags != null) ''
-            echo "${ldFlags}" >> $out/nix-support/cc-ldflags
-          '') + (self.lib.optionalString (crossSystem.arch == "wasm32") ''
-            echo "--allow-undefined" >> $out/nix-support/cc-ldflags
-          '');
+              echo 'export CC=${targetSystem.config}-cc' >> $out/nix-support/setup-hook
+              echo 'export CXX=${targetSystem.config}-c++' >> $out/nix-support/setup-hook
+            '' + (self.lib.optionalString (libc != null) ''
+              echo "-lc" >> $out/nix-support/libc-ldflags
+            '') + (self.lib.optionalString (ldFlags != null) ''
+              echo "${ldFlags}" >> $out/nix-support/cc-ldflags
+            '') + (self.lib.optionalString (targetSystem.arch or null == "wasm32") ''
+              echo "--allow-undefined" >> $out/nix-support/cc-ldflags
+            '');
+          }
+        else self.ccWrapperFun {
+          nativeTools = false;
+          nativeLibc = false;
+          nativePrefix = "";
+          noLibc = libc == null;
+          cc = self.llvmPackages_HEAD.clang-unwrapped;
+          isGNU = false;
+          isClang = true;
+          inherit libc extraPackages;
         };
+
         mkStdenv = cc: let x = (self.makeStdenvCross {
           inherit (self) stdenv;
           buildPlatform = localSystem;
-          hostPlatform = crossSystem;
-          targetPlatform = crossSystem;
+          hostPlatform = targetSystem;
+          targetPlatform = targetSystem;
           inherit cc;
         });
         in x //  {
@@ -98,8 +112,8 @@ in bootStages ++ [
   # Run Packages
   (toolPackages: {
     buildPlatform = localSystem;
-    hostPlatform = crossSystem;
-    targetPlatform = crossSystem;
+    hostPlatform = targetSystem;
+    targetPlatform = targetSystem;
     inherit config overlays;
     selfBuild = false;
     stdenv = toolPackages.makeStdenvCross {
@@ -111,8 +125,8 @@ in bootStages ++ [
         });
       };
       buildPlatform = localSystem;
-      hostPlatform = crossSystem;
-      targetPlatform = crossSystem;
+      hostPlatform = targetSystem;
+      targetPlatform = targetSystem;
       cc = toolPackages.clangCross;
     };
   })
