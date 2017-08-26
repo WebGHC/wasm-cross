@@ -26,49 +26,68 @@ in bootStages ++ [
     allowCustomOverrides = true;
     stdenv = vanillaPackages.stdenv.override (oldStdenv: {
       overrides = self: super: let
-        mkClang = { ldFlags ? null, libc ? null, extraPackages ? [] }:
-          if localSystem != targetSystem
-          then self.wrapCCCross {
-            name = "clang-cross-wrapper";
-            cc = self.llvmPackages_HEAD.clang-unwrapped;
-            binutils = self.llvmPackages_HEAD.llvm-binutils;
-            inherit libc extraPackages;
+        llvmPackages = self.llvmPackages_HEAD;
+        mkClang = { ldFlags ? null, libc ? null, extraPackages ? [], ccFlags ? null }:
+          let
             extraBuildCommands = ''
-              echo "-target ${targetSystem.config} -nostdinc -nodefaultlibs -nostartfiles" >> $out/nix-support/cc-cflags
-              # TODO: Build start files so entry isn't main
-              echo "-entry=main" >> $out/nix-support/cc-ldflags
-
-              echo 'export CC=${targetSystem.config}-cc' >> $out/nix-support/setup-hook
-              echo 'export CXX=${targetSystem.config}-c++' >> $out/nix-support/setup-hook
+              echo "-target ${targetSystem.config} -nostdinc -nodefaultlibs" >> $out/nix-support/cc-cflags
             '' + (self.lib.optionalString (libc != null) ''
               echo "-lc" >> $out/nix-support/libc-ldflags
+            '') + (self.lib.optionalString (ccFlags != null) ''
+              echo "${ccFlags}" >> $out/nix-support/cc-cflags
             '') + (self.lib.optionalString (ldFlags != null) ''
               echo "${ldFlags}" >> $out/nix-support/cc-ldflags
-            '') + (self.lib.optionalString (targetSystem.arch or null == "wasm32") ''
-              echo "--allow-undefined" >> $out/nix-support/cc-ldflags
+            '');
+          in if localSystem != targetSystem
+          then self.wrapCCCross {
+            name = "clang-cross-wrapper";
+            cc = llvmPackages.clang-unwrapped;
+            binutils = llvmPackages.llvm-binutils;
+            inherit libc extraPackages;
+            extraBuildCommands = extraBuildCommands + ''
+              echo 'export CC=${targetSystem.config}-cc' >> $out/nix-support/setup-hook
+              echo 'export CXX=${targetSystem.config}-c++' >> $out/nix-support/setup-hook
+            '' + (self.lib.optionalString (targetSystem.arch or null == "wasm32") ''
+              echo "-nostartfiles" >> $out/nix-support/cc-cflags
+              echo "--allow-undefined -entry=main" >> $out/nix-support/cc-ldflags
             '');
           }
-        else self.ccWrapperFun {
-          nativeTools = false;
-          nativeLibc = false;
-          nativePrefix = "";
-          noLibc = libc == null;
-          cc = self.llvmPackages_HEAD.clang-unwrapped;
-          isGNU = false;
-          isClang = true;
-          inherit libc extraPackages;
-        };
+          else self.ccWrapperFun {
+            nativeTools = false;
+            nativeLibc = false;
+            nativePrefix = "";
+            noLibc = libc == null;
+            cc = llvmPackages.clang-unwrapped;
+            isGNU = false;
+            isClang = true;
+            inherit libc extraPackages extraBuildCommands;
+            binutils = llvmPackages.llvm-binutils;
+          };
 
-        mkStdenv = cc: let x = (self.makeStdenvCross {
+        mkStdenv = cc: let x = if localSystem != targetSystem
+        then (self.makeStdenvCross {
           inherit (self) stdenv;
           buildPlatform = localSystem;
           hostPlatform = targetSystem;
           targetPlatform = targetSystem;
+          overrides = self: super: {
+            ncurses = (super.ncurses.override { androidMinimal = true; }).overrideDerivation (drv: {
+              patches = drv.patches or [] ++ [./ncurses.patch];
+              configureFlags = drv.configureFlags or [] ++ ["--without-progs" "--without-tests"];
+            });
+          };
           inherit cc;
-        });
-        in x //  {
+        })
+        else self.stdenv.override {
+          inherit cc;
+          overrides = _: _: {};
+          allowedRequisites = null;
+        };
+        in x // {
           mkDerivation = args: x.mkDerivation (args // {
-            hardeningDisable = args.hardeningDisable or [] ++ ["all"];
+            hardeningDisable = args.hardeningDisable or []
+                             ++ ["stackprotector"]
+                             ++ self.lib.optional (targetSystem.arch or null == "wasm32") "pic";
             dontDisableStatic = true;
             configureFlags = let
               flags = args.configureFlags or [];
@@ -93,7 +112,6 @@ in bootStages ++ [
         stdenvNoCompilerRt = mkStdenv clangCross-noCompilerRt;
 
         musl-cross = self.__targetPackages.callPackage ./musl-cross.nix {
-          enableSharedLibraries = false;
           stdenv = stdenvNoLibc;
         };
 
@@ -104,7 +122,8 @@ in bootStages ++ [
         compiler-rt = llvmPackages-cross.compiler-rt.override { baremetal = true; };
       in oldStdenv.overrides self super // {
         inherit clangCross musl-cross compiler-rt;
-        binutils = self.llvmPackages_HEAD.llvm-binutils;
+        binutils = llvmPackages.llvm-binutils;
+        llvmStdenvCross = mkStdenv clangCross;
       };
     });
   })
@@ -116,19 +135,7 @@ in bootStages ++ [
     targetPlatform = targetSystem;
     inherit config overlays;
     selfBuild = false;
-    stdenv = toolPackages.makeStdenvCross {
-      inherit (toolPackages) stdenv;
-      overrides = self: super: {
-        ncurses = (super.ncurses.override { androidMinimal = true; }).overrideDerivation (drv: {
-          patches = drv.patches or [] ++ [./ncurses.patch];
-          configureFlags = drv.configureFlags or [] ++ ["--without-progs" "--without-tests"];
-        });
-      };
-      buildPlatform = localSystem;
-      hostPlatform = targetSystem;
-      targetPlatform = targetSystem;
-      cc = toolPackages.clangCross;
-    };
+    stdenv = toolPackages.llvmStdenvCross;
   })
 
 ]

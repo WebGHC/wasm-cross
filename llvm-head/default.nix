@@ -58,17 +58,20 @@ let
         if hostPlatform != targetPlatform
         then "${targetPlatform.config}-"
         else "";
-    in with tools; runCommand "binutils" { propogatedNativeBuildInputs = [ llvm lld ]; } ''
+    in with tools; runCommand "binutils" {} ''
       mkdir -p $out/bin
-      for prog in ${lld}/bin/*; do
-        ln -s $prog $out/bin/${prefix}$(basename $prog)
-      done
+      # for prog in ${lld}/bin/*; do
+      #   ln -s $prog $out/bin/${prefix}$(basename $prog)
+      # done
       for prog in ${llvm}/bin/*; do
         ln -s $prog $out/bin/${prefix}$(echo $(basename $prog) | sed -e "s|llvm-||")
       done
 
+      rm $out/bin/${prefix}cat
+
       ln -s ${lld}/bin/lld $out/bin/${prefix}ld
-      ln -s ${lld}/bin/lld $out/bin/${prefix}ld.gold # TODO: Figure out the ld.gold thing for GHC
+      ln -s ${lld}/bin/lld $out/bin/${prefix}ld.lld
+      ln -s ${lld}/bin/lld $out/bin/${prefix}lld
     '';
   };
 

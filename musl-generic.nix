@@ -1,15 +1,21 @@
-{ stdenv, lib, enableSharedLibraries ? true, buildPlatform, hostPlatform, fetchgit }:
+{ stdenv, lib, buildPlatform, hostPlatform, fetchgit }:
 
 stdenv.mkDerivation ({
   name = "musl";
   src = fetchgit {
     url = "git://git.musl-libc.org/musl";
-    rev = "a08910fc2cc739f631b75b2d09b8d72a0d64d285";
-    sha256 = "1dz743sq9qb7y27xab2s81xla95w9whvahg22m152phjbkwcg9n1";
+    rev = "8fe1f2d79b275b7f7fb0d41c99e379357df63cd9";
+    sha256 = "1675ach4xpylhahrhxcjcsrr49y0ypck2a6k6q7fr5cysyxi1d9g";
   };
-} // lib.optionalAttrs (!enableSharedLibraries) {
-  configureFlags = "--disable-shared --enable-static";
-  makeFlags = ["lib/libc.a"];
+
+  installPhase = ''
+    mkdir $out
+    make install
+    for f in crtbegin crtend crtbeginS crtendS; do
+      touch $f.c
+      $CC -c -o $out/lib/$f.o $f.c
+    done
+  '';
 } // lib.optionalAttrs (hostPlatform != buildPlatform) {
   CROSS_COMPILE = "${hostPlatform.config}-";
 })
