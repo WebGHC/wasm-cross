@@ -26,11 +26,19 @@ in bootStages ++ [
     allowCustomOverrides = true;
     stdenv = vanillaPackages.stdenv.override (oldStdenv: {
       overrides = self: super: let
+        prefix =
+          if localSystem != crossSystem && crossSystem != null
+          then "${crossSystem.config}-"
+          else "";
         llvmPackages = self.llvmPackages_HEAD;
         mkClang = { ldFlags ? null, libc ? null, extraPackages ? [], ccFlags ? null }:
           let
+            # Clang's wasm backend assumes the presence of a working
+            # lld (optionally with prefix). We symlink it here to get
+            # a wrapper version.
             extraBuildCommands = ''
               echo "-target ${targetSystem.config} -nostdinc -nodefaultlibs" >> $out/nix-support/cc-cflags
+              ln -s $out/bin/${prefix}ld $out/bin/${prefix}lld
             '' + (self.lib.optionalString (libc != null) ''
               echo "-lc" >> $out/nix-support/libc-ldflags
             '') + (self.lib.optionalString (ccFlags != null) ''
@@ -64,38 +72,41 @@ in bootStages ++ [
             binutils = llvmPackages.llvm-binutils;
           };
 
-        mkStdenv = cc: let x = if localSystem != targetSystem
-        then (self.makeStdenvCross {
-          inherit (self) stdenv;
-          buildPlatform = localSystem;
-          hostPlatform = targetSystem;
-          targetPlatform = targetSystem;
-          overrides = self: super: {
-            ncurses = (super.ncurses.override { androidMinimal = true; }).overrideDerivation (drv: {
-              patches = drv.patches or [] ++ [./ncurses.patch];
-              configureFlags = drv.configureFlags or [] ++ ["--without-progs" "--without-tests"];
+        mkStdenv = cc:
+          let
+            overrides = self: super: {
+              ncurses = (super.ncurses.override { androidMinimal = true; }).overrideDerivation (drv: {
+                patches = drv.patches or [] ++ [./ncurses.patch];
+                configureFlags = drv.configureFlags or []
+                  ++ self.lib.optionals (targetSystem.arch or null == "wasm32") ["--without-progs" "--without-tests"];
+              });
+            };
+            x =
+              if localSystem != targetSystem
+              then self.makeStdenvCross {
+                inherit (self) stdenv;
+                buildPlatform = localSystem;
+                hostPlatform = targetSystem;
+                targetPlatform = targetSystem;
+                inherit cc overrides;
+              }
+              else self.stdenv.override {
+                inherit cc overrides;
+                allowedRequisites = null;
+              };
+          in x // {
+            mkDerivation = args: x.mkDerivation (args // {
+              hardeningDisable = args.hardeningDisable or []
+                ++ ["stackprotector"]
+                ++ self.lib.optional (targetSystem.arch or null == "wasm32") "pic";
+              dontDisableStatic = true;
+              configureFlags = let
+                flags = args.configureFlags or [];
+              in
+                (if builtins.isString flags then [flags] else flags) ++ ["--enable-static" "--disable-shared"];
             });
+            isStatic = true;
           };
-          inherit cc;
-        })
-        else self.stdenv.override {
-          inherit cc;
-          overrides = _: _: {};
-          allowedRequisites = null;
-        };
-        in x // {
-          mkDerivation = args: x.mkDerivation (args // {
-            hardeningDisable = args.hardeningDisable or []
-                             ++ ["stackprotector"]
-                             ++ self.lib.optional (targetSystem.arch or null == "wasm32") "pic";
-            dontDisableStatic = true;
-            configureFlags = let
-              flags = args.configureFlags or [];
-            in
-              (if builtins.isString flags then [flags] else flags) ++ ["--enable-static" "--disable-shared"];
-          });
-          isStatic = true;
-        };
 
         clangCross-noLibc = mkClang {};
         clangCross-noCompilerRt = mkClang {

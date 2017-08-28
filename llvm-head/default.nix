@@ -58,7 +58,7 @@ let
         if hostPlatform != targetPlatform
         then "${targetPlatform.config}-"
         else "";
-    in with tools; runCommand "binutils" {} ''
+    in with tools; runCommand "llvm-binutils-${release_version}" {} ''
       mkdir -p $out/bin
       # for prog in ${lld}/bin/*; do
       #   ln -s $prog $out/bin/${prefix}$(basename $prog)
@@ -70,8 +70,8 @@ let
       rm $out/bin/${prefix}cat
 
       ln -s ${lld}/bin/lld $out/bin/${prefix}ld
-      ln -s ${lld}/bin/lld $out/bin/${prefix}ld.lld
-      ln -s ${lld}/bin/lld $out/bin/${prefix}lld
+      # ln -s ${lld}/bin/lld $out/bin/${prefix}ld.lld
+      # ln -s ${lld}/bin/lld $out/bin/${prefix}lld
     '';
   };
 
