@@ -15,6 +15,11 @@ stdenv.mkDerivation ({
       touch $f.c
       $CC -c -o $out/lib/$f.o $f.c
     done
+    for f in libgcc libgcc_s; do
+      touch $f.c
+      $CC -c -o $f.o $f.c
+      ''${AR-ar} rc $out/lib/$f.a $f.o
+    done
   '';
 } // lib.optionalAttrs (hostPlatform != buildPlatform) {
   CROSS_COMPILE = "${hostPlatform.config}-";

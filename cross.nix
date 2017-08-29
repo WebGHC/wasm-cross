@@ -33,19 +33,19 @@ in bootStages ++ [
         llvmPackages = self.llvmPackages_HEAD;
         mkClang = { ldFlags ? null, libc ? null, extraPackages ? [], ccFlags ? null }:
           let
-            # Clang's wasm backend assumes the presence of a working
-            # lld (optionally with prefix). We symlink it here to get
-            # a wrapper version.
             extraBuildCommands = ''
-              echo "-target ${targetSystem.config} -nostdinc -nodefaultlibs" >> $out/nix-support/cc-cflags
+              # We don't yet support C++
+              # https://github.com/WebGHC/wasm-cross/issues/1
+              echo "-target ${targetSystem.config} -nostdlib++" >> $out/nix-support/cc-cflags
+              # Clang's wasm backend assumes the presence of a working
+              # lld (optionally with prefix). We symlink it here to get
+              # a wrapper version.
               ln -s $out/bin/${prefix}ld $out/bin/${prefix}lld
-            '' + (self.lib.optionalString (libc != null) ''
-              echo "-lc" >> $out/nix-support/libc-ldflags
-            '') + (self.lib.optionalString (ccFlags != null) ''
+            '' + self.lib.optionalString (ccFlags != null) ''
               echo "${ccFlags}" >> $out/nix-support/cc-cflags
-            '') + (self.lib.optionalString (ldFlags != null) ''
+            '' + self.lib.optionalString (ldFlags != null) ''
               echo "${ldFlags}" >> $out/nix-support/cc-ldflags
-            '');
+            '';
           in if localSystem != targetSystem
           then self.wrapCCCross {
             name = "clang-cross-wrapper";
@@ -53,12 +53,11 @@ in bootStages ++ [
             binutils = llvmPackages.llvm-binutils;
             inherit libc extraPackages;
             extraBuildCommands = extraBuildCommands + ''
-              echo 'export CC=${targetSystem.config}-cc' >> $out/nix-support/setup-hook
-              echo 'export CXX=${targetSystem.config}-c++' >> $out/nix-support/setup-hook
-            '' + (self.lib.optionalString (targetSystem.arch or null == "wasm32") ''
-              echo "-nostartfiles" >> $out/nix-support/cc-cflags
+              echo 'export CC=${prefix}cc' >> $out/nix-support/setup-hook
+              echo 'export CXX=${prefix}c++' >> $out/nix-support/setup-hook
+            '' + self.lib.optionalString (targetSystem.arch or null == "wasm32") ''
               echo "--allow-undefined -entry=main" >> $out/nix-support/cc-ldflags
-            '');
+            '';
           }
           else self.ccWrapperFun {
             nativeTools = false;
@@ -108,15 +107,19 @@ in bootStages ++ [
             isStatic = true;
           };
 
-        clangCross-noLibc = mkClang {};
+        clangCross-noLibc = mkClang {
+          ccFlags = "-nostdinc -nodefaultlibs";
+        };
         clangCross-noCompilerRt = mkClang {
           libc = musl-cross;
+          ccFlags = "-nodefaultlibs";
+          ldFlags = "-lc";
         };
         clangCross = mkClang {
-          # TODO: Should not have to add compiler-rt to the library path. Should be handled by extraPackages.
-          ldFlags = "-L${compiler-rt}/lib -lcompiler_rt";
+          # TODO: Just use -rtlib=...  This is hard because Clang
+          # currently expects compiler-rt builtins to be a crazy place
+          ccFlags = "-L${compiler-rt}/lib ${self.lib.optionalString (targetSystem.arch or null != "wasm32") "-lcompiler_rt"}";
           libc = musl-cross;
-          extraPackages = [ compiler-rt ];
         };
 
         stdenvNoLibc = mkStdenv clangCross-noLibc;
