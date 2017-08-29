@@ -79,6 +79,18 @@ in bootStages ++ [
                 configureFlags = drv.configureFlags or []
                   ++ self.lib.optionals (targetSystem.arch or null == "wasm32") ["--without-progs" "--without-tests"];
               });
+              haskell = let inherit (super) haskell; in haskell // {
+                packages = haskell.packages // {
+                  ghcHEAD = haskell.packages.ghcHEAD.override (drv: {
+                    ghc = drv.ghc.override {
+                      dynamic = false;
+                      enableRelocatedStaticLibs = false;
+                      enableIntegerSimple = true;
+                      quick-cross = true;
+                    };
+                  });
+                };
+              };
             };
             x =
               if localSystem != targetSystem
