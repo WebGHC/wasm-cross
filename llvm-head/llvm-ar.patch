@@ -1,0 +1,24 @@
+diff --git a/tools/llvm-ar/llvm-ar.cpp b/tools/llvm-ar/llvm-ar.cpp
+index af4d3efa52f..b089d91480d 100644
+--- a/tools/llvm-ar/llvm-ar.cpp
++++ b/tools/llvm-ar/llvm-ar.cpp
+@@ -167,9 +167,7 @@ static std::vector<StringRef> Members;
+ // Show the error message, the help message and exit.
+ LLVM_ATTRIBUTE_NORETURN static void
+ show_help(const std::string &msg) {
+-  errs() << ToolName << ": " << msg << "\n\n";
+-  cl::PrintHelpMessage();
+-  exit(1);
++  report_fatal_error(msg);
+ }
+ 
+ // Extract the member filename from the command line for the [relpos] argument
+@@ -275,7 +273,7 @@ static ArchiveOperation parseCommandLine() {
+       Thin = true;
+       break;
+     default:
+-      cl::PrintHelpMessage();
++      show_help("Invalid option");
+     }
+   }
+ 
