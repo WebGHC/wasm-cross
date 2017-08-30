@@ -86,7 +86,7 @@ in bootStages ++ [
                       dynamic = false;
                       enableRelocatedStaticLibs = false;
                       enableIntegerSimple = true;
-                      quick-cross = true;
+                      # quick-cross = true; # Just for dev
                     };
                   });
                 };
