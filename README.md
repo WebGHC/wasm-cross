@@ -4,7 +4,11 @@ wasm-cross
 This repo contains the nix expressions necessary to build cross a
 compiling toolchain for WebAssembly. A secondary goal of this repo is
 to make it easy or trivial to build cross compiling toolchains for
-arbitrary LLVM targets.
+arbitrary LLVM targets. Currently, `wasm-cross` can be used to build
+"Hello, World!" C programs for `aarch64-unknown-linux-gnu`,
+`x86_64-unknown-linux-gnu`, and `wasm32-unknown-uknown-wasm`. It can
+also build the `hello` Hackage package for aarch64 using GHC as a
+cross compiler.
 
 ### Design
 
@@ -18,13 +22,12 @@ arbitrary LLVM targets.
    platform. This avoids needlessly rebuilding Clang many times when
    it's perfectly capable of targetting many platforms with the same
    binary.
-2. `./musl-cross.nix` uses
-   [a fork of `musl`](https://github.com/jfbastien/musl) for a
-   portable `libc`. Building it for WebAssembly is currently
-   incomplete, as it's missing several standard functions.  The nix
-   expression configures building it for cross systems.  Currently,
-   there are some hacks to make things build into static
-   libraries. Static vs shared needs to be formalized in Nixpkgs.
+2. `./musl-cross.nix` builds libc for the target. When the target is
+   wasm, it builds
+   [wasm-syslib-builder](https://github.com/WebGHC/wasm-syslib-builder),
+   which is little more than a Makefile for Emscripten's libc
+   implementation, which is based on musl. For other targets, an
+   ordinary musl build is used.
 3. `./cross.nix` defines the cross compiling stages. The first stages
    are the vanilla boot stages, which produce a normal Nixpkgs. The
    next stage builds a `cc-wrapper` around Clang that targets the
@@ -38,13 +41,22 @@ arbitrary LLVM targets.
    such that a project designed for arbitrary cross compilation to
    platforms such as Arm can be built for WebAssembly without changing
    the build system.
+5. GHC, for the most part, is handled in `nixpkgs`. John Ericson
+   (@Ericson2314) has already done much work on getting the GHC Nix
+   expressions to properly build cross compilers. For aarch64, little
+   work was needed to build a functioning `haskellPackages`. However,
+   GHC is currently built from
+   [a fork](https://github.com/WebGHC/ghc/tree/WebGHC) in an effort to
+   support WebAssembly as a target.
 
 ### Notes
 
-1. Upstream `lld` does not yet support the `wasm` ABI. We use
-   [a fork](https://github.com/sbc100/lld/tree/add_wasm_linker) that does support it, along
-   with
-   [a few minor changes of our own](https://github.com/WebGHC/lld)
-   (which are awaiting upstreaming).
-2. We also forked the `musl` fork in order to streamline the build
-   process for WebAssembly, but have yet to accomplish that goal.
+1. Upstream `lld` does not yet support the `wasm` object file
+   format. So [a fork](https://github.com/WebAssembly/lld/tree/wasm)
+   is used that does support it.
+2. We have
+   [forked `nixpkgs`](https://github.com/WebGHC/nixpkgs/tree/wasm-cross)
+   in order to support a variety of custom needs. When John Ericson
+   has finished upstreaming a large amount of cross compilation
+   infrastructure into nixpkgs, these changes can begin to be
+   generalized and upstreamed.
