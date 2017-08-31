@@ -1,4 +1,4 @@
-{ stdenv, sources, cmake, libxml2, libedit, llvm, release_version, python }:
+{ stdenv, sources, cmake, libxml2, libedit, llvm, release_version, python, debugVersion }:
 
 let
   gcc = if stdenv.cc.isGNU then stdenv.cc.cc else stdenv.cc.cc.gcc;
@@ -14,6 +14,7 @@ let
     ] ++
     # Maybe with compiler-rt this won't be needed?
     # (stdenv.lib.optional stdenv.isLinux "-DGCC_INSTALL_PREFIX=${gcc}") ++
+    stdenv.lib.optional debugVersion "-DCMAKE_BUILD_TYPE=Debug" ++
     (stdenv.lib.optional (stdenv.cc.libc != null) "-DC_INCLUDE_DIRS=${stdenv.cc.libc}/include");
 
     patches = [ ./purity.patch ./wasm-lld.patch ];

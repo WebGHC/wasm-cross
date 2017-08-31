@@ -13,7 +13,7 @@
 , release_version
 , zlib
 , libcxxabi
-, debugVersion ? false
+, debugVersion
 , enableSharedLibraries
 , darwin
 }:
