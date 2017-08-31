@@ -79,6 +79,7 @@ in bootStages ++ [
                 configureFlags = drv.configureFlags or []
                   ++ self.lib.optionals (targetSystem.arch or null == "wasm32") ["--without-progs" "--without-tests"];
               });
+              haskellPackages = self.haskell.packages.ghcHEAD;
               haskell = let inherit (super) haskell; in haskell // {
                 packages = haskell.packages // {
                   ghcHEAD = haskell.packages.ghcHEAD.override (drv: {
