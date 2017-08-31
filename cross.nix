@@ -89,6 +89,14 @@ in bootStages ++ [
                       enableIntegerSimple = true;
                       # quick-cross = true; # Just for dev
                     };
+                    overrides = self.lib.composeExtensions (drv.overrides or (_:_:{})) (self: super: {
+                      mkDerivation = args: super.mkDerivation (args // {
+                        enableExecutableStripping = false;
+                        enableLibraryStripping = false;
+                        enableSharedExecutables = false;
+                        enableSharedLibraries = false;
+                      });
+                    });
                   });
                 };
               };
