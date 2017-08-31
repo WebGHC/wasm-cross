@@ -123,7 +123,7 @@ in bootStages ++ [
               configureFlags = let
                 flags = args.configureFlags or [];
               in
-                (if builtins.isString flags then [flags] else flags) ++ ["--enable-static" "--disable-shared"];
+                (if builtins.isString flags then [flags] else flags) ++ self.lib.optionals (!(args.dontConfigureStatic or false)) ["--enable-static" "--disable-shared"];
             });
             isStatic = true;
           };
