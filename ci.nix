@@ -6,9 +6,8 @@ with import ./.;
   nixpkgs.binaryen
   nixpkgs.haskell.compiler.ghcHEAD
 
-  nixpkgsArm.stdenv.cc
-  nixpkgsWasm.stdenv.cc
-
-  nixpkgsArm.fib-example
-  nixpkgsWasm.fib-example
-]
+  nixpkgsArm.haskellPackages.hello
+] ++ builtins.concatLists (builtins.map (pkgs: [
+  pkgs.stdenv.cc
+  pkgs.fib-example
+]) [nixpkgsWasm nixpkgsArm nixpkgsNative])

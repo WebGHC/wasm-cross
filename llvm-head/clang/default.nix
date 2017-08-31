@@ -13,7 +13,7 @@ let
       "-DCMAKE_CXX_FLAGS=-std=c++11"
     ] ++
     # Maybe with compiler-rt this won't be needed?
-    (stdenv.lib.optional stdenv.isLinux "-DGCC_INSTALL_PREFIX=${gcc}") ++
+    # (stdenv.lib.optional stdenv.isLinux "-DGCC_INSTALL_PREFIX=${gcc}") ++
     (stdenv.lib.optional (stdenv.cc.libc != null) "-DC_INCLUDE_DIRS=${stdenv.cc.libc}/include");
 
     patches = [ ./purity.patch ./wasm-lld.patch ];
