@@ -45,6 +45,8 @@ let
 
     enableParallelBuilding = true;
 
+    dontStrip = debugVersion;
+
     passthru = {
       lib = self; # compatibility with gcc, so that `stdenv.cc.cc.lib` works on both
       isClang = true;

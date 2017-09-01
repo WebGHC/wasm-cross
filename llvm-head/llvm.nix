@@ -95,6 +95,8 @@ in stdenv.mkDerivation rec {
     ln -s $lib/lib/libLLVM.dylib $lib/lib/libLLVM-${release_version}.dylib
   '';
 
+  dontStrip = debugVersion;
+
   doCheck = false; # stdenv.isLinux;
 
   checkTarget = "check-all";
