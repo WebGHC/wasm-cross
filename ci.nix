@@ -10,4 +10,4 @@ with import ./.;
 ] ++ builtins.concatLists (builtins.map (pkgs: [
   pkgs.stdenv.cc
   pkgs.fib-example
-]) [nixpkgsWasm nixpkgsArm nixpkgsNative])
+]) [nixpkgsWasm nixpkgsArm])

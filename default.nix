@@ -38,7 +38,4 @@
   nixpkgsArm = import ./nixpkgs (project.nixpkgsCrossArgs // {
     crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix").aarch64-multiplatform;
   });
-  nixpkgsNative = import ./nixpkgs (project.nixpkgsCrossArgs // {
-    # crossSystem = project.nixpkgs.hostPlatform;
-  });
 })

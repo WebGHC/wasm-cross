@@ -2,7 +2,7 @@
 , localSystem, crossSystem, config, overlays
 }:
 
-# assert crossSystem.config == "wasm32-unknown-none-unknown"; # "aarch64-unknown-linux-gnu"
+assert crossSystem != null;
 
 let
   bootStages = import "${(import ./nixpkgs {}).path}/pkgs/stdenv" {
@@ -11,7 +11,6 @@ let
     # Ignore custom stdenvs when cross compiling for compatability
     config = builtins.removeAttrs config [ "replaceStdenv" ];
   };
-  targetSystem = if crossSystem == null then localSystem else crossSystem;
 
 in bootStages ++ [
 
@@ -19,57 +18,41 @@ in bootStages ++ [
   (vanillaPackages: {
     buildPlatform = localSystem;
     hostPlatform = localSystem;
-    targetPlatform = targetSystem;
+    targetPlatform = crossSystem;
     inherit config overlays;
     selfBuild = false;
     # It's OK to change the built-time dependencies
     allowCustomOverrides = true;
     stdenv = vanillaPackages.stdenv.override (oldStdenv: {
       overrides = self: super: let
-        prefix =
-          if localSystem != crossSystem && crossSystem != null
-          then "${crossSystem.config}-"
-          else "";
+        prefix = "${crossSystem.config}-";
         llvmPackages = self.llvmPackages_HEAD;
-        mkClang = { ldFlags ? null, libc ? null, extraPackages ? [], ccFlags ? null }:
-          let
-            extraBuildCommands = ''
-              # We don't yet support C++
-              # https://github.com/WebGHC/wasm-cross/issues/1
-              echo "-target ${targetSystem.config} -nostdlib++" >> $out/nix-support/cc-cflags
-              # Clang's wasm backend assumes the presence of a working
-              # lld (optionally with prefix). We symlink it here to get
-              # a wrapper version.
-              ln -s $out/bin/${prefix}ld $out/bin/${prefix}lld
-            '' + self.lib.optionalString (ccFlags != null) ''
-              echo "${ccFlags}" >> $out/nix-support/cc-cflags
-            '' + self.lib.optionalString (ldFlags != null) ''
-              echo "${ldFlags}" >> $out/nix-support/cc-ldflags
-            '';
-          in if localSystem != targetSystem
-          then self.wrapCCCross {
-            name = "clang-cross-wrapper";
-            cc = llvmPackages.clang-unwrapped;
-            binutils = llvmPackages.llvm-binutils;
-            inherit libc extraPackages;
-            extraBuildCommands = extraBuildCommands + ''
-              echo 'export CC=${prefix}cc' >> $out/nix-support/setup-hook
-              echo 'export CXX=${prefix}c++' >> $out/nix-support/setup-hook
-            '' + self.lib.optionalString (targetSystem.arch or null == "wasm32") ''
-              echo "--allow-undefined -entry=main" >> $out/nix-support/cc-ldflags
-            '';
-          }
-          else self.ccWrapperFun {
-            nativeTools = false;
-            nativeLibc = false;
-            nativePrefix = "";
-            noLibc = libc == null;
-            cc = llvmPackages.clang-unwrapped;
-            isGNU = false;
-            isClang = true;
-            inherit libc extraPackages extraBuildCommands;
-            binutils = llvmPackages.llvm-binutils;
-          };
+        mkClang = { ldFlags ? null, libc ? null, extraPackages ? [], ccFlags ? null }: self.wrapCCCross {
+          name = "clang-cross-wrapper";
+          cc = llvmPackages.clang-unwrapped;
+          binutils = llvmPackages.llvm-binutils;
+          inherit libc extraPackages;
+          extraBuildCommands = ''
+            # We don't yet support C++
+            # https://github.com/WebGHC/wasm-cross/issues/1
+            echo "-target ${crossSystem.config} -nostdlib++" >> $out/nix-support/cc-cflags
+            # Clang's wasm backend assumes the presence of a working
+            # lld (optionally with prefix). We symlink it here to get
+            # a wrapper version.
+            ln -s $out/bin/${prefix}ld $out/bin/${prefix}lld
+
+            # Something about the way clang is handled on macOS makes
+            # this necessary even on Linux.
+            echo 'export CC=${prefix}cc' >> $out/nix-support/setup-hook
+            echo 'export CXX=${prefix}c++' >> $out/nix-support/setup-hook
+          '' + self.lib.optionalString (ccFlags != null) ''
+            echo "${ccFlags}" >> $out/nix-support/cc-cflags
+          '' + self.lib.optionalString (ldFlags != null) ''
+            echo "${ldFlags}" >> $out/nix-support/cc-ldflags
+          '' + self.lib.optionalString (crossSystem.arch == "wasm32") ''
+            echo "--allow-undefined -entry=main" >> $out/nix-support/cc-ldflags
+          '';
+        };
 
         mkStdenv = cc:
           let
@@ -77,7 +60,7 @@ in bootStages ++ [
               ncurses = (super.ncurses.override { androidMinimal = true; }).overrideDerivation (drv: {
                 patches = drv.patches or [] ++ [./ncurses.patch];
                 configureFlags = drv.configureFlags or []
-                  ++ self.lib.optionals (targetSystem.arch or null == "wasm32") ["--without-progs" "--without-tests"];
+                  ++ self.lib.optionals (crossSystem.arch == "wasm32") ["--without-progs" "--without-tests"];
               });
               haskellPackages = self.haskell.packages.ghcHEAD;
               haskell = let inherit (super) haskell; in haskell // {
@@ -101,29 +84,23 @@ in bootStages ++ [
                 };
               };
             };
-            x =
-              if localSystem != targetSystem
-              then self.makeStdenvCross {
-                inherit (self) stdenv;
-                buildPlatform = localSystem;
-                hostPlatform = targetSystem;
-                targetPlatform = targetSystem;
-                inherit cc overrides;
-              }
-              else self.stdenv.override {
-                inherit cc overrides;
-                allowedRequisites = null;
-              };
+            x = self.makeStdenvCross {
+              inherit (self) stdenv;
+              buildPlatform = localSystem;
+              hostPlatform = crossSystem;
+              targetPlatform = crossSystem;
+              inherit cc overrides;
+            };
           in x // {
             mkDerivation = args: x.mkDerivation (args // {
               hardeningDisable = args.hardeningDisable or []
                 ++ ["stackprotector"]
-                ++ self.lib.optional (targetSystem.arch or null == "wasm32") "pic";
+                ++ self.lib.optional (crossSystem.arch == "wasm32") "pic";
               dontDisableStatic = true;
-              configureFlags = let
-                flags = args.configureFlags or [];
-              in
-                (if builtins.isString flags then [flags] else flags) ++ self.lib.optionals (!(args.dontConfigureStatic or false)) ["--enable-static" "--disable-shared"];
+              configureFlags =
+                (let flags = args.configureFlags or [];
+                  in if builtins.isString flags then [flags] else flags)
+                ++ self.lib.optionals (!(args.dontConfigureStatic or false)) ["--enable-static" "--disable-shared"];
             });
             isStatic = true;
           };
@@ -139,7 +116,7 @@ in bootStages ++ [
         clangCross = mkClang {
           # TODO: Just use -rtlib=...  This is hard because Clang
           # currently expects compiler-rt builtins to be a crazy place
-          ccFlags = "-L${compiler-rt}/lib ${self.lib.optionalString (targetSystem.arch or null != "wasm32") "-lcompiler_rt"}";
+          ccFlags = "-L${compiler-rt}/lib ${self.lib.optionalString (crossSystem.arch != "wasm32") "-lcompiler_rt"}";
           libc = musl-cross;
         };
 
@@ -166,8 +143,8 @@ in bootStages ++ [
   # Run Packages
   (toolPackages: {
     buildPlatform = localSystem;
-    hostPlatform = targetSystem;
-    targetPlatform = targetSystem;
+    hostPlatform = crossSystem;
+    targetPlatform = crossSystem;
     inherit config overlays;
     selfBuild = false;
     stdenv = toolPackages.llvmStdenvCross;
