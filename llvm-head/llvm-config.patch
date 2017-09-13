@@ -1,0 +1,12 @@
+diff --git a/include/llvm/WindowsManifest/WindowsManifestMerger.h b/include/llvm/WindowsManifest/WindowsManifestMerger.h
+index ba5703c673f..302d3705887 100644
+--- a/include/llvm/WindowsManifest/WindowsManifestMerger.h
++++ b/include/llvm/WindowsManifest/WindowsManifestMerger.h
+@@ -26,7 +26,6 @@
+ #ifndef LLVM_INCLUDE_LLVM_SUPPORT_WINDOWS_MANIFEST_MERGER_H
+ #define LLVM_INCLUDE_LLVM_SUPPORT_WINDOWS_MANIFEST_MERGER_H
+ 
+-#include "llvm/Config/config.h"
+ #include "llvm/Support/Error.h"
+ 
+ namespace llvm {
