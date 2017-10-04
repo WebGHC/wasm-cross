@@ -58,7 +58,7 @@ let
         if hostPlatform != targetPlatform
         then "${targetPlatform.config}-"
         else "";
-    in with tools; runCommand "llvm-binutils-${release_version}" {} ''
+    in with tools; runCommand "llvm-binutils-${release_version}" { preferLocalBuild = true; } ''
       mkdir -p $out/bin
       # for prog in ${lld}/bin/*; do
       #   ln -s $prog $out/bin/${prefix}$(basename $prog)
