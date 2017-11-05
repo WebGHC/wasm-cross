@@ -5,9 +5,9 @@ This repo contains the nix expressions necessary to build cross a
 compiling toolchain for WebAssembly. A secondary goal of this repo is
 to make it easy or trivial to build cross compiling toolchains for
 arbitrary LLVM targets. Currently, `wasm-cross` can be used to build
-"Hello, World!" C programs for `aarch64-unknown-linux-gnu` and
-`wasm32-unknown-uknown-wasm`. It can also build the `hello` Hackage
-package for aarch64 using GHC as a cross compiler.
+"Hello, World!" C programs for `aarch64-unknown-linux-gnu`, Raspberry
+Pi, and `wasm32-unknown-uknown-wasm`. It can also build the `hello`
+Hackage package for aarch64 using GHC as a cross compiler.
 
 ### Design
 

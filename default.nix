@@ -39,4 +39,7 @@
   nixpkgsArm = import ./nixpkgs (project.nixpkgsCrossArgs // {
     crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix" { inherit (project.nixpkgs) lib; }).aarch64-multiplatform;
   });
+  nixpkgsRpi = import ./nixpkgs (project.nixpkgsCrossArgs // {
+    crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix" { inherit (project.nixpkgs) lib; }).raspberryPi // { disableDynamicLinker = true; };
+  });
 })

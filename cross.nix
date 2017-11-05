@@ -50,6 +50,8 @@ in bootStages ++ [
         echo 'export CXX=${prefix}c++' >> $out/nix-support/setup-hook
       '' + toolPackages.lib.optionalString (ccFlags != null) ''
         echo "${ccFlags}" >> $out/nix-support/cc-cflags
+      '' + toolPackages.lib.optionalString (crossSystem.fpu or null != null) ''
+        echo "-mfpu=${crossSystem.fpu}" >> $out/nix-support/cc-cflags
       '' + toolPackages.lib.optionalString (crossSystem.arch == "wasm32") ''
         echo "--allow-undefined -entry=main" >> $out/nix-support/cc-ldflags
       '';
