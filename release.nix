@@ -4,7 +4,7 @@ with import ./.;
 let
   fromPkgs = pkgs: {
     inherit (pkgs.stdenv) cc;
-    inherit (pkgs) fib-example;
+    inherit (pkgs) fib-example musl-cross;
   };
 in {
   inherit (nixpkgs.llvmPackages_HEAD) llvm clang clang-unwrapped compiler-rt

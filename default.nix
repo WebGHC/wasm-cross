@@ -33,9 +33,10 @@
       config = "wasm32-unknown-unknown-wasm";
       arch = "wasm32";
       libc = null;
+      disableDynamicLinker = true;
     };
   });
   nixpkgsArm = import ./nixpkgs (project.nixpkgsCrossArgs // {
-    crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix").aarch64-multiplatform;
+    crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix" { inherit (project.nixpkgs) lib; }).aarch64-multiplatform;
   });
 })
