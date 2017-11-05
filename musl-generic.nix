@@ -8,6 +8,8 @@ stdenv.mkDerivation ({
     sha256 = "1675ach4xpylhahrhxcjcsrr49y0ypck2a6k6q7fr5cysyxi1d9g";
   };
 
+  enableParallelBuilding = true;
+
   installPhase = ''
     mkdir $out
     make install

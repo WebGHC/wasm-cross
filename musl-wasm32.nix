@@ -13,4 +13,6 @@ stdenv.mkDerivation {
     make install
     touch $out/lib/wasm.syms
   '';
+
+  enableParallelBuilding = true;
 }

@@ -39,4 +39,6 @@ stdenv.mkDerivation {
     mkdir -p $out/lib
     mv lib/*/libclang_rt.builtins-*.a $out/lib/libcompiler_rt.a
   '';
+
+  enableParallelBuilding = true;
 }
