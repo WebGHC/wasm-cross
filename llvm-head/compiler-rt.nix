@@ -34,8 +34,7 @@ stdenv.mkDerivation {
       --replace 'set(COMPILER_RT_HAS_TSAN TRUE)' 'set(COMPILER_RT_HAS_TSAN FALSE)'
   '';
 
-  # TODO: Install sanitizers
-  installPhase = ''
+  ${if hostPlatform.arch or null == "wasm32" then "installPhase" else null} = ''
     mkdir -p $out/lib
     mv lib/*/libclang_rt.builtins-*.a $out/lib/libcompiler_rt.a
   '';

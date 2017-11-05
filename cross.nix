@@ -83,9 +83,10 @@ in bootStages ++ [
       ccFlags = "-nodefaultlibs -lc";
     };
     clangCross = mkClang {
-      # TODO: Just use -rtlib=...  This is hard because Clang
-      # currently expects compiler-rt builtins to be a crazy place
-      ccFlags = "-lc -L${compiler-rt}/lib ${toolPackages.lib.optionalString (crossSystem.arch != "wasm32") "-lcompiler_rt"}";
+      ccFlags =
+        if crossSystem.arch or null == "wasm32"
+          then "-L${compiler-rt}/lib"
+          else "-rtlib=compiler-rt -resource-dir ${compiler-rt}";
       libc = musl-cross;
     };
 

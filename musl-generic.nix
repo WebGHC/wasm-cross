@@ -13,14 +13,9 @@ stdenv.mkDerivation ({
   installPhase = ''
     mkdir $out
     make install
-    for f in crtbegin crtend crtbeginS crtendS; do
+    for f in crtbegin crtend; do # crtbeginS crtendS -- Maybe?
       touch $f.c
       $CC -c -o $out/lib/$f.o $f.c
-    done
-    for f in libgcc libgcc_s; do
-      touch $f.c
-      $CC -c -o $f.o $f.c
-      ''${AR-ar} rc $out/lib/$f.a $f.o
     done
   '';
 } // lib.optionalAttrs (hostPlatform != buildPlatform) {
