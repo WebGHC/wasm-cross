@@ -13,7 +13,7 @@ stdenv.mkDerivation ({
   installPhase = ''
     mkdir $out
     make install
-    for f in crtbegin crtend; do # crtbeginS crtendS -- Maybe?
+    for f in crtbegin crtend crtbeginS crtendS; do
       touch $f.c
       $CC -c -o $out/lib/$f.o $f.c
     done

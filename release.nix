@@ -8,7 +8,7 @@ let
   };
 in {
   inherit (nixpkgs.llvmPackages_HEAD) llvm clang clang-unwrapped compiler-rt
-    libcxx libcxx-headers libcxxabi libunwind lld lldb llvm-binutils;
+    lld lldb llvm-binutils; # libcxx libcxx-headers libcxxabi libunwind
   inherit (nixpkgs) binaryen;
   inherit (nixpkgs.haskell.compiler) ghcHEAD;
 
