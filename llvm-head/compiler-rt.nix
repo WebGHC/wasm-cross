@@ -34,9 +34,11 @@ stdenv.mkDerivation {
       --replace 'set(COMPILER_RT_HAS_TSAN TRUE)' 'set(COMPILER_RT_HAS_TSAN FALSE)'
   '';
 
+  # For some reason, WebAssembly builtins are still placed under a
+  # `linux` directory.
   ${if hostPlatform.arch or null == "wasm32" then "installPhase" else null} = ''
     mkdir -p $out/lib
-    mv lib/*/libclang_rt.builtins-*.a $out/lib/libcompiler_rt.a
+    mv lib/*/libclang_rt.builtins-*.a $out/lib/
   '';
 
   enableParallelBuilding = true;

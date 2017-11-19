@@ -1,12 +1,12 @@
-diff --git a/include/llvm/WindowsManifest/WindowsManifestMerger.h b/include/llvm/WindowsManifest/WindowsManifestMerger.h
-index ba5703c673f..302d3705887 100644
---- a/include/llvm/WindowsManifest/WindowsManifestMerger.h
-+++ b/include/llvm/WindowsManifest/WindowsManifestMerger.h
-@@ -26,7 +26,6 @@
- #ifndef LLVM_INCLUDE_LLVM_SUPPORT_WINDOWS_MANIFEST_MERGER_H
- #define LLVM_INCLUDE_LLVM_SUPPORT_WINDOWS_MANIFEST_MERGER_H
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8cd9d053c63..9b364991e8b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -965,7 +965,6 @@ if (NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
+     PATTERN "*.inc"
+     # Exclude include/llvm/CMakeFiles/intrinsics_gen.dir, matched by "*.def"
+     PATTERN "CMakeFiles" EXCLUDE
+-    PATTERN "config.h" EXCLUDE
+     PATTERN ".svn" EXCLUDE
+     )
  
--#include "llvm/Config/config.h"
- #include "llvm/Support/Error.h"
- 
- namespace llvm {
