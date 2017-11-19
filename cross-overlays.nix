@@ -7,7 +7,7 @@ self: super: {
   haskell = let inherit (super) haskell; in haskell // {
     packages = haskell.packages // {
       ghcHEAD = haskell.packages.ghcHEAD.override (drv: {
-        ghc = drv.ghc.override {
+        ghc = (drv.ghc.override {
           enableShared = false;
           enableRelocatedStaticLibs = false;
           enableIntegerSimple = true;
@@ -15,7 +15,10 @@ self: super: {
           dontStrip = true;
           dontUseLibFFIForAdjustors = crossSystem.arch or null == "wasm32";
           # quick-cross = true; # Just for dev
-        };
+        }).overrideDerivation (drv: {
+          # Use this to test nix-build on your local GHC checkout.
+          # src = lib.cleanSource ./ghc;
+        });
         overrides = self.lib.composeExtensions (drv.overrides or (_:_:{})) (self: super: {
           mkDerivation = args: super.mkDerivation (args // {
             enableExecutableStripping = false;
