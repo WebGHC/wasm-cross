@@ -33,9 +33,17 @@
       config = "wasm32-unknown-unknown-wasm";
       arch = "wasm32";
       libc = null;
+      disableDynamicLinker = true;
     };
+
+    overlays = project.nixpkgsCrossArgs.overlays ++ [(self: super: {
+      libiconv = if self.hostPlatform.arch or null == "wasm32" then null else super.libiconv;
+    })];
   });
   nixpkgsArm = import ./nixpkgs (project.nixpkgsCrossArgs // {
-    crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix").aarch64-multiplatform;
+    crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix" { inherit (project.nixpkgs) lib; }).aarch64-multiplatform;
+  });
+  nixpkgsRpi = import ./nixpkgs (project.nixpkgsCrossArgs // {
+    crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix" { inherit (project.nixpkgs) lib; }).raspberryPi // { disableDynamicLinker = true; };
   });
 })
