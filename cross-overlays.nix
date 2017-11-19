@@ -13,6 +13,7 @@ self: super: {
           enableIntegerSimple = true;
           with-terminfo = false;
           dontStrip = true;
+          dontUseLibFFIForAdjustors = crossSystem.arch or null == "wasm32";
           # quick-cross = true; # Just for dev
         };
         overrides = self.lib.composeExtensions (drv.overrides or (_:_:{})) (self: super: {
