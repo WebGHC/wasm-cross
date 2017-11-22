@@ -37,7 +37,10 @@
     };
 
     overlays = project.nixpkgsCrossArgs.overlays ++ [(self: super: {
-      libiconv = if self.hostPlatform.arch or null == "wasm32" then null else super.libiconv;
+      libiconvReal =
+        if self.hostPlatform.arch or null == "wasm32"
+        then super.lib.overrideDerivation super.libiconvReal (attrs: {patches = [./libiconv-wasm32.patch];})
+        else super.libiconvReal;
     })];
   });
   nixpkgsArm = import ./nixpkgs (project.nixpkgsCrossArgs // {

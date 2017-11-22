@@ -1,0 +1,42 @@
+diff -ruN libiconv-1.15/build-aux/config.sub libiconv-1.15-patched/build-aux/config.sub
+--- libiconv-1.15/build-aux/config.sub	2017-01-02 09:02:47.000000000 +1000
++++ libiconv-1.15-patched/build-aux/config.sub	2017-11-22 08:38:36.995036311 +1000
+@@ -118,7 +118,7 @@
+   linux-musl* | linux-uclibc* | uclinux-uclibc* | uclinux-gnu* | kfreebsd*-gnu* | \
+   knetbsd*-gnu* | netbsd*-gnu* | netbsd*-eabi* | \
+   kopensolaris*-gnu* | cloudabi*-eabi* | \
+-  storm-chaos* | os2-emx* | rtmk-nova*)
++  storm-chaos* | os2-emx* | rtmk-nova* | unknown-wasm)
+     os=-$maybe_os
+     basic_machine=`echo $1 | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`
+     ;;
+@@ -1543,6 +1543,8 @@
+ 		;;
+ 	-ios)
+ 		;;
++	-unknown-wasm)
++		;;
+ 	-none)
+ 		;;
+ 	*)
+diff -ruN libiconv-1.15/libcharset/build-aux/config.sub libiconv-1.15-patched/libcharset/build-aux/config.sub
+--- libiconv-1.15/libcharset/build-aux/config.sub	2017-01-02 09:02:47.000000000 +1000
++++ libiconv-1.15-patched/libcharset/build-aux/config.sub	2017-11-22 08:52:03.504787774 +1000
+@@ -118,7 +118,7 @@
+   linux-musl* | linux-uclibc* | uclinux-uclibc* | uclinux-gnu* | kfreebsd*-gnu* | \
+   knetbsd*-gnu* | netbsd*-gnu* | netbsd*-eabi* | \
+   kopensolaris*-gnu* | cloudabi*-eabi* | \
+-  storm-chaos* | os2-emx* | rtmk-nova*)
++  storm-chaos* | os2-emx* | rtmk-nova* | unknown-wasm)
+     os=-$maybe_os
+     basic_machine=`echo $1 | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`
+     ;;
+@@ -1543,6 +1543,8 @@
+ 		;;
+ 	-ios)
+ 		;;
++	-unknown-wasm)
++		;;
+ 	-none)
+ 		;;
+ 	*)
