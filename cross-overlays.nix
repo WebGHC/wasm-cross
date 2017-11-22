@@ -3,6 +3,7 @@
 }:
 
 self: super: {
+  libiconv = self.libiconvReal; # By default, this wants to pull stuff out of glibc or something
   haskellPackages = self.haskell.packages.ghcHEAD;
   haskell = let inherit (super) haskell; in haskell // {
     packages = haskell.packages // {
