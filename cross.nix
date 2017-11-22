@@ -53,8 +53,7 @@ in bootStages ++ [
       '' + toolPackages.lib.optionalString (crossSystem.fpu or null != null) ''
         echo "-mfpu=${crossSystem.fpu}" >> $out/nix-support/cc-cflags
       '' + toolPackages.lib.optionalString (crossSystem.arch == "wasm32") ''
-        echo "--allow-undefined -entry=main" >> $out/nix-support/cc-ldflags
-        echo "-nostartfiles" >> $out/nix-support/cc-cflags
+        echo "--allow-undefined-file=${musl-cross.src}/arch/wasm32/wasm.syms" >> $out/nix-support/cc-ldflags
       '';
     };
     mkStdenv = cc: let x = toolPackages.makeStdenvCross {
@@ -93,7 +92,7 @@ in bootStages ++ [
     stdenv-noLibc = mkStdenv clangCross-noLibc;
     stdenv-noCompilerRt = mkStdenv clangCross-noCompilerRt;
 
-    musl-cross = toolPackages.callPackage ./musl-cross.nix {
+    musl-cross = toolPackages.callPackage ./musl.nix {
       hostPlatform = crossSystem;
       stdenv = stdenv-noLibc;
     };
