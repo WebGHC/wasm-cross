@@ -22,13 +22,6 @@
       libc = null;
       disableDynamicLinker = true;
     };
-
-    overlays = project.nixpkgsCrossArgs.overlays ++ [(self: super: {
-      libiconvReal =
-        if self.hostPlatform.arch or null == "wasm32"
-        then super.lib.overrideDerivation super.libiconvReal (attrs: {patches = [./libiconv-wasm32.patch];})
-        else super.libiconvReal;
-    })];
   });
   nixpkgsArm = import ./nixpkgs (project.nixpkgsCrossArgs // {
     crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix" { inherit (project.nixpkgs) lib; }).aarch64-multiplatform;

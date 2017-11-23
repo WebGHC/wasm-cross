@@ -3,7 +3,12 @@
 }:
 
 self: super: {
+  libiconvReal =
+    if crossSystem.arch or null == "wasm32"
+    then super.libiconvReal.overrideDerivation (attrs: {patches = [./libiconv-wasm32.patch];})
+    else super.libiconvReal;
   libiconv = self.libiconvReal; # By default, this wants to pull stuff out of glibc or something
+
   haskellPackages = self.haskell.packages.ghcHEAD;
   haskell = let inherit (super) haskell; in haskell // {
     packages = haskell.packages // {
