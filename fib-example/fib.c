@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 int fib(int n) {
   if (n == 0 || n == 1) {
     return n;
@@ -8,7 +6,6 @@ int fib(int n) {
   }
 }
 
-int main() {
-  printf("Hello, World!\nfib(10) = %d\n", fib(10));
-  return 0;
+int main(int n) {
+  return fib(n);
 }
