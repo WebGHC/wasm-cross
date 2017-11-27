@@ -4,14 +4,14 @@ set -e
 
 declare -A repos=([llvm]=llvm-mirror \
        [clang]=llvm-mirror \
-       [lld]=WebAssembly \
+       [lld]=llvm-mirror \
        [clang-tools-extra]=llvm-mirror \
        [compiler-rt]=llvm-mirror [libcxx]=llvm-mirror \
        [libcxxabi]=llvm-mirror \
        [libunwind]=llvm-mirror \
        [lldb]=llvm-mirror)
 
-declare -A branches=([lld]=wasm)
+declare -A branches=()
 
 echo "{ fetchFromGitHub }: {"
 
