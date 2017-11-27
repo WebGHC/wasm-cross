@@ -1,7 +1,7 @@
-{ stdenv, cmake }:
+{ build-wasm-app, stdenv, cmake, musl-cross }:
 
-stdenv.mkDerivation {
+build-wasm-app ./www (stdenv.mkDerivation {
   name = "fib-example";
   src = ./.;
   nativeBuildInputs = [ cmake ];
-}
+})

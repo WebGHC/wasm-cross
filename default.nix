@@ -10,6 +10,15 @@
       llvmPackages = self.llvmPackages_HEAD;
 
       binaryen = self.callPackage ./binaryen.nix {};
+
+      build-wasm-app = www: drv: self.buildEnv {
+        name = "hello-example";
+        paths = [
+          www
+          "${self.musl-cross.src}/arch/wasm32/js"
+          "${drv}/bin"
+        ];
+      };
     })];
   };
   nixpkgsCrossArgs = project.nixpkgsArgs // {
