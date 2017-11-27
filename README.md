@@ -21,25 +21,25 @@ Hackage package for aarch64 using GHC as a cross compiler.
    platform. This avoids needlessly rebuilding Clang many times when
    it's perfectly capable of targetting many platforms with the same
    binary.
-2. `./musl-cross.nix` builds libc for the target. When the target is
-   wasm, it builds
-   [wasm-syslib-builder](https://github.com/WebGHC/wasm-syslib-builder),
-   which is little more than a Makefile for Emscripten's libc
-   implementation, which is based on musl. For other targets, an
-   ordinary musl build is used.
+2. `./musl.nix` builds libc for the target. It builds
+   [musl](https://github.com/WebGHC/musl), which is a fork of musl
+   that adds WebAssembly support.
 3. `./cross.nix` defines the cross compiling stages. The first stages
    are the vanilla boot stages, which produce a normal Nixpkgs. The
    next stage builds a `cc-wrapper` around Clang that targets the
    cross system using `compiler-rt` as the runtime, and
    `musl-cross.nix` as the `libc`. The final stage uses a `stdenv`
    that will target the cross system by default.
-4. `./fib-example` is a simple C program that returns a fibonacci
-   calculation. The goal of this program is to demonstrate that a
-   CMake project can be built for WebAssembly with relative ease. A
-   secondary goal is to show that this requires minimal porting work,
-   such that a project designed for arbitrary cross compilation to
-   platforms such as Arm can be built for WebAssembly without changing
-   the build system.
+4. `./fib-example` and `./hello-example` are simple C programs that
+   demonstrate different levels of sophistication in the
+   toolchain. `fib-example` demonstrates that WebAssembly works
+   without relying on any syscalls, and `hello-example` demonstrates
+   some basic syscalls for `printf` and `malloc`. The goal of these
+   programs is to demonstrate that a CMake project can be built for
+   WebAssembly with relative ease. A secondary goal is to show that
+   this requires minimal porting work, such that a project designed
+   for arbitrary cross compilation to platforms such as Arm can be
+   built for WebAssembly without changing the build system.
 5. GHC, for the most part, is handled in `nixpkgs`. John Ericson
    (@Ericson2314) has already done much work on getting the GHC Nix
    expressions to properly build cross compilers. For aarch64, little
