@@ -50,10 +50,10 @@ in bootStages ++ [
         echo 'export CXX=${prefix}c++' >> $out/nix-support/setup-hook
       '' + toolPackages.lib.optionalString (ccFlags != null) ''
         echo "${ccFlags}" >> $out/nix-support/cc-cflags
+      '' + toolPackages.lib.optionalString (libc != null) ''
+        echo "--sysroot ${libc}" >> $out/nix-support/cc-cflags
       '' + toolPackages.lib.optionalString (crossSystem.fpu or null != null) ''
         echo "-mfpu=${crossSystem.fpu}" >> $out/nix-support/cc-cflags
-      '' + toolPackages.lib.optionalString (crossSystem.arch == "wasm32") ''
-        echo "--allow-undefined-file=${musl-cross.src}/arch/wasm32/wasm.syms" >> $out/nix-support/cc-ldflags
       '';
     };
     mkStdenv = cc: let x = toolPackages.makeStdenvCross {
@@ -82,7 +82,7 @@ in bootStages ++ [
     };
     clangCross-noCompilerRt = mkClang {
       libc = musl-cross;
-      ccFlags = "-nodefaultlibs -lc";
+      ccFlags = "-nodefaultlibs -lc -Xlinker --allow-undefined-file=${musl-cross}/lib/wasm.syms";
     };
     clangCross = mkClang {
       ccFlags = "-rtlib=compiler-rt -resource-dir ${compiler-rt}";

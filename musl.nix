@@ -6,8 +6,8 @@ stdenv.mkDerivation ({
   src = fetchFromGitHub {
     owner = "WebGHC";
     repo = "musl";
-    rev = "a96d25da0d7ed6168efe043d31c8c657eb7ff1fa";
-    sha256 = "1qb6a0hhkfqmipyfxn4q1vkgg83l041j8advxp6zb4xwis0bvlkn";
+    rev = "776bf6b906ac4835868f24211150860f8b95fe55";
+    sha256 = "0xfmnyfvm3c853d4nv1fam1vk9l5kd7rs33v1wlaydagjbd1b367";
   };
 
   postInstall = ''
@@ -15,8 +15,6 @@ stdenv.mkDerivation ({
       touch $f.c
       $CC -c -o $out/lib/$f.o $f.c
     done
-  '' + lib.optionalString (hostPlatform.arch or null == "wasm32") ''
-    cp $src/arch/wasm32/wasm.syms $out/lib/wasm.syms
   '';
 
   enableParallelBuilding = true;
