@@ -82,7 +82,9 @@ in bootStages ++ [
     };
     clangCross-noCompilerRt = mkClang {
       libc = musl-cross;
-      ccFlags = "-nodefaultlibs -lc -Xlinker --allow-undefined-file=${musl-cross}/lib/wasm.syms";
+      ccFlags = "-nodefaultlibs -lc"
+        + lib.optionalString (crossSystem.arch or null == "wasm32")
+          " -Xlinker --allow-undefined-file=${musl-cross}/lib/wasm.syms";
     };
     clangCross = mkClang {
       ccFlags = "-rtlib=compiler-rt -resource-dir ${compiler-rt}";
