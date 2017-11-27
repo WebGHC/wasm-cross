@@ -27,9 +27,8 @@ Hackage package for aarch64 using GHC as a cross compiler.
 3. `./cross.nix` defines the cross compiling stages. The first stages
    are the vanilla boot stages, which produce a normal Nixpkgs. The
    next stage builds a `cc-wrapper` around Clang that targets the
-   cross system using `compiler-rt` as the runtime, and
-   `musl-cross.nix` as the `libc`. The final stage uses a `stdenv`
-   that will target the cross system by default.
+   cross system using `compiler-rt` as the runtime, and `musl.nix` as
+   the `libc`.
 4. `./fib-example` and `./hello-example` are simple C programs that
    demonstrate different levels of sophistication in the
    toolchain. `fib-example` demonstrates that WebAssembly works
@@ -59,3 +58,7 @@ Hackage package for aarch64 using GHC as a cross compiler.
    has finished upstreaming a large amount of cross compilation
    infrastructure into nixpkgs, these changes can begin to be
    generalized and upstreamed.
+3. If you're using Linux, a Nix binary cache is available at
+   https://hydra.webghc.org with a public key of:
+
+   `hydra.webghc.org-1:knW30Yb8EXYxmUZKEl0Vc6t2BDjAUQ5kfC1BKJ9qEG8=`
