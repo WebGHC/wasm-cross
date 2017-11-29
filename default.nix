@@ -32,6 +32,7 @@
       arch = "wasm32";
       libc = null;
       disableDynamicLinker = true;
+      thread-model = "single";
     };
   });
   nixpkgsArm = import ./nixpkgs (project.nixpkgsCrossArgs // {

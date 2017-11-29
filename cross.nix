@@ -54,6 +54,8 @@ in bootStages ++ [
         echo "--sysroot ${libc}" >> $out/nix-support/cc-cflags
       '' + toolPackages.lib.optionalString (crossSystem.fpu or null != null) ''
         echo "-mfpu=${crossSystem.fpu}" >> $out/nix-support/cc-cflags
+      '' + toolPackages.lib.optionalString (crossSystem ? thread-model) ''
+        echo "-mthread-model ${crossSystem.thread-model}" >> $out/nix-support/cc-cflags
       '';
     };
     mkStdenv = cc: let x = toolPackages.makeStdenvCross {
