@@ -12,7 +12,7 @@
       binaryen = self.callPackage ./binaryen.nix {};
 
       build-wasm-app = www: drv: self.buildEnv {
-        name = "hello-example";
+        name = "wasm-app-${drv.name}";
         paths = [
           www
           "${self.musl-cross.src}/arch/wasm32/js"
