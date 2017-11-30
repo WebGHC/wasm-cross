@@ -21,7 +21,6 @@ self: super: {
           dontStrip = true;
           dontUseLibFFIForAdjustors = crossSystem.arch or null == "wasm32";
           disableFFI = crossSystem.arch or null == "wasm32";
-          ghcSingleThreaded = crossSystem.arch or null == "wasm32";
           # quick-cross = true; # Just for dev
         }).overrideDerivation (drv: {
           # Use this to test nix-build on your local GHC checkout.
