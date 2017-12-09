@@ -18,6 +18,8 @@
           "${self.musl-cross.src}/arch/wasm32/js"
           "${drv}/bin"
         ];
+
+        passthru = { inherit drv; };
       };
     })];
   };
