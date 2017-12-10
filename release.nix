@@ -1,6 +1,6 @@
 {}:
 
-with import ./.;
+with import ./. {};
 let
   fromPkgs = pkgs: {
     inherit (pkgs.stdenv) cc;

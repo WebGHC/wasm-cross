@@ -1,4 +1,4 @@
-{ stdenv, sources, cmake, libxml2, libedit, llvm, release_version, python }:
+{ stdenv, sources, cmake, libxml2, libedit, llvm, release_version, python, debugVersion }:
 
 let
   gcc = if stdenv.cc.isGNU then stdenv.cc.cc else stdenv.cc.cc.gcc;
@@ -12,6 +12,7 @@ let
     cmakeFlags = [
       "-DCMAKE_CXX_FLAGS=-std=c++11"
     ] ++
+    (stdenv.lib.optional debugVersion "-DCMAKE_BUILD_TYPE=Debug") ++
     # Maybe with compiler-rt this won't be needed?
     # (stdenv.lib.optional stdenv.isLinux "-DGCC_INSTALL_PREFIX=${gcc}") ++
     (stdenv.lib.optional (stdenv.cc.libc != null) "-DC_INCLUDE_DIRS=${stdenv.cc.libc}/include");
@@ -43,6 +44,8 @@ let
     '';
 
     enableParallelBuilding = true;
+
+    dontStrip = debugVersion;
 
     passthru = {
       lib = self; # compatibility with gcc, so that `stdenv.cc.cc.lib` works on both

@@ -1,3 +1,5 @@
+{ debugLlvm ? false }:
+
 (import ./nixpkgs {}).lib.makeExtensible (project: {
   nixpkgsArgs = {
     overlays = [(self: super: {
@@ -5,7 +7,10 @@
 
       hello-example = self.callPackage ./hello-example {};
 
-      llvmPackages_HEAD = self.callPackage ./llvm-head { buildTools = self.buildPackages.llvmPackages_HEAD; };
+      llvmPackages_HEAD = self.callPackage ./llvm-head {
+        buildTools = self.buildPackages.llvmPackages_HEAD;
+        debugVersion = debugLlvm;
+      };
 
       llvmPackages = self.llvmPackages_HEAD;
 

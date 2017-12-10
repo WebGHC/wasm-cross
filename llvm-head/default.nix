@@ -11,17 +11,18 @@
 , buildTools
 , lib
 , runCommand
+, debugVersion ? false
 , enableSharedLibraries ? true
 , hostPlatform
 , targetPlatform
 }:
 let
   callLibrary = newScope (buildTools.tools // libraries // {
-    inherit stdenv cmake libxml2 python2 isl release_version enableSharedLibraries sources;
+    inherit stdenv cmake libxml2 python2 isl release_version enableSharedLibraries sources debugVersion;
   });
 
   callTool = newScope (tools // libraries // {
-    inherit stdenv cmake libxml2 python2 isl release_version enableSharedLibraries sources;
+    inherit stdenv cmake libxml2 python2 isl release_version enableSharedLibraries sources debugVersion;
   });
 
   sources = callLibrary ./sources.nix {};

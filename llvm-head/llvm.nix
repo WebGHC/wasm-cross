@@ -14,7 +14,7 @@
 , release_version
 , zlib
 , libcxxabi
-, debugVersion ? false
+, debugVersion
 , enableSharedLibraries
 , darwin
 }:
@@ -29,8 +29,6 @@ in stdenv.mkDerivation rec {
   name = "llvm";
 
   src = sources.llvm;
-
-  outputs = [ "out" ] ++ stdenv.lib.optional enableSharedLibraries "lib";
 
   buildInputs = [ perl groff cmake libxml2 python libffi ]
     ++ stdenv.lib.optionals stdenv.isDarwin [ libcxxabi ];
@@ -52,8 +50,9 @@ in stdenv.mkDerivation rec {
     ln -sv $PWD/lib $out
   '';
 
-  cmakeFlags = with stdenv; [
-    "-DCMAKE_BUILD_TYPE=${if debugVersion then "Debug" else "Release"}"
+  cmakeFlags = with stdenv; lib.optional debugVersion
+    "-DCMAKE_BUILD_TYPE=Debug"
+  ++ [
     "-DLLVM_INSTALL_UTILS=ON"  # Needed by rustc
     "-DLLVM_BUILD_TESTS=ON"
     "-DLLVM_ENABLE_FFI=ON"
@@ -83,23 +82,25 @@ in stdenv.mkDerivation rec {
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
   '';
 
-  postInstall = ""
-  + stdenv.lib.optionalString (enableSharedLibraries) ''
-    moveToOutput "lib/libLLVM-*" "$lib"
-    moveToOutput "lib/libLLVM.${shlib}" "$lib"
-    substituteInPlace "$out/lib/cmake/llvm/LLVMExports-release.cmake" \
-      --replace "\''${_IMPORT_PREFIX}/lib/libLLVM-" "$lib/lib/libLLVM-"
-  ''
-  + stdenv.lib.optionalString (stdenv.isDarwin && enableSharedLibraries) ''
-    substituteInPlace "$out/lib/cmake/llvm/LLVMExports-release.cmake" \
-      --replace "\''${_IMPORT_PREFIX}/lib/libLLVM.dylib" "$lib/lib/libLLVM.dylib"
-    install_name_tool -id $lib/lib/libLLVM.dylib $lib/lib/libLLVM.dylib
-    install_name_tool -change @rpath/libLLVM.dylib $lib/lib/libLLVM.dylib $out/bin/llvm-config
-    ln -s $lib/lib/libLLVM.dylib $lib/lib/libLLVM-${shortVersion}.dylib
-    ln -s $lib/lib/libLLVM.dylib $lib/lib/libLLVM-${release_version}.dylib
-  '';
+  # postInstall = ""
+  # + stdenv.lib.optionalString (enableSharedLibraries) ''
+  #   moveToOutput "lib/libLLVM-*" "$lib"
+  #   moveToOutput "lib/libLLVM.${shlib}" "$lib"
+  #   substituteInPlace "$out/lib/cmake/llvm/LLVMExports-release.cmake" \
+  #     --replace "\''${_IMPORT_PREFIX}/lib/libLLVM-" "$lib/lib/libLLVM-"
+  # ''
+  # + stdenv.lib.optionalString (stdenv.isDarwin && enableSharedLibraries) ''
+  #   substituteInPlace "$out/lib/cmake/llvm/LLVMExports-release.cmake" \
+  #     --replace "\''${_IMPORT_PREFIX}/lib/libLLVM.dylib" "$lib/lib/libLLVM.dylib"
+  #   install_name_tool -id $lib/lib/libLLVM.dylib $lib/lib/libLLVM.dylib
+  #   install_name_tool -change @rpath/libLLVM.dylib $lib/lib/libLLVM.dylib $out/bin/llvm-config
+  #   ln -s $lib/lib/libLLVM.dylib $lib/lib/libLLVM-${shortVersion}.dylib
+  #   ln -s $lib/lib/libLLVM.dylib $lib/lib/libLLVM-${release_version}.dylib
+  # '';
 
   doCheck = false; # stdenv.isLinux;
+
+  dontStrip = debugVersion;
 
   checkTarget = "check-all";
 

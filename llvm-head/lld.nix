@@ -6,6 +6,7 @@
 , python
 , libxml2
 , sources
+, debugVersion
 }:
 
 stdenv.mkDerivation {
@@ -14,6 +15,10 @@ stdenv.mkDerivation {
   src = sources.lld;
 
   nativeBuildInputs = [ cmake ];
+
+  cmakeFlags = stdenv.lib.optional debugVersion "-DCMAKE_BUILD_TYPE=Debug";
+
+  dontStrip = debugVersion;
 
   buildInputs = [ llvm libxml2 ];
 
