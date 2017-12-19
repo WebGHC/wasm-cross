@@ -14,7 +14,7 @@
 
       llvmPackages = self.llvmPackages_HEAD;
 
-      binaryen = self.callPackage ./binaryen.nix {};
+      wabt = self.callPackage ./wabt.nix {};
 
       build-wasm-app = www: drv: self.buildEnv {
         name = "wasm-app-${drv.name}";
