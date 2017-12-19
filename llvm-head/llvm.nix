@@ -37,7 +37,7 @@ in stdenv.mkDerivation rec {
 
   # Most people build LLVM in the monolithic 'projects' form. So most
   # people don't notice when LLD imports an internal header...
-  patches = [./llvm-config.patch];
+  patches = [./llvm-config.patch ./isFAbsFree.patch];
 
   postPatch = stdenv.lib.optionalString (enableSharedLibraries) ''
     substitute '${./llvm-outputs.patch}' ./llvm-outputs.patch --subst-var lib
