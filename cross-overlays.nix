@@ -25,6 +25,11 @@ self: super: {
         }).overrideDerivation (drv: {
           # Use this to test nix-build on your local GHC checkout.
           # src = lib.cleanSource ./ghc;
+          hardeningDisable = drv.hardeningDisable or []
+            ++ ["stackprotector"]
+            ++ lib.optional (crossSystem.arch == "wasm32") "pic";
+          dontDisableStatic = true;
+          NIX_NO_SELF_RPATH=1;
         });
         overrides = self.lib.composeExtensions (drv.overrides or (_:_:{})) (self: super: {
           mkDerivation = args: super.mkDerivation (args // {
