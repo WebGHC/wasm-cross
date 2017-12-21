@@ -40,6 +40,8 @@
       libc = null;
       disableDynamicLinker = true;
       thread-model = "single";
+      # target-cpu = "bleeding-edge";
+      # entry = "main";
     };
   });
   nixpkgsArm = import ./nixpkgs (project.nixpkgsCrossArgs // {

@@ -54,6 +54,10 @@ in bootStages ++ [
         echo "--sysroot ${libc}" >> $out/nix-support/cc-cflags
       '' + toolPackages.lib.optionalString (crossSystem ? fpu) ''
         echo "-mfpu=${crossSystem.fpu}" >> $out/nix-support/cc-cflags
+      '' + toolPackages.lib.optionalString (crossSystem ? target-cpu) ''
+        echo "-mcpu=${crossSystem.target-cpu}" >> $out/nix-support/cc-cflags
+      '' + toolPackages.lib.optionalString (crossSystem ? entry) ''
+        echo "--entry ${crossSystem.entry}" >> $out/nix-support/cc-ldflags
       '' + toolPackages.lib.optionalString (crossSystem ? thread-model) ''
         echo "-mthread-model ${crossSystem.thread-model}" >> $out/nix-support/cc-cflags
       '';
