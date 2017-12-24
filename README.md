@@ -1,64 +1,47 @@
 wasm-cross
 ---
 
-This repo contains the nix expressions necessary to build cross a
-compiling toolchain for WebAssembly. A secondary goal of this repo is
-to make it easy or trivial to build cross compiling toolchains for
-arbitrary LLVM targets. Currently, `wasm-cross` can be used to build
-"Hello, World!" C programs for `aarch64-unknown-linux-gnu`, Raspberry
-Pi, and `wasm32-unknown-uknown-wasm`. It can also build the `hello`
-Hackage package for aarch64 using GHC as a cross compiler.
+`wasm-cross` provides a generic toolchain for cross compiling, with a
+primary focus on targeting WebAssembly. Currently, `wasm-cross` can be
+used to build "Hello, World!" C programs for
+`aarch64-unknown-linux-gnu`, Raspberry Pi, and
+`wasm32-unknown-uknown-wasm`. It can use GHC to cross compile Haskell
+to aarch64, and work is ongoing to cross compile Haskell to Raspberry
+Pi and WebAssembly.
 
-### Design
+The C toolchain is made up of Clang / LLVM, LLD, and [a fork of
+musl](https://github.com/WebGHC/musl). `wasm-cross` builds all of
+these from near-HEAD checkouts in order to keep up with the
+bleeding-edge WebAssembly support. By statically linking everything,
+this toolchain can be made to work for many platforms. WebAssembly is
+becoming increasingly supported, as work on LLVM, LLD, and musl adds
+support for it.
 
-1. `./llvm-head` contains the nix expressions for building LLVM,
-   Clang, and various LLVM libraries from near-head checkouts. The
-   libraries are automatically built to target whatever system Nixpkgs
-   is targetting in the `host == target` stage. But Clang is not built
-   with the cross system set as its default target in the `host ==
-   build` stage because it's better to have a single build of Clang
-   that `stdenv` massages into targetting the appropriate
-   platform. This avoids needlessly rebuilding Clang many times when
-   it's perfectly capable of targetting many platforms with the same
-   binary.
-2. `./musl.nix` builds libc for the target. It builds
-   [musl](https://github.com/WebGHC/musl), which is a fork of musl
-   that adds WebAssembly support.
-3. `./cross.nix` defines the cross compiling stages. The first stages
-   are the vanilla boot stages, which produce a normal Nixpkgs. The
-   next stage builds a `cc-wrapper` around Clang that targets the
-   cross system using `compiler-rt` as the runtime, and `musl.nix` as
-   the `libc`.
-4. `./fib-example` and `./hello-example` are simple C programs that
-   demonstrate different levels of sophistication in the
-   toolchain. `fib-example` demonstrates that WebAssembly works
-   without relying on any syscalls, and `hello-example` demonstrates
-   some basic syscalls for `printf` and `malloc`. The goal of these
-   programs is to demonstrate that a CMake project can be built for
-   WebAssembly with relative ease. A secondary goal is to show that
-   this requires minimal porting work, such that a project designed
-   for arbitrary cross compilation to platforms such as Arm can be
-   built for WebAssembly without changing the build system.
-5. GHC, for the most part, is handled in `nixpkgs`. John Ericson
-   (@Ericson2314) has already done much work on getting the GHC Nix
-   expressions to properly build cross compilers. For aarch64, little
-   work was needed to build a functioning `haskellPackages`. However,
-   GHC is currently built from
-   [a fork](https://github.com/WebGHC/ghc/tree/WebGHC) in an effort to
-   support WebAssembly as a target.
+`fib-example` and `hello-example` show that this behaves just like a
+standard cross compilation toolchain, even for
+WebAssembly. `fib-example` demonstrates C code that does not need
+`libc` (though the build system does not reflect
+this). `hello-example` demonstrates some basic syscalls implemented by
+`libc`.
+
+GHC cross compilers are built from [a
+fork](https://github.com/WebGHC/ghc) using the Nix infrastructure
+largely developed by John Ericson (@Ericson2314), producing a working
+`haskellPackages`. This fork is developing support for
+WebAssembly. `wasm-cross` configures it with no dynamic
+linking. Currently, GHC only works for aarch64.
+
+When building for WebAssembly, the build product will simply be a wasm
+binary. To run this in a browser, you will need the JS kernel and some
+HTML wrapper. The `build-wasm-app` Nix function can help with this.
 
 ### Notes
 
-1. Upstream `lld` does not yet support the `wasm` object file
-   format. So [a fork](https://github.com/WebAssembly/lld/tree/wasm)
-   is used that does support it.
-2. We have
-   [forked `nixpkgs`](https://github.com/WebGHC/nixpkgs/tree/wasm-cross)
-   in order to support a variety of custom needs. When John Ericson
-   has finished upstreaming a large amount of cross compilation
-   infrastructure into nixpkgs, these changes can begin to be
-   generalized and upstreamed.
-3. If you're using Linux, a Nix binary cache is available at
+1. We have [forked
+   `nixpkgs`](https://github.com/WebGHC/nixpkgs/tree/wasm-cross) in
+   order to support a variety of custom needs. As this gets cleaned
+   up, it will be upstreamed.
+2. If you're using Linux, a Nix binary cache is available at
    https://hydra.webghc.org with a public key of:
 
    `hydra.webghc.org-1:knW30Yb8EXYxmUZKEl0Vc6t2BDjAUQ5kfC1BKJ9qEG8=`
