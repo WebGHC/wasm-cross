@@ -33,7 +33,9 @@ linking. Currently, GHC only works for aarch64.
 
 When building for WebAssembly, the build product will simply be a wasm
 binary. To run this in a browser, you will need the JS kernel and some
-HTML wrapper. The `build-wasm-app` Nix function can help with this.
+HTML wrapper. The `build-wasm-app` Nix function can help with this. It
+uses [`webabi`](https://github.com/WebGHC/webabi) as a kernel to
+support `musl`'s syscalls.
 
 ### Notes
 
