@@ -7,7 +7,7 @@ let
     inherit (pkgs) stdenv nodejs fetchurl fetchgit;
     neededNatives = [ pkgs.python ] ++ pkgs.lib.optional pkgs.stdenv.isLinux pkgs.utillinux;
     self = nodePackages;
-    generated = ./test.nix;
+    generated = ./webabi.nix;
   };
 in rec {
   tarball = pkgs.runCommand "webabi-0.0.1.tgz" { buildInputs = [ pkgs.nodejs ]; } ''
