@@ -30,6 +30,8 @@ in stdenv.mkDerivation rec {
 
   src = sources.llvm;
 
+  outputs = ["out"] ++ stdenv.lib.optional enableSharedLibraries "lib";
+
   buildInputs = [ perl groff cmake libxml2 python libffi ]
     ++ stdenv.lib.optionals stdenv.isDarwin [ libcxxabi ];
 
@@ -81,6 +83,15 @@ in stdenv.mkDerivation rec {
   preCheck = ''
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
   '';
+
+
+  postInstall = stdenv.lib.optionalString enableSharedLibraries ''
+    moveToOutput "lib/libLLVM-*" "$lib"
+    moveToOutput "lib/libLLVM${stdenv.hostPlatform.extensions.sharedLibrary}" "$lib"
+    substituteInPlace "$out/lib/cmake/llvm/LLVMExports-${if debugVersion then "debug" else "release"}.cmake" \
+      --replace "\''${_IMPORT_PREFIX}/lib/libLLVM-" "$lib/lib/libLLVM-"
+  '';
+
 
   # postInstall = ""
   # + stdenv.lib.optionalString (enableSharedLibraries) ''
