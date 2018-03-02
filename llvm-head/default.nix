@@ -27,7 +27,7 @@ let
 
   sources = callLibrary ./sources.nix {};
 
-  release_version = "6.0.0";
+  release_version = "7.0.0";
 
   tools = {
     llvm = callTool ./llvm.nix {};
