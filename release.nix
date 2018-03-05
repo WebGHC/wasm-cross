@@ -13,7 +13,7 @@ in {
   inherit (nixpkgs.haskell.compiler) ghcHEAD;
 
   wasm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsWasm);
-  rpi = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsRpi);
+  # rpi = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsRpi);
   arm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsArm) // {
     inherit (nixpkgsArm.haskellPackages) hello ghc;
   };
