@@ -93,7 +93,7 @@ in bootStages ++ [
           " -Xlinker --allow-undefined-file=${musl-cross}/lib/wasm.syms";
     };
     clangCross = mkClang {
-      ccFlags = "-rtlib=compiler-rt -resource-dir ${compiler-rt}";
+      ccFlags = "-rtlib=compiler-rt -resource-dir ${compiler-rt} -Xlinker --allow-undefined-file=${musl-cross}/lib/wasm.syms";
       libc = musl-cross;
     };
 
