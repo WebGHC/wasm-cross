@@ -44,6 +44,6 @@ support `musl`'s syscalls.
    order to support a variety of custom needs. As this gets cleaned
    up, it will be upstreamed.
 2. If you're using Linux, a Nix binary cache is available at
-   https://hydra.webghc.org with a public key of:
+   https://nixcache.webghc.org with a public key of:
 
    `hydra.webghc.org-1:knW30Yb8EXYxmUZKEl0Vc6t2BDjAUQ5kfC1BKJ9qEG8=`
