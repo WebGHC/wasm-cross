@@ -43,7 +43,7 @@ in stdenv.mkDerivation rec {
 
   postPatch = stdenv.lib.optionalString (enableSharedLibraries) ''
     substitute '${./llvm-outputs.patch}' ./llvm-outputs.patch --subst-var lib
-    patch -p1 < ./llvm-outputs.patch
+    patch  -p1 < ./llvm-outputs.patch
   '';
 
   # hacky fix: created binaries need to be run before installation

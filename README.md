@@ -1,3 +1,5 @@
+This branch is a trivial PR to test Hydra PR CI
+
 wasm-cross
 ---
 
