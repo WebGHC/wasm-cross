@@ -9,7 +9,7 @@ let
 in {
   inherit (nixpkgs.llvmPackages_HEAD) llvm clang clang-unwrapped compiler-rt
     lld lldb llvm-binutils; # libcxx libcxx-headers libcxxabi libunwind
-  inherit (nixpkgs) binaryen;
+  inherit (nixpkgs) binaryen cmake;
   inherit (nixpkgs.haskell.compiler) ghcHEAD;
 
   wasm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsWasm);
