@@ -5,8 +5,8 @@ stdenv.mkDerivation {
   src = fetchFromGitHub {
     owner = "WebAssembly";
     repo = "wabt";
-    rev = "be94d802c076c08d8f102eb4c6d3376dcc77c232";
-    sha256 = "08rnwv5is6vd0xqjqykjd7k4c0apmz9asvjg1m22dpz6milrwnmd";
+    rev = "c1896e079897830b4e8c8f9c15dea6bd41ffc28c";
+    sha256 = "03x2imhs43p4iwjhgwgh925r2b43mgscml5wpg6wcqa7zhqacnzs";
   };
   nativeBuildInputs = [ cmake python ];
   enableParallelBuilding = true;
