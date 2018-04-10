@@ -15,6 +15,7 @@
       llvmPackages = self.llvmPackages_HEAD;
 
       wabt = self.callPackage ./wabt.nix {};
+      binaryen = self.callPackage ./binaryen.nix {};
 
       webabi = self.callPackage ./webabi-nix { webabi = {
         outPath = self.fetchFromGitHub {
