@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-int main() {
+__attribute__((visibility("default"))) int main() {
   printf("Hello, World!\n");
   sleep(2);
   volatile int *x;
