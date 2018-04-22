@@ -20,8 +20,8 @@
       webabi = self.callPackage ./webabi-nix { webabi = self.fetchFromGitHub {
         owner = "WebGHC";
         repo = "webabi";
-        rev = "aba8197e30449b21447612f85cd5e5e08f5c8825";
-        sha256 = "0m674kx6d09dqa5lwz29szzhsaxr1s1qhr8z6n6h69dnb6kbfcnv";
+        rev = "7e70d2ea79f3d90ab9ba5638cb46d97a4e159150";
+        sha256 = "0g6a4sg02r1skndjxa6n2af2mw375p3ca2p785hipkjl8z57vdjn";
       }; };
 
       build-wasm-app = www: drv: self.buildEnv {
