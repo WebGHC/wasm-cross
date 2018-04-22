@@ -23,6 +23,22 @@ self: super: {
           disableFFI = crossSystem.arch or null == "wasm32";
           # quick-cross = true; # Just for dev
         }).overrideDerivation (drv: {
+          src =
+            if !(crossSystem.arch or null == "wasm32")
+              then drv.src
+              else self.buildPackages.fetchgit {
+                url = "https://github.com/WebGHC/ghc.git";
+                rev = "7f1605d3ce7e5db14b851344f1feabf731399324";
+                sha256 = "18piw0ziq1w650hdwsxd3yrvnh6v36wfak6s6imil3xypi4qd2gf";
+                preFetch = ''
+                  export HOME=$(pwd)
+                  git config --global url."git://github.com/WebGHC/packages-".insteadOf     git://github.com/WebGHC/packages/
+                  git config --global url."http://github.com/WebGHC/packages-".insteadOf    http://github.com/WebGHC/packages/
+                  git config --global url."https://github.com/WebGHC/packages-".insteadOf   https://github.com/WebGHC/packages/
+                  git config --global url."ssh://git@github.com/WebGHC/packages-".insteadOf ssh://git@github.com/WebGHC/packages/
+                  git config --global url."git@github.com:WebGHC/packages-".insteadOf       git@github.com:WebGHC/packages/
+                '';
+              };
           # Use this to test nix-build on your local GHC checkout.
           # src = lib.cleanSource ./ghc;
           hardeningDisable = drv.hardeningDisable or []
