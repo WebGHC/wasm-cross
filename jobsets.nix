@@ -21,13 +21,7 @@ let
     emailoverride = "";
     nixexprinput = "wasm-cross";
     nixexprpath = "release.nix";
-    inputs = jobs.inputs // {
-      nixpkgs = {
-        type = "git";
-        value = "https://github.com/NixOS/nixpkgs-channels.git nixos-unstable";
-        emailresponsible = false;
-      };
-    };
+    inputs = jobs.inputs;
   };
   branchJobset = branch: defaults {
     description = "wasm-cross-${branch}";

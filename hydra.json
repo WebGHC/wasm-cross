@@ -15,11 +15,6 @@
       "value": "https://github.com/WebGHC/wasm-cross.git master",
       "emailresponsible": false
     },
-    "nixpkgs": {
-      "type": "git",
-      "value": "https://github.com/NixOS/nixpkgs-channels.git nixos-unstable",
-      "emailresponsible": false
-    },
     "wasm-cross-prs": {
       "type": "githubpulls",
       "value": "WebGHC wasm-cross",
