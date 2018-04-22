@@ -5,6 +5,7 @@ let
   fromPkgs = pkgs: {
     inherit (pkgs.stdenv) cc;
     inherit (pkgs) fib-example hello-example musl-cross;
+    inherit (pkgs.haskellPackages) hello ghc;
   };
 in {
   inherit (nixpkgs.llvmPackages_HEAD) llvm clang clang-unwrapped compiler-rt
@@ -14,7 +15,5 @@ in {
 
   wasm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsWasm);
   # rpi = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsRpi);
-  arm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsArm) // {
-    inherit (nixpkgsArm.haskellPackages) hello ghc;
-  };
+  arm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsArm);
 }
