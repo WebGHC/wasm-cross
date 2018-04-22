@@ -17,14 +17,11 @@
       wabt = self.callPackage ./wabt.nix {};
       binaryen = self.callPackage ./binaryen.nix {};
 
-      webabi = self.callPackage ./webabi-nix { webabi = {
-        outPath = self.fetchFromGitHub {
-          owner = "WebGHC";
-          repo = "webabi";
-          rev = "aba8197e30449b21447612f85cd5e5e08f5c8825";
-          sha256 = "0m674kx6d09dqa5lwz29szzhsaxr1s1qhr8z6n6h69dnb6kbfcnv";
-        };
-        name = "webabi";
+      webabi = self.callPackage ./webabi-nix { webabi = self.fetchFromGitHub {
+        owner = "WebGHC";
+        repo = "webabi";
+        rev = "aba8197e30449b21447612f85cd5e5e08f5c8825";
+        sha256 = "0m674kx6d09dqa5lwz29szzhsaxr1s1qhr8z6n6h69dnb6kbfcnv";
       }; };
 
       build-wasm-app = www: drv: self.buildEnv {
