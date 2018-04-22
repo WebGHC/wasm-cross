@@ -53,6 +53,7 @@ self: super: {
             enableLibraryStripping = false;
             enableSharedExecutables = false;
             enableSharedLibraries = false;
+            enableDeadCodeElimination = false;
             doHaddock = !(crossSystem.arch or null == "wasm32");
             configureFlags = args.configureFlags or [] ++
               lib.optionals
