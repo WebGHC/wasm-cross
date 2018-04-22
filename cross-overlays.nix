@@ -53,6 +53,11 @@ self: super: {
             enableLibraryStripping = false;
             enableSharedExecutables = false;
             enableSharedLibraries = false;
+            doHaddock = !(crossSystem.arch or null == "wasm32");
+            configureFlags = args.configureFlags or [] ++
+              lib.optionals
+                (crossSystem.arch or null == "wasm32")
+                ["--ghc-option=-optl" "--ghc-option=-Wl,--export=main"];
           });
         });
       });
