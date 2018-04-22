@@ -27,7 +27,11 @@ in bootStages ++ [
   (toolPackages: let
     prefix = "${crossSystem.config}-";
     llvmPackages = toolPackages.llvmPackages_HEAD;
-    mkClang = { libc ? null, ccFlags ? null }: toolPackages.wrapCCWith {
+    ldFlags =
+      if (crossSystem.arch or null == "wasm32")
+        then "--allow-undefined-file=${musl-cross}/lib/wasm.syms"
+        else null;
+    mkClang = { libc ? null, ccFlags ? null, ldFlags ? null }: toolPackages.wrapCCWith {
       name = "clang-cross-wrapper";
       cc = llvmPackages.clang-unwrapped;
       binutils = toolPackages.wrapBinutilsWith {
@@ -50,6 +54,8 @@ in bootStages ++ [
         echo 'export CXX=${prefix}c++' >> $out/nix-support/setup-hook
       '' + toolPackages.lib.optionalString (ccFlags != null) ''
         echo "${ccFlags}" >> $out/nix-support/cc-cflags
+      '' + toolPackages.lib.optionalString (ldFlags != null) ''
+        echo "${ldFlags}" >> $out/nix-support/cc-ldflags
       '' + toolPackages.lib.optionalString (libc != null) ''
         echo "--sysroot ${libc}" >> $out/nix-support/cc-cflags
       '' + toolPackages.lib.optionalString (crossSystem ? fpu) ''
@@ -88,14 +94,12 @@ in bootStages ++ [
     };
     clangCross-noCompilerRt = mkClang {
       libc = musl-cross;
-      ccFlags = "-nodefaultlibs -lc"
-        + lib.optionalString (crossSystem.arch or null == "wasm32")
-          " -Xlinker --allow-undefined-file=${musl-cross}/lib/wasm.syms";
+      ccFlags = "-nodefaultlibs -lc";
+      inherit ldFlags;
     };
     clangCross = mkClang {
-      ccFlags = "-rtlib=compiler-rt -resource-dir ${compiler-rt}"
-        + lib.optionalString (crossSystem.arch or null == "wasm32")
-          " -Xlinker --allow-undefined-file=${musl-cross}/lib/wasm.syms";
+      ccFlags = "-rtlib=compiler-rt -resource-dir ${compiler-rt}";
+      inherit ldFlags;
       libc = musl-cross;
     };
 
