@@ -6,7 +6,7 @@
 , cmake
 , python
 , libffi
-, binutils
+, libbfd
 , buildPackages
 , libxml2
 , valgrind
@@ -64,7 +64,7 @@ in stdenv.mkDerivation rec {
     "-DLLVM_LINK_LLVM_DYLIB=ON"
   ] ++ stdenv.lib.optional (!isDarwin)
     # TODO: Not sure what binutils to use here
-    "-DLLVM_BINUTILS_INCDIR=${buildPackages.binutils.binutils.dev}/include"
+    "-DLLVM_BINUTILS_INCDIR=${libbfd.dev}/include"
     ++ stdenv.lib.optionals (isDarwin) [
     "-DLLVM_ENABLE_LIBCXX=ON"
     "-DCAN_TARGET_i386=false"

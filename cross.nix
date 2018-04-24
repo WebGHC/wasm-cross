@@ -28,14 +28,14 @@ in bootStages ++ [
     prefix = "${crossSystem.config}-";
     llvmPackages = toolPackages.llvmPackages_HEAD;
     ldFlags =
-      if (crossSystem.arch or null == "wasm32")
+      if crossSystem.isWasm
         then "--allow-undefined-file=${musl-cross}/lib/wasm.syms"
         else null;
     mkClang = { libc ? null, ccFlags ? null, ldFlags ? null }: toolPackages.wrapCCWith {
       name = "clang-cross-wrapper";
       cc = llvmPackages.clang-unwrapped;
-      binutils = toolPackages.wrapBinutilsWith {
-        binutils = llvmPackages.llvm-binutils;
+      bintools = toolPackages.wrapBintoolsWith {
+        bintools = llvmPackages.llvm-binutils;
         inherit libc;
       };
       inherit libc;
@@ -78,13 +78,14 @@ in bootStages ++ [
       mkDerivation = args: x.mkDerivation (args // {
         hardeningDisable = args.hardeningDisable or []
           ++ ["stackprotector"]
-          ++ toolPackages.lib.optional (crossSystem.arch == "wasm32") "pic";
+          ++ toolPackages.lib.optional crossSystem.isWasm "pic";
         dontDisableStatic = true;
         NIX_NO_SELF_RPATH=1;
         configureFlags =
           (let flags = args.configureFlags or [];
             in if builtins.isString flags then [flags] else flags)
           ++ toolPackages.lib.optionals (!(args.dontConfigureStatic or false)) ["--enable-static" "--disable-shared"];
+        dontStrip = true;
       });
       isStatic = true;
     };

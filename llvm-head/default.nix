@@ -15,6 +15,8 @@
 , enableSharedLibraries ? true
 , hostPlatform
 , targetPlatform
+, coreutils
+, buildPackages
 }:
 let
   callLibrary = newScope (buildTools.tools // libraries // {
@@ -59,6 +61,7 @@ let
         if hostPlatform != targetPlatform
         then "${targetPlatform.config}-"
         else "";
+      strip = buildPackages.writeShellScriptBin "strip" "true";
     in with tools; runCommand "llvm-binutils-${release_version}" { preferLocalBuild = true; } ''
       mkdir -p $out/bin
       # for prog in ${lld}/bin/*; do
@@ -73,6 +76,7 @@ let
       ln -s ${lld}/bin/lld $out/bin/${prefix}ld
       # ln -s ${lld}/bin/lld $out/bin/${prefix}ld.lld
       # ln -s ${lld}/bin/lld $out/bin/${prefix}lld
+      ln -s ${strip}/bin/strip $out/bin/${prefix}strip
     '';
   };
 
