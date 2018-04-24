@@ -10,7 +10,7 @@ let
 in {
   inherit (nixpkgs.llvmPackages_HEAD) llvm clang clang-unwrapped compiler-rt
     lld lldb llvm-binutils; # libcxx libcxx-headers libcxxabi libunwind
-  inherit (nixpkgs) binaryen cmake wabt;
+  inherit (nixpkgs) binaryen cmake wabt webabi;
 
   wasm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsWasm);
   # rpi = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsRpi);
