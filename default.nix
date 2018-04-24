@@ -17,14 +17,7 @@
       wabt = self.callPackage ./wabt.nix {};
       binaryen = self.callPackage ./binaryen.nix {};
 
-      webabi = (self.callPackage ./webabi-nix {}).package.overrideAttrs (_: {
-        src = self.fetchFromGitHub {
-          owner = "WebGHC";
-          repo = "webabi";
-          rev = "7e70d2ea79f3d90ab9ba5638cb46d97a4e159150";
-          sha256 = "0g6a4sg02r1skndjxa6n2af2mw375p3ca2p785hipkjl8z57vdjn";
-        };
-      });
+      webabi = (self.callPackage ./webabi-nix {}).package;
 
       build-wasm-app = www: drv: self.buildEnv {
         name = "wasm-app-${drv.name}";

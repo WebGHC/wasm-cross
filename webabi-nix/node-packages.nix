@@ -45,7 +45,11 @@ let
     name = "webabi";
     packageName = "webabi";
     version = "0.0.1";
-    src = ../webabi;
+    src = fetchgit {
+      url = "https://github.com/WebGHC/webabi.git";
+      rev = "7e70d2ea79f3d90ab9ba5638cb46d97a4e159150";
+      sha256 = "0g6a4sg02r1skndjxa6n2af2mw375p3ca2p785hipkjl8z57vdjn";
+    };
     dependencies = [
       sources."async-2.6.0"
       sources."browserfs-1.4.3"
