@@ -47,11 +47,6 @@ in bootStages ++ [
         # lld (optionally with prefix). We symlink it here to get
         # a wrapper version.
         ln -s $out/bin/${prefix}ld $out/bin/${prefix}lld
-
-        # Something about the way clang is handled on macOS makes
-        # this necessary even on Linux.
-        echo 'export CC=${prefix}cc' >> $out/nix-support/setup-hook
-        echo 'export CXX=${prefix}c++' >> $out/nix-support/setup-hook
       '' + toolPackages.lib.optionalString (ccFlags != null) ''
         echo "${ccFlags}" >> $out/nix-support/cc-cflags
       '' + toolPackages.lib.optionalString (ldFlags != null) ''
