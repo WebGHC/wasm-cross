@@ -44,6 +44,6 @@ stdenv.mkDerivation {
     description = "A next-generation high-performance debugger";
     homepage    = http://llvm.org/;
     license     = licenses.ncsa;
-    platforms   = platforms.allBut platforms.darwin;
+    platforms   = platforms.all;
   };
 }
