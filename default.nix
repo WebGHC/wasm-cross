@@ -12,8 +12,6 @@
         debugVersion = debugLlvm;
       };
 
-      llvmPackages = self.llvmPackages_HEAD;
-
       wabt = self.callPackage ./wabt.nix {};
       binaryen = self.callPackage ./binaryen.nix {};
 

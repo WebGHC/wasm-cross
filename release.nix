@@ -5,7 +5,7 @@ let
   fromPkgs = pkgs: {
     inherit (pkgs.stdenv) cc;
     inherit (pkgs) fib-example hello-example musl-cross;
-    inherit (pkgs.haskellPackages) hello ghc;
+    inherit (pkgs.haskell.packages.ghcHEAD) hello ghc;
   };
 in {
   inherit (nixpkgs.llvmPackages_HEAD) llvm clang clang-unwrapped compiler-rt

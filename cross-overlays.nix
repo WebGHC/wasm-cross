@@ -9,7 +9,6 @@ self: super: {
     else super.libiconvReal;
   libiconv = self.libiconvReal; # By default, this wants to pull stuff out of glibc or something
 
-  haskellPackages = self.haskell.packages.ghcHEAD;
   haskell = let inherit (super) haskell; in haskell // {
     packages = haskell.packages // {
       ghcHEAD = haskell.packages.ghcHEAD.override (drv: {
@@ -23,8 +22,8 @@ self: super: {
           disableFFI = crossSystem.isWasm;
           useLLVM = true;
           version = "8.5.20180424";
-          buildLlvmPackages = self.buildPackages.llvmPackages;
-          llvmPackages = self.buildPackages.llvmPackages;
+          buildLlvmPackages = self.buildPackages.llvmPackages_HEAD;
+          llvmPackages = self.buildPackages.llvmPackages_HEAD;
         }).overrideAttrs (drv: {
           src =
             if !(crossSystem.isWasm)

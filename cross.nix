@@ -106,7 +106,7 @@ in bootStages ++ [
       hostPlatform = crossSystem;
       stdenv = stdenv-noLibc;
     };
-    compiler-rt = toolPackages.llvmPackages.compiler-rt.override {
+    compiler-rt = toolPackages.llvmPackages_HEAD.compiler-rt.override {
       baremetal = true;
       hostPlatform = crossSystem;
       stdenv = stdenv-noCompilerRt;
