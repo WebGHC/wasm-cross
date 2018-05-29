@@ -19,6 +19,19 @@ diff -ruN libiconv-1.15/build-aux/config.sub libiconv-1.15-patched/build-aux/con
  	-none)
  		;;
  	*)
+diff -ruN libiconv-1.15/lib/loop_wchar.h libiconv-1.15-patched/lib/loop_wchar.h
+--- libiconv-1.15/lib/loop_wchar.h	2014-01-02 17:23:02.000000000 -0500
++++ libiconv-1.15-patched/lib/loop_wchar.h	2018-05-29 11:23:49.342538241 -0400
+@@ -36,7 +36,9 @@
+ # include <wchar.h>
+ # define BUF_SIZE 64  /* assume MB_LEN_MAX <= 64 */
+   /* Some systems, like BeOS, have multibyte encodings but lack mbstate_t.  */
++#ifndef __wasm__
+   extern size_t mbrtowc ();
++#endif
+ # ifdef mbstate_t
+ #  define mbrtowc(pwc, s, n, ps) (mbrtowc)(pwc, s, n, 0)
+ #  define mbsinit(ps) 1
 diff -ruN libiconv-1.15/libcharset/build-aux/config.sub libiconv-1.15-patched/libcharset/build-aux/config.sub
 --- libiconv-1.15/libcharset/build-aux/config.sub	2017-01-02 09:02:47.000000000 +1000
 +++ libiconv-1.15-patched/libcharset/build-aux/config.sub	2017-11-22 08:52:03.504787774 +1000
