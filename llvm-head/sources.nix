@@ -2,55 +2,55 @@
   clang = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "clang";
-    rev = "4d48be1aa7744f3e4f5b0a53dad7fdde7885da41";
-    sha256 = "0qxjr6vr2bz1xj2ig6wx9z0v2hp8giyg4xr90b1xy408q3lpqcjj";
+    rev = "3de179a61e5c29a0f91918da87c692756bc755b4";
+    sha256 = "1fksprjs0laqrqmx9mydn2a0qybbbn1k8lmn0dvs1p8x6ik3a0q2";
   };
   libcxxabi = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "libcxxabi";
-    rev = "b95ff2df2d0b0f909f5f5fbe0731c960b64bdad4";
-    sha256 = "0bsny1rdnn1zbqyapnya06wpwa6qdy3scfhnxawsizjhr6pp7vd9";
+    rev = "e0330b61d74b898ee64922d0a3d50c3562f6ddb1";
+    sha256 = "180ld1nlyzlr04sd807jsiyaw4qyj2xw3nk8lc362c838kpzkbra";
   };
   llvm = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "llvm";
-    rev = "f8dd899c6c05e91652a92f7f7e0d61255142780f";
-    sha256 = "1c1fcxjbqn2rlgg1wl0absms7n9d84w0mijkffdgbcy9sx90zr66";
+    rev = "980b901b1e71198925a015eed32e798708fd5674";
+    sha256 = "1kc1pb8zrrjg13m0xwl35gllzw9gzhicaril2rnzxx65a88cs6xh";
   };
   libcxx = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "libcxx";
-    rev = "52cd8e497ad7fd1aa256c01a1cd989bf20242044";
-    sha256 = "0z1vviy4f540bx0d087vxrhpdjmi876dz1nmd274hha8kmwgc79v";
+    rev = "40a29e79c29fd5552f44bc7d11e56344b90d0107";
+    sha256 = "1jgnr5c8gfyl45ms45kwqm9v14kg2j4k90ywbwdacl9z9amppj3z";
   };
   lldb = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "lldb";
-    rev = "58bb4f62236100737e46a886cfd4c80f94084443";
-    sha256 = "1p2z0i0yxwkfg0z7i04wlmq9280r7gniylsgng0rwmch70alnf9l";
+    rev = "b620101a53938b86ddeff13f5963f19186586734";
+    sha256 = "08d989xk2hqapkdncg83xv0r2471g6syxks0ldg9ida6g6nicxz4";
   };
   clang-tools-extra = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "clang-tools-extra";
-    rev = "05d033ed8a85c8862f2c67187d2dc5dfc554c91e";
-    sha256 = "066slid90pfpv6697ydysrk50lm8pjr1rx84kfp0qzlkyj2kyqkh";
+    rev = "829689f693bb14e4e78672f14e50c1e33e65be4e";
+    sha256 = "1wf6kxfx528y1rp0vdyy7jshdhca4w31fldq6maph1dp1jysl5gr";
   };
   libunwind = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "libunwind";
-    rev = "0f3cbe4123f8afacd646bd4f5414aa6528ef8129";
-    sha256 = "1swdfqr9jgjhip7071n1p3x4rpqyv4qyvqkrzh7n0m40zibrpx4v";
+    rev = "1e1c6b739595098ba5c466bfe9d58b993e646b48";
+    sha256 = "12wpvxchi0nik2xh06j3ivkf9mzg5nmpn87w3cb6dm9lcfh8mv5i";
   };
   compiler-rt = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "compiler-rt";
-    rev = "aec8ba39dedba0ed7e6f0ae8f287c0f10c4c88f7";
-    sha256 = "0v44j3ha5sh8fdz4g10ylcfz7cncwf1fmj636y9xpqk90miv7f44";
+    rev = "4e8e8d6b18fccced6738aa85dfc28105c7add469";
+    sha256 = "06al5hn0q30jm3wrq7kggdizl1mv5i50x6ggc0s2lnqn41pab1vb";
   };
   lld = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "lld";
-    rev = "b6bd248aa7d17f1f98515d396b260f7e78580c9b";
-    sha256 = "1zybly10fmxgrm34zvshflzq2ihsvh84kcqmp3in5v57q5vhjp6y";
+    rev = "77ec8d7522c5395ab7b2d610e0065e51e819597d";
+    sha256 = "11xid9drshfg7m2gl6vdaxi97981rw98ksk5yjjwwjaksj1wyqwy";
   };
 }

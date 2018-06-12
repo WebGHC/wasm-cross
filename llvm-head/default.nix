@@ -62,7 +62,7 @@ let
         then "${targetPlatform.config}-"
         else "";
       strip = buildPackages.writeShellScriptBin "strip" "true";
-    in with tools; runCommand "llvm-binutils-${release_version}" { preferLocalBuild = true; } ''
+    in with tools; runCommand "llvm-binutils-${release_version}" { preferLocalBuild = true; } (''
       mkdir -p $out/bin
       # for prog in ${lld}/bin/*; do
       #   ln -s $prog $out/bin/${prefix}$(basename $prog)
@@ -76,8 +76,11 @@ let
       ln -s ${lld}/bin/lld $out/bin/${prefix}ld
       # ln -s ${lld}/bin/lld $out/bin/${prefix}ld.lld
       # ln -s ${lld}/bin/lld $out/bin/${prefix}lld
+    '' + lib.optionalString targetPlatform.isWasm ''
+      # llvm-strip doesn't work on wasm
+      rm $out/bin/${prefix}strip
       ln -s ${strip}/bin/strip $out/bin/${prefix}strip
-    '';
+    '');
   };
 
   libraries = {

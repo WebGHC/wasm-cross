@@ -57,8 +57,8 @@ in bootStages ++ [
         echo "-mfpu=${crossSystem.fpu}" >> $out/nix-support/cc-cflags
       '' + toolPackages.lib.optionalString (crossSystem ? target-cpu) ''
         echo "-mcpu=${crossSystem.target-cpu}" >> $out/nix-support/cc-cflags
-      '' + toolPackages.lib.optionalString (crossSystem ? entry) ''
-        echo "--entry ${crossSystem.entry}" >> $out/nix-support/cc-ldflags
+      '' + toolPackages.lib.optionalString (crossSystem ? visibility) ''
+        echo "-fvisibility=${crossSystem.visibility}" >> $out/nix-support/cc-cflags
       '' + toolPackages.lib.optionalString (crossSystem ? thread-model) ''
         echo "-mthread-model ${crossSystem.thread-model}" >> $out/nix-support/cc-cflags
       '';
