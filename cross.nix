@@ -29,7 +29,7 @@ in bootStages ++ [
     llvmPackages = toolPackages.llvmPackages_HEAD;
     ldFlags =
       if crossSystem.isWasm
-        then "--allow-undefined-file=${musl-cross}/lib/wasm.syms"
+        then "--allow-undefined-file=${musl-cross}/lib/wasm.syms --export-all"
         else null;
     mkClang = { libc ? null, ccFlags ? null, ldFlags ? null }: toolPackages.wrapCCWith {
       name = "clang-cross-wrapper";
@@ -57,8 +57,6 @@ in bootStages ++ [
         echo "-mfpu=${crossSystem.fpu}" >> $out/nix-support/cc-cflags
       '' + toolPackages.lib.optionalString (crossSystem ? target-cpu) ''
         echo "-mcpu=${crossSystem.target-cpu}" >> $out/nix-support/cc-cflags
-      '' + toolPackages.lib.optionalString (crossSystem ? visibility) ''
-        echo "-fvisibility=${crossSystem.visibility}" >> $out/nix-support/cc-cflags
       '' + toolPackages.lib.optionalString (crossSystem ? thread-model) ''
         echo "-mthread-model ${crossSystem.thread-model}" >> $out/nix-support/cc-cflags
       '';

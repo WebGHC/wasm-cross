@@ -41,7 +41,6 @@
       libc = null;
       disableDynamicLinker = true;
       thread-model = "single";
-      visibility = "default";
       # target-cpu = "bleeding-edge";
     };
   });
