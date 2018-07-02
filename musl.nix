@@ -6,8 +6,8 @@ stdenv.mkDerivation ({
   src = fetchFromGitHub {
     owner = "WebGHC";
     repo = "musl";
-    rev = "03011add468f294f95cf0a03d2d7f1a45fe52e55";
-    sha256 = "0i3cdlspqbwpdbs13k7flhyz53r05zq2kr6w97qacq4ik1s7n9ww";
+    rev = "122fb45ac55ee634e734d82df141715f3c5fc6b1";
+    sha256 = "1w2vw2y0niafbw7zrbw17s5i8kp9h52fch7qfzy6zz4jggzd2c1s";
   };
 
   postInstall = ''

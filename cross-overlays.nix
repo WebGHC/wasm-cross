@@ -30,8 +30,8 @@ self: super: {
               then drv.src
               else self.buildPackages.fetchgit {
                 url = "https://github.com/WebGHC/ghc.git";
-                rev = "b1115e8e2aef9d0ef0b278a5b9cc82d8ddaf195b";
-                sha256 = "13n43hbxdwj134qgg7gdgyg69bbzjpj8w162bv0lbdm6rcjdpnmj";
+                rev = "895006cb628bd1a2434749d7f056c901f9c76af1";
+                sha256 = "1yaganq5rpvfnf75pn0g1ir3693j893agdpmmcpbcbv77z6rsadp";
                 preFetch = ''
                   export HOME=$(pwd)
                   git config --global url."git://github.com/WebGHC/packages-".insteadOf     git://github.com/WebGHC/packages/
