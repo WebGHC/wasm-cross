@@ -4,7 +4,9 @@ with import ./. {};
 let
   fromPkgs = pkgs: {
     inherit (pkgs.stdenv) cc;
-    inherit (pkgs) fib-example hello-example musl-cross;
+    inherit (pkgs) musl-cross;
+    fib-example = pkgs.fib-example.drv;
+    hello-example = pkgs.hello-example.drv;
     inherit (pkgs.haskell.packages.ghcHEAD) hello ghc;
   };
 in {
@@ -13,7 +15,11 @@ in {
   inherit (nixpkgs) binaryen cmake wabt webabi;
   inherit (nixpkgs.haskell.packages.ghcHEAD) ghc;
 
-  wasm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsWasm);
+  wasm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsWasm // {
+    inherit (nixpkgsWasm) fib-example hello-example;
+    fib-example-web = nixpkgsWasm.fib-example;
+    hello-example-web = nixpkgsWasm.hello-example;
+  });
   # rpi = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsRpi);
   arm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsArm);
 }
