@@ -19,6 +19,7 @@ in {
     inherit (nixpkgsWasm) fib-example hello-example;
     fib-example-web = nixpkgsWasm.fib-example;
     hello-example-web = nixpkgsWasm.hello-example;
+    haskell-example-web = nixpkgsWasm.haskell-example;
   });
   # rpi = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsRpi);
   arm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsArm);
