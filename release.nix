@@ -16,7 +16,6 @@ in {
   inherit (nixpkgs.haskell.packages.ghcHEAD) ghc;
 
   wasm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsWasm // {
-    inherit (nixpkgsWasm) fib-example hello-example;
     fib-example-web = nixpkgsWasm.fib-example;
     hello-example-web = nixpkgsWasm.hello-example;
     haskell-example-web = nixpkgsWasm.haskell-example;
