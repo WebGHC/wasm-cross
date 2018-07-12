@@ -1,14 +1,14 @@
-{ stdenv, fetchFromGitHub, cmake }:
+{ stdenv, fetchFromGitHub, cmake, python }:
 
 stdenv.mkDerivation {
   name = "binaryen";
   src = fetchFromGitHub {
     owner = "WebAssembly";
     repo = "binaryen";
-    rev = "e42e1e3d4a5c67c0c066fe397b456ab8d41a78fd";
-    sha256 = "038c244n7wdilzq3lmfpj7lahhd0ga7g0v238sh7hhjkjgd1rndf";
+    rev = "14ea9995281718b9694db4ed5441d44d1171e86f";
+    sha256 = "0hsh1ghma06qlq9xhz9lv1gs2ysgf0px5dfbrf24i2hlbfbcm7la";
   };
-  nativeBuildInputs = [ cmake ];
+  nativeBuildInputs = [ cmake python ];
 
   enableParallelBuilding = true;
 }
