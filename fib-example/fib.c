@@ -6,6 +6,6 @@ int fib(int n) {
   }
 }
 
-__attribute__((visibility("default"))) int main() {
+int main(int argc, char **argv) {
   return fib(10);
 }

@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-int main() {
+int main(int argc, char **argv) {
   printf("Hello, World!\n");
   sleep(2);
   volatile int *x;

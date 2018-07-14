@@ -29,7 +29,7 @@ in bootStages ++ [
     llvmPackages = toolPackages.llvmPackages_HEAD;
     ldFlags =
       if crossSystem.isWasm
-        then "--allow-undefined-file=${musl-cross}/lib/wasm.syms --export-all"
+        then "--allow-undefined-file=${musl-cross}/lib/wasm.syms"
         else null;
     mkClang = { libc ? null, ccFlags ? null, ldFlags ? null }: toolPackages.wrapCCWith {
       name = "clang-cross-wrapper";
