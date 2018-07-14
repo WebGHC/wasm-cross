@@ -16,7 +16,7 @@ self: super: {
           enableShared = false;
           enableRelocatedStaticLibs = false;
           enableIntegerSimple = true;
-          withTerminfo = false;
+          enableTerminfo = !crossSystem.isWasm;
           dontStrip = true;
           dontUseLibFFIForAdjustors = crossSystem.isWasm;
           disableFFI = crossSystem.isWasm;

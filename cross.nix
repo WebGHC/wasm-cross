@@ -70,8 +70,15 @@ in bootStages ++ [
     }; in x // {
       mkDerivation = args: x.mkDerivation (args // {
         hardeningDisable = args.hardeningDisable or []
-          ++ ["stackprotector"]
-          ++ toolPackages.lib.optional crossSystem.isWasm "pic";
+          ++ [
+            "stackprotector"
+
+            # These two cause arguments to be placed before the
+            # -flavor argument, but -flavor must be first. Since we
+            # statically link everything, these don't matter anyway.
+            "relro"
+            "bindnow"
+          ] ++ toolPackages.lib.optional crossSystem.isWasm "pic";
         dontDisableStatic = true;
         NIX_NO_SELF_RPATH=1;
         configureFlags =

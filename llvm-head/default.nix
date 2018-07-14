@@ -7,7 +7,7 @@
 , fetchurl
 , overrideCC
 , wrapCC
-, ccWrapperFun
+# , ccWrapperFun
 , buildTools
 , lib
 , runCommand
@@ -38,14 +38,14 @@ let
 
     clang = wrapCC tools.clang-unwrapped;
 
-    libcxxClang = ccWrapperFun {
-      cc = tools.clang-unwrapped;
-      isClang = true;
-      inherit (tools) stdenv;
-      /* FIXME is this right? */
-      inherit (stdenv.cc) libc nativeTools nativeLibc;
-      extraPackages = [ libraries.libcxx libraries.libcxxabi ];
-    };
+    # libcxxClang = ccWrapperFun {
+    #   cc = tools.clang-unwrapped;
+    #   isClang = true;
+    #   inherit (tools) stdenv;
+    #   /* FIXME is this right? */
+    #   inherit (stdenv.cc) libc nativeTools nativeLibc;
+    #   extraPackages = [ libraries.libcxx libraries.libcxxabi ];
+    # };
 
     stdenv = overrideCC stdenv tools.clang;
 
