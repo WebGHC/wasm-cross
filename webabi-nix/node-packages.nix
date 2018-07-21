@@ -47,8 +47,8 @@ let
     version = "0.0.1";
     src = fetchgit {
       url = "https://github.com/WebGHC/webabi.git";
-      rev = "92a2e1b5c34afb6870fb9f6bb26d57053cdd5f9a";
-      sha256 = "0jkkzc845vh10xg3kykmvlxlpxh5k0p36v0rrp87albdhw0j4v5x";
+      rev = "d17af4e52fe814b8befce1046dbd62fb62db9332";
+      sha256 = "02pfr993qkxmhmy11p4xq6c73nsilmjhh32m1bwqs8mlmkarjixk";
     };
     dependencies = [
       sources."async-2.6.1"
