@@ -81,10 +81,6 @@ in bootStages ++ [
           ] ++ toolPackages.lib.optional crossSystem.isWasm "pic";
         dontDisableStatic = true;
         NIX_NO_SELF_RPATH=1;
-        configureFlags =
-          (let flags = args.configureFlags or [];
-            in if builtins.isString flags then [flags] else flags)
-          ++ toolPackages.lib.optionals (!(args.dontConfigureStatic or false)) ["--enable-static" "--disable-shared"];
         dontStrip = true;
       });
       isStatic = true;
