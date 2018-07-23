@@ -57,10 +57,6 @@ self: super: {
             enableSharedLibraries = false;
             enableDeadCodeElimination = false;
             doHaddock = !crossSystem.isWasm;
-            configureFlags = args.configureFlags or [] ++
-              lib.optionals
-                crossSystem.isWasm
-                ["--ghc-option=-optl" "--ghc-option=-Wl,--export=main"];
           });
         });
       });
