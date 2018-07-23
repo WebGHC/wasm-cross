@@ -30,8 +30,8 @@ self: super: {
               then drv.src
               else self.buildPackages.fetchgit {
                 url = "https://github.com/WebGHC/ghc.git";
-                rev = "895006cb628bd1a2434749d7f056c901f9c76af1";
-                sha256 = "1yaganq5rpvfnf75pn0g1ir3693j893agdpmmcpbcbv77z6rsadp";
+                rev = "35a703dad585639021eb88acdaf117837078eb47";
+                sha256 = "1afx9y4648351g123kp8hkx74q0wbixh06x41gg6nrkmszdw8g6b";
                 preFetch = ''
                   export HOME=$(pwd)
                   git config --global url."git://github.com/WebGHC/packages-".insteadOf     git://github.com/WebGHC/packages/
@@ -49,8 +49,9 @@ self: super: {
           dontDisableStatic = true;
           NIX_NO_SELF_RPATH=1;
         });
-        overrides = self.lib.composeExtensions (drv.overrides or (_:_:{})) (self: super: {
-          mkDerivation = args: super.mkDerivation (args // {
+        overrides = self.lib.composeExtensions (drv.overrides or (_:_:{})) (hsSelf: hsSuper: {
+          primitive = self.haskell.lib.appendPatch hsSuper.primitive ./primitive.patch;
+          mkDerivation = args: hsSuper.mkDerivation (args // {
             dontStrip = true;
             enableSharedExecutables = false;
             enableSharedLibraries = false;
