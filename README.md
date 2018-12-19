@@ -5,7 +5,7 @@ wasm-cross
 primary focus on targeting WebAssembly. Currently, `wasm-cross` can be
 used to build "Hello, World!" C programs for
 `aarch64-unknown-linux-gnu`, Raspberry Pi, and
-`wasm32-unknown-uknown-wasm`. It can use GHC to cross compile Haskell
+`wasm32-unknown-unknown-wasm`. It can use GHC to cross compile Haskell
 to aarch64, and work is ongoing to cross compile Haskell to Raspberry
 Pi and WebAssembly.
 
