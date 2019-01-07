@@ -1,6 +1,4 @@
-{ lib
-, localSystem, crossSystem, config, overlays
-}:
+{ lib, crossSystem, ... }:
 
 self: super: {
   libiconvReal =
@@ -11,7 +9,7 @@ self: super: {
 
   haskell = let inherit (super) haskell; in haskell // {
     packages = haskell.packages // {
-      ghcHEAD = haskell.packages.ghcHEAD.override (drv: {
+      ghc863 = haskell.packages.ghc863.override (drv: {
         ghc = (drv.ghc.override {
           enableShared = false;
           enableRelocatedStaticLibs = false;
@@ -21,7 +19,6 @@ self: super: {
           dontUseLibFFIForAdjustors = crossSystem.isWasm;
           disableFFI = crossSystem.isWasm;
           useLLVM = true;
-          version = "8.5.20180424";
           buildLlvmPackages = self.buildPackages.llvmPackages_HEAD;
           llvmPackages = self.buildPackages.llvmPackages_HEAD;
         }).overrideAttrs (drv: {
