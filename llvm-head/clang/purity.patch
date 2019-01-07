@@ -1,149 +1,30 @@
-diff --git a/lib/Driver/ToolChains/DragonFly.cpp b/lib/Driver/ToolChains/DragonFly.cpp
-index 648469e4ce..1919dd8adc 100644
---- a/lib/Driver/ToolChains/DragonFly.cpp
-+++ b/lib/Driver/ToolChains/DragonFly.cpp
-@@ -68,10 +68,10 @@ void dragonfly::Linker::ConstructJob(Compilation &C, const JobAction &JA,
-       CmdArgs.push_back("-export-dynamic");
-     if (Args.hasArg(options::OPT_shared))
-       CmdArgs.push_back("-Bshareable");
--    else {
--      CmdArgs.push_back("-dynamic-linker");
--      CmdArgs.push_back("/usr/libexec/ld-elf.so.2");
--    }
-+    // else {
-+    //   CmdArgs.push_back("-dynamic-linker");
-+    //   CmdArgs.push_back("/usr/libexec/ld-elf.so.2");
-+    // }
-     CmdArgs.push_back("--hash-style=gnu");
-     CmdArgs.push_back("--enable-new-dtags");
-   }
-diff --git a/lib/Driver/ToolChains/FreeBSD.cpp b/lib/Driver/ToolChains/FreeBSD.cpp
-index 2f066cf0cc..49851c8717 100644
---- a/lib/Driver/ToolChains/FreeBSD.cpp
-+++ b/lib/Driver/ToolChains/FreeBSD.cpp
-@@ -153,10 +153,10 @@ void freebsd::Linker::ConstructJob(Compilation &C, const JobAction &JA,
-       CmdArgs.push_back("-export-dynamic");
-     if (Args.hasArg(options::OPT_shared)) {
-       CmdArgs.push_back("-Bshareable");
--    } else {
--      CmdArgs.push_back("-dynamic-linker");
--      CmdArgs.push_back("/libexec/ld-elf.so.1");
--    }
-+    } // else {
-+    //   CmdArgs.push_back("-dynamic-linker");
-+    //   CmdArgs.push_back("/libexec/ld-elf.so.1");
-+    // }
-     if (ToolChain.getTriple().getOSMajorVersion() >= 9) {
-       if (Arch == llvm::Triple::arm || Arch == llvm::Triple::sparc ||
-           Arch == llvm::Triple::x86 || Arch == llvm::Triple::x86_64) {
-diff --git a/lib/Driver/ToolChains/Fuchsia.cpp b/lib/Driver/ToolChains/Fuchsia.cpp
-index 10ee7b7829..73d397ea13 100644
---- a/lib/Driver/ToolChains/Fuchsia.cpp
-+++ b/lib/Driver/ToolChains/Fuchsia.cpp
-@@ -76,15 +76,15 @@ void fuchsia::Linker::ConstructJob(Compilation &C, const JobAction &JA,
-   else if (Args.hasArg(options::OPT_shared))
-     CmdArgs.push_back("-shared");
- 
--  if (!Args.hasArg(options::OPT_shared)) {
--    std::string Dyld = D.DyldPrefix;
--    if (ToolChain.getSanitizerArgs().needsAsanRt() &&
--        ToolChain.getSanitizerArgs().needsSharedRt())
--      Dyld += "asan/";
--    Dyld += "ld.so.1";
--    CmdArgs.push_back("-dynamic-linker");
--    CmdArgs.push_back(Args.MakeArgString(Dyld));
--  }
-+  // if (!Args.hasArg(options::OPT_shared)) {
-+  //   std::string Dyld = D.DyldPrefix;
-+  //   if (ToolChain.getSanitizerArgs().needsAsanRt() &&
-+  //       ToolChain.getSanitizerArgs().needsSharedRt())
-+  //     Dyld += "asan/";
-+  //   Dyld += "ld.so.1";
-+  //   CmdArgs.push_back("-dynamic-linker");
-+  //   CmdArgs.push_back(Args.MakeArgString(Dyld));
-+  // }
- 
-   CmdArgs.push_back("-o");
-   CmdArgs.push_back(Output.getFilename());
+From 4add81bba40dcec62c4ea4481be8e35ac53e89d8 Mon Sep 17 00:00:00 2001
+From: Will Dietz <w@wdtz.org>
+Date: Thu, 18 May 2017 11:56:12 -0500
+Subject: [PATCH] "purity" patch for 5.0
+
+---
+ lib/Driver/ToolChains/Gnu.cpp | 7 -------
+ 1 file changed, 7 deletions(-)
+
 diff --git a/lib/Driver/ToolChains/Gnu.cpp b/lib/Driver/ToolChains/Gnu.cpp
-index 08282ff003..80ee368e40 100644
+index fe3c0191bb..c6a482bece 100644
 --- a/lib/Driver/ToolChains/Gnu.cpp
 +++ b/lib/Driver/ToolChains/Gnu.cpp
-@@ -382,12 +382,12 @@ void tools::gnutools::Linker::ConstructJob(Compilation &C, const JobAction &JA,
+@@ -494,13 +494,6 @@ void tools::gnutools::Linker::ConstructJob(Compilation &C, const JobAction &JA,
+   if (!Args.hasArg(options::OPT_static)) {
      if (Args.hasArg(options::OPT_rdynamic))
        CmdArgs.push_back("-export-dynamic");
- 
+-
 -    if (!Args.hasArg(options::OPT_shared)) {
 -      const std::string Loader =
 -          D.DyldPrefix + ToolChain.getDynamicLinker(Args);
 -      CmdArgs.push_back("-dynamic-linker");
 -      CmdArgs.push_back(Args.MakeArgString(Loader));
 -    }
-+    // if (!Args.hasArg(options::OPT_shared)) {
-+    //   const std::string Loader =
-+    //       D.DyldPrefix + ToolChain.getDynamicLinker(Args);
-+    //   CmdArgs.push_back("-dynamic-linker");
-+    //   CmdArgs.push_back(Args.MakeArgString(Loader));
-+    // }
    }
  
    CmdArgs.push_back("-o");
-diff --git a/lib/Driver/ToolChains/NetBSD.cpp b/lib/Driver/ToolChains/NetBSD.cpp
-index c2c9007af6..78a0f6e9e8 100644
---- a/lib/Driver/ToolChains/NetBSD.cpp
-+++ b/lib/Driver/ToolChains/NetBSD.cpp
-@@ -126,11 +126,11 @@ void netbsd::Linker::ConstructJob(Compilation &C, const JobAction &JA,
-       CmdArgs.push_back("-export-dynamic");
-     if (Args.hasArg(options::OPT_shared)) {
-       CmdArgs.push_back("-Bshareable");
--    } else {
--      Args.AddAllArgs(CmdArgs, options::OPT_pie);
--      CmdArgs.push_back("-dynamic-linker");
--      CmdArgs.push_back("/libexec/ld.elf_so");
--    }
-+    } // else {
-+    //   Args.AddAllArgs(CmdArgs, options::OPT_pie);
-+    //   CmdArgs.push_back("-dynamic-linker");
-+    //   CmdArgs.push_back("/libexec/ld.elf_so");
-+    // }
-   }
- 
-   // Many NetBSD architectures support more than one ABI.
-diff --git a/lib/Driver/ToolChains/OpenBSD.cpp b/lib/Driver/ToolChains/OpenBSD.cpp
-index fbb84a62ca..aa85a0fa90 100644
---- a/lib/Driver/ToolChains/OpenBSD.cpp
-+++ b/lib/Driver/ToolChains/OpenBSD.cpp
-@@ -127,10 +127,10 @@ void openbsd::Linker::ConstructJob(Compilation &C, const JobAction &JA,
-     CmdArgs.push_back("-Bdynamic");
-     if (Args.hasArg(options::OPT_shared)) {
-       CmdArgs.push_back("-shared");
--    } else {
--      CmdArgs.push_back("-dynamic-linker");
--      CmdArgs.push_back("/usr/libexec/ld.so");
--    }
-+    } // else {
-+    //   CmdArgs.push_back("-dynamic-linker");
-+    //   CmdArgs.push_back("/usr/libexec/ld.so");
-+    // }
-   }
- 
-   if (Args.hasArg(options::OPT_pie))
-diff --git a/lib/Driver/ToolChains/PS4CPU.cpp b/lib/Driver/ToolChains/PS4CPU.cpp
-index b37fe7d1f9..dd548a7ade 100644
---- a/lib/Driver/ToolChains/PS4CPU.cpp
-+++ b/lib/Driver/ToolChains/PS4CPU.cpp
-@@ -167,10 +167,10 @@ static void ConstructGoldLinkJob(const Tool &T, Compilation &C,
-     CmdArgs.push_back("--eh-frame-hdr");
-     if (Args.hasArg(options::OPT_shared)) {
-       CmdArgs.push_back("-Bshareable");
--    } else {
--      CmdArgs.push_back("-dynamic-linker");
--      CmdArgs.push_back("/libexec/ld-elf.so.1");
--    }
-+    } // else {
-+    //   CmdArgs.push_back("-dynamic-linker");
-+    //   CmdArgs.push_back("/libexec/ld-elf.so.1");
-+    // }
-     CmdArgs.push_back("--enable-new-dtags");
-   }
- 
+-- 
+2.11.0
+

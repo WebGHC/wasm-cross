@@ -29,7 +29,7 @@ let
 
   sources = callLibrary ./sources.nix {};
 
-  release_version = "7.0.0";
+  release_version = "8.0.0";
 
   tools = {
     llvm = callTool ./llvm.nix {};
@@ -64,18 +64,14 @@ let
       strip = buildPackages.writeShellScriptBin "strip" "true";
     in with tools; runCommand "llvm-binutils-${release_version}" { preferLocalBuild = true; } (''
       mkdir -p $out/bin
-      # for prog in ${lld}/bin/*; do
-      #   ln -s $prog $out/bin/${prefix}$(basename $prog)
-      # done
+      for prog in ${lld}/bin/*; do
+        ln -s $prog $out/bin/${prefix}$(basename $prog)
+      done
       for prog in ${llvm}/bin/*; do
         ln -s $prog $out/bin/${prefix}$(echo $(basename $prog) | sed -e "s|llvm-||")
       done
 
       rm $out/bin/${prefix}cat
-
-      ln -s ${lld}/bin/lld $out/bin/${prefix}ld
-      # ln -s ${lld}/bin/lld $out/bin/${prefix}ld.lld
-      # ln -s ${lld}/bin/lld $out/bin/${prefix}lld
     '' + lib.optionalString targetPlatform.isWasm ''
       # llvm-strip doesn't work on wasm
       rm $out/bin/${prefix}strip
