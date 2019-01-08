@@ -69,9 +69,11 @@ let
       done
       for prog in ${llvm}/bin/*; do
         ln -s $prog $out/bin/${prefix}$(echo $(basename $prog) | sed -e "s|llvm-||")
+        ln -sf $prog $out/bin/${prefix}$(basename $prog)
       done
 
       rm $out/bin/${prefix}cat
+      ln -s ${lld}/bin/lld $out/bin/${prefix}ld
     '' + lib.optionalString targetPlatform.isWasm ''
       # llvm-strip doesn't work on wasm
       rm $out/bin/${prefix}strip

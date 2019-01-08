@@ -48,10 +48,6 @@ in bootStages ++ [
         # We don't yet support C++
         # https://github.com/WebGHC/wasm-cross/issues/1
         echo "-target ${crossSystem.config} -nostdlib++" >> $out/nix-support/cc-cflags
-        # Clang's wasm backend assumes the presence of a working
-        # lld (optionally with prefix). We symlink it here to get
-        # a wrapper version.
-        ln -s $out/bin/${prefix}ld $out/bin/${prefix}lld
       '' + toolPackages.lib.optionalString (ccFlags != null) ''
         echo "${ccFlags}" >> $out/nix-support/cc-cflags
       '' + toolPackages.lib.optionalString (ldFlags != null) ''

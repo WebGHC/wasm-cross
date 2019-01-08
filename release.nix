@@ -13,9 +13,9 @@ in {
   inherit (nixpkgs.llvmPackages_HEAD) llvm clang clang-unwrapped compiler-rt
     lld lldb llvm-binutils; # libcxx libcxx-headers libcxxabi libunwind
   inherit (nixpkgs) binaryen cmake wabt webabi;
-  inherit (nixpkgs.haskell.packages.ghc863) ghc;
 
   wasm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsWasm // {
+    inherit (nixpkgsWasm.haskell.packages.ghcWasm) hello ghc;
     fib-example-web = nixpkgsWasm.fib-example;
     hello-example-web = nixpkgsWasm.hello-example;
     haskell-example-web = nixpkgsWasm.haskell-example;

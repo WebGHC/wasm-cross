@@ -7,7 +7,7 @@
 
       hello-example = self.callPackage ./hello-example {};
 
-      haskell-example = self.build-wasm-app ./hello-example/www self.haskell.packages.ghc863.hello;
+      haskell-example = self.build-wasm-app ./hello-example/www self.haskell.packages.ghcWasm.hello;
 
       llvmPackages_HEAD = self.callPackage ./llvm-head {
         buildTools = self.buildPackages.llvmPackages_HEAD;
