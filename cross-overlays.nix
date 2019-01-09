@@ -1,4 +1,4 @@
-{ lib, crossSystem, ... }:
+haskellProfiling: { lib, crossSystem, ... }:
 
 self: super: {
   libiconvReal =
@@ -50,6 +50,8 @@ self: super: {
             enableSharedLibraries = false;
             enableDeadCodeElimination = false;
             doHaddock = !crossSystem.isWasm;
+            doCheck = !crossSystem.isWasm;
+            enableLibraryProfiling = haskellProfiling;
           });
         });
       });

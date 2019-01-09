@@ -1,4 +1,4 @@
-{ debugLlvm ? false }:
+{ debugLlvm ? false, haskellProfiling ? false }:
 
 (import ./nixpkgs {}).lib.makeExtensible (project: {
   nixpkgsArgs = {
@@ -36,7 +36,7 @@
     })];
   };
   nixpkgsCrossArgs = project.nixpkgsArgs // {
-    stdenvStages = import ./cross.nix;
+    stdenvStages = import ./cross.nix haskellProfiling;
   };
 
   nixpkgs = import ./nixpkgs project.nixpkgsArgs;

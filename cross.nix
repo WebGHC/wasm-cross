@@ -1,3 +1,5 @@
+haskellProfiling:
+
 { lib
 , localSystem, crossSystem, config, overlays, crossOverlays ? []
 } @ args:
@@ -124,7 +126,7 @@ in bootStages ++ [
       (self: super: {
         inherit compiler-rt musl-cross clangCross-noLibc clangCross-noCompilerRt clangCross;
       })
-      (import ./cross-overlays.nix args)
+      (import ./cross-overlays.nix haskellProfiling args)
     ];
     selfBuild = false;
     stdenv = mkStdenv clangCross;
