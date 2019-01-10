@@ -7,7 +7,7 @@ let
     inherit (pkgs) musl-cross;
     fib-example = pkgs.fib-example.drv;
     hello-example = pkgs.hello-example.drv;
-    inherit (pkgs.haskell.packages.ghc863) hello ghc;
+    inherit (pkgs.haskell.packages.integer-simple.ghc863) hello ghc;
   };
 in {
   inherit (nixpkgs.llvmPackages_HEAD) llvm clang clang-unwrapped compiler-rt
@@ -19,7 +19,7 @@ in {
     fib-example-web = nixpkgsWasm.fib-example;
     hello-example-web = nixpkgsWasm.hello-example;
     haskell-example-web = nixpkgsWasm.haskell-example;
-    primitive = nixpkgsWasm.haskell.packages.ghc863.primitive;
+    primitive = nixpkgsWasm.haskell.packages.ghcWasm.primitive;
   });
   # rpi = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsRpi);
   arm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsArm);
