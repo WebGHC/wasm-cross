@@ -1,6 +1,4 @@
-{ lib
-, localSystem, crossSystem, config, overlays
-}:
+haskellProfiling: { lib, crossSystem, ... }:
 
 self: super: {
   libiconvReal =
@@ -11,8 +9,8 @@ self: super: {
 
   haskell = let inherit (super) haskell; in haskell // {
     packages = haskell.packages // {
-      ghcHEAD = haskell.packages.ghcHEAD.override (drv: {
-        ghc = (drv.ghc.override {
+      ghcWasm = haskell.packages.ghc863.override (drv: {
+        ghc = (self.buildPackages.haskell.compiler.ghcHEAD.override {
           enableShared = false;
           enableRelocatedStaticLibs = false;
           enableIntegerSimple = true;
@@ -20,27 +18,22 @@ self: super: {
           dontStrip = true;
           dontUseLibFFIForAdjustors = crossSystem.isWasm;
           disableFFI = crossSystem.isWasm;
+          version = "8.6.3";
           useLLVM = true;
-          version = "8.5.20180424";
           buildLlvmPackages = self.buildPackages.llvmPackages_HEAD;
           llvmPackages = self.buildPackages.llvmPackages_HEAD;
         }).overrideAttrs (drv: {
-          src =
-            if !(crossSystem.isWasm)
-              then drv.src
-              else self.buildPackages.fetchgit {
-                url = "https://github.com/WebGHC/ghc.git";
-                rev = "35a703dad585639021eb88acdaf117837078eb47";
-                sha256 = "1afx9y4648351g123kp8hkx74q0wbixh06x41gg6nrkmszdw8g6b";
-                preFetch = ''
-                  export HOME=$(pwd)
-                  git config --global url."git://github.com/WebGHC/packages-".insteadOf     git://github.com/WebGHC/packages/
-                  git config --global url."http://github.com/WebGHC/packages-".insteadOf    http://github.com/WebGHC/packages/
-                  git config --global url."https://github.com/WebGHC/packages-".insteadOf   https://github.com/WebGHC/packages/
-                  git config --global url."ssh://git@github.com/WebGHC/packages-".insteadOf ssh://git@github.com/WebGHC/packages/
-                  git config --global url."git@github.com:WebGHC/packages-".insteadOf       git@github.com:WebGHC/packages/
-                '';
-              };
+          nativeBuildInputs = drv.nativeBuildInputs or [] ++ [self.buildPackages.autoreconfHook];
+          src = self.buildPackages.fetchgit {
+            url = "https://github.com/WebGHC/ghc.git";
+            rev = "9af15622eead357865f33eb1945bd2fe3da70c90";
+            sha256 = "08xzlasdv14hhfdszk7khjlhjifpzdlc1fybaiwgik3nrhphlkjf";
+            fetchSubmodules = true;
+            preFetch = ''
+              export HOME=$(pwd)
+              git config --global url."https://github.com/WebGHC/packages-".insteadOf   https://github.com/WebGHC/packages/
+            '';
+          };
           # Use this to test nix-build on your local GHC checkout.
           # src = lib.cleanSource ./ghc;
           hardeningDisable = drv.hardeningDisable or []
@@ -57,6 +50,8 @@ self: super: {
             enableSharedLibraries = false;
             enableDeadCodeElimination = false;
             doHaddock = !crossSystem.isWasm;
+            doCheck = !crossSystem.isWasm;
+            enableLibraryProfiling = haskellProfiling;
           });
         });
       });

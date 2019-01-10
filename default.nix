@@ -1,4 +1,4 @@
-{ debugLlvm ? false }:
+{ debugLlvm ? false, haskellProfiling ? false }:
 
 (import ./nixpkgs {}).lib.makeExtensible (project: {
   nixpkgsArgs = {
@@ -7,7 +7,7 @@
 
       hello-example = self.callPackage ./hello-example {};
 
-      haskell-example = self.build-wasm-app ./hello-example/www self.haskell.packages.ghcHEAD.hello;
+      haskell-example = self.build-wasm-app ./hello-example/www self.haskell.packages.ghcWasm.hello;
 
       llvmPackages_HEAD = self.callPackage ./llvm-head {
         buildTools = self.buildPackages.llvmPackages_HEAD;
@@ -36,7 +36,7 @@
     })];
   };
   nixpkgsCrossArgs = project.nixpkgsArgs // {
-    stdenvStages = import ./cross.nix;
+    stdenvStages = import ./cross.nix haskellProfiling;
   };
 
   nixpkgs = import ./nixpkgs project.nixpkgsArgs;

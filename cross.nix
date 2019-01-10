@@ -1,5 +1,7 @@
+haskellProfiling:
+
 { lib
-, localSystem, crossSystem, config, overlays
+, localSystem, crossSystem, config, overlays, crossOverlays ? []
 } @ args:
 
 assert crossSystem != null;
@@ -7,7 +9,10 @@ assert crossSystem != null;
 let
   bootStages = import "${(import ./nixpkgs {}).path}/pkgs/stdenv" {
     inherit lib localSystem overlays;
-    crossSystem = null;
+
+    crossSystem = localSystem;
+    crossOverlays = [];
+
     # Ignore custom stdenvs when cross compiling for compatability
     config = builtins.removeAttrs config [ "replaceStdenv" ];
   };
@@ -18,9 +23,11 @@ in bootStages ++ [
   (vanillaPackages: {
     inherit config overlays;
     selfBuild = false;
-    stdenv = vanillaPackages.stdenv.override (oldStdenv: {
-      targetPlatform = crossSystem;
-    });
+    stdenv =
+      assert vanillaPackages.stdenv.buildPlatform == localSystem;
+      assert vanillaPackages.stdenv.hostPlatform == localSystem;
+      assert vanillaPackages.stdenv.targetPlatform == localSystem;
+      vanillaPackages.stdenv.override { targetPlatform = crossSystem; };
   })
 
   # Run Packages
@@ -43,10 +50,6 @@ in bootStages ++ [
         # We don't yet support C++
         # https://github.com/WebGHC/wasm-cross/issues/1
         echo "-target ${crossSystem.config} -nostdlib++" >> $out/nix-support/cc-cflags
-        # Clang's wasm backend assumes the presence of a working
-        # lld (optionally with prefix). We symlink it here to get
-        # a wrapper version.
-        ln -s $out/bin/${prefix}ld $out/bin/${prefix}lld
       '' + toolPackages.lib.optionalString (ccFlags != null) ''
         echo "${ccFlags}" >> $out/nix-support/cc-cflags
       '' + toolPackages.lib.optionalString (ldFlags != null) ''
@@ -61,13 +64,13 @@ in bootStages ++ [
         echo "-mthread-model ${crossSystem.thread-model}" >> $out/nix-support/cc-cflags
       '';
     };
-    mkStdenv = cc: let x = toolPackages.makeStdenvCross {
-      inherit (toolPackages) stdenv;
+    mkStdenv = cc: let x = toolPackages.stdenv.override (old: {
       buildPlatform = localSystem;
       hostPlatform = crossSystem;
       targetPlatform = crossSystem;
       inherit cc;
-    }; in x // {
+      allowedRequisites = null;
+    }); in x // {
       mkDerivation = args: x.mkDerivation (args // {
         hardeningDisable = args.hardeningDisable or []
           ++ [
@@ -119,11 +122,11 @@ in bootStages ++ [
     };
   in {
     inherit config;
-    overlays = overlays ++ [
+    overlays = overlays ++ crossOverlays ++ [
       (self: super: {
         inherit compiler-rt musl-cross clangCross-noLibc clangCross-noCompilerRt clangCross;
       })
-      (import ./cross-overlays.nix args)
+      (import ./cross-overlays.nix haskellProfiling args)
     ];
     selfBuild = false;
     stdenv = mkStdenv clangCross;
