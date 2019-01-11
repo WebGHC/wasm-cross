@@ -42,8 +42,24 @@ self: super: {
           dontDisableStatic = true;
           NIX_NO_SELF_RPATH=1;
         });
-        overrides = self.lib.composeExtensions (drv.overrides or (_:_:{})) (hsSelf: hsSuper: {
-          primitive = self.haskell.lib.appendPatch hsSuper.primitive ./primitive.patch;
+        overrides = self.lib.composeExtensions (drv.overrides or (_:_:{})) (hsSelf: hsSuper: let haskellLib = self.haskell.lib; in {
+          primitive = haskellLib.appendPatch hsSuper.primitive ./primitive.patch;
+
+          ref-tf = haskellLib.doJailbreak hsSuper.ref-tf;
+          jsaddle = hsSelf.callCabal2nix "jsaddle" (builtins.fetchGit https://github.com/ghcjs/jsaddle + /jsaddle) {};
+          jsaddle-wasm = hsSelf.callCabal2nix "jsaddle-wasm" (builtins.fetchGit https://github.com/WebGHC/jsaddle-wasm) {};
+          jsaddle-dom = hsSelf.callCabal2nix "jsaddle-dom" (builtins.fetchGit https://github.com/ghcjs/jsaddle-dom) {};
+
+          reflex = hsSelf.callPackage (builtins.fetchGit https://github.com/reflex-frp/reflex) { useTemplateHaskell = false; };
+          reflex-dom-core =
+            haskellLib.appendConfigureFlag
+              (hsSelf.callPackage (builtins.fetchGit { url = https://github.com/reflex-frp/reflex-dom; ref = "wasm-8.6.3"; } + /reflex-dom-core) {})
+              "-f-use-template-haskell";
+          reflex-todomvc =
+            haskellLib.appendConfigureFlag
+              (hsSelf.callPackage (builtins.fetchGit { url = https://github.com/reflex-frp/reflex-todomvc; ref = "wasm-8.6.3"; }) {})
+              "-fwasm";
+
           mkDerivation = args: hsSuper.mkDerivation (args // {
             dontStrip = true;
             enableSharedExecutables = false;

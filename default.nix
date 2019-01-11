@@ -8,6 +8,8 @@
       hello-example = self.callPackage ./hello-example {};
 
       haskell-example = self.build-wasm-app ./hello-example/www self.haskell.packages.ghcWasm.hello;
+      jsaddle-example = self.build-wasm-app ./hello-example/www self.haskell.packages.ghcWasm.jsaddle-wasm;
+      reflex-example = self.build-wasm-app ./hello-example/www self.haskell.packages.ghcWasm.reflex-todomvc;
 
       llvmPackages_HEAD = self.callPackage ./llvm-head {
         buildTools = self.buildPackages.llvmPackages_HEAD;
