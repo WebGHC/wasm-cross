@@ -20,7 +20,7 @@
       webabi = self.callPackage ./webabi-nix {};
 
       webghc-runner = self.writeShellScriptBin "webghc-runner" ''
-        exec ${self.nodejs-8_x}/bin/node ${self.webabi}/lib/node_modules/webabi/run_node.js "$@"
+        exec ${self.nodejs-8_x}/bin/node ${self.webabi}/lib/node_modules/webabi/build/node_runner.js "$@"
       '';
 
       build-wasm-app = exeName: drv: self.buildEnv {
