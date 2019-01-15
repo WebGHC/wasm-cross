@@ -1,7 +1,8 @@
 {}:
 
-with import ./. {};
+with import ./. { overlays = [(import ./haskell-examples)]; };
 let
+  inherit (nixpkgs) lib;
   fromPkgs = pkgs: {
     inherit (pkgs.stdenv) cc;
     inherit (pkgs) musl-cross;
@@ -23,4 +24,9 @@ in {
   });
   # rpi = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsRpi);
   arm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsArm);
+
+  examples = nixpkgs.recurseIntoAttrs {
+    inherit (nixpkgsWasm.examples) wasm;
+    inherit (nixpkgs.examples) ghcjs;
+  };
 }
