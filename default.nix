@@ -7,7 +7,7 @@
 
       hello-example = self.callPackage ./hello-example {};
 
-      haskell-example = self.build-wasm-app ./hello-example/www self.haskell.packages.ghcWasm.hello;
+      haskell-example = self.build-wasm-app "hello" self.haskell.packages.ghcWasm.hello;
 
       llvmPackages_HEAD = self.callPackage ./llvm-head {
         buildTools = self.buildPackages.llvmPackages_HEAD;
@@ -23,12 +23,17 @@
         exec ${self.nodejs-8_x}/bin/node ${self.webabi}/lib/node_modules/webabi/run_node.js "$@"
       '';
 
-      build-wasm-app = www: drv: self.buildEnv {
-        name = "wasm-app-${drv.name}";
+      build-wasm-app = exeName: drv: self.buildEnv {
+        name = "wasm-app-${exeName}";
         paths = [
-          www
-          "${self.buildPackages.buildPackages.webabi}/lib/node_modules/webabi"
+          "${self.buildPackages.buildPackages.webabi}/lib/node_modules/webabi/build"
+          "${self.buildPackages.buildPackages.webabi}/lib/node_modules/webabi/jsaddleJS"
           "${drv}/bin"
+          (self.runCommand "${exeName}-html" {} ''
+            mkdir -p $out
+            substitute ${self.buildPackages.buildPackages.webabi}/lib/node_modules/webabi/www/index.html \
+              $out/index.html --replace jsaddle-wasm-test.wasm ${exeName}
+          '')
         ];
 
         passthru = { inherit drv; };
