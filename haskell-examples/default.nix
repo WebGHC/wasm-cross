@@ -87,7 +87,7 @@ let
     _2048.ename = "2048";
     flatris.pname = "miso";
     mario.pname = "miso";
-    mario.assets = ["imgs"];
+    mario.assets = ["examples/mario/imgs"];
     simple.pname = "miso";
     todo-mvc.pname = "miso";
   };
