@@ -1,4 +1,4 @@
-{ debugLlvm ? false, haskellProfiling ? false }:
+{ debugLlvm ? false, haskellProfiling ? false, overlays ? [] }:
 
 (import ./nixpkgs {}).lib.makeExtensible (project: {
   nixpkgsArgs = {
@@ -33,7 +33,7 @@
 
         passthru = { inherit drv; };
       };
-    })];
+    })] ++ overlays;
   };
   nixpkgsCrossArgs = project.nixpkgsArgs // {
     stdenvStages = import ./cross.nix haskellProfiling;
