@@ -1,4 +1,4 @@
-{ lib, xorg, buildPackages, runCommand }:
+{ lib, buildPackages, runCommand }:
 
 let
   indexHtml = { ename, scripts, styles }: builtins.toFile "index.html" ''
@@ -15,7 +15,7 @@ let
         <script>
           var jsaddleVals = jsaddleJsInit();
           const worker = new Worker("worker_runner.js");
-          worker.postMessage({ url: "${ename}"
+          worker.postMessage({ url: "${ename}-opt"
                              , jsaddleVals: jsaddleVals }
                              , [jsaddleVals.jsaddleListener]);
         </script>
@@ -24,7 +24,7 @@ let
   '';
 
 in { ename, pkg, assets ? [], scripts ? [], styles ? [] }: runCommand "wasm-app-${ename}" {
-  nativeBuildInputs = [ xorg.lndir ];
+  nativeBuildInputs = [ buildPackages.xorg.lndir buildPackages.binaryen ];
   passthru = { inherit pkg; };
 } ''
   mkdir -p $out
@@ -33,4 +33,5 @@ in { ename, pkg, assets ? [], scripts ? [], styles ? [] }: runCommand "wasm-app-
   ln -s ${pkg}/bin/${ename} $out/
   ${lib.concatMapStringsSep "\n" (a: "ln -s ${a} $out/") assets}
   ln -s ${indexHtml { inherit ename scripts styles; }} $out/index.html
+  wasm-opt -Oz $out/${ename} -o $out/${ename}-opt
 ''

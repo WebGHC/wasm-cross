@@ -108,23 +108,21 @@ let
     <html>
       <head>
         ${lib.concatMapStrings (s: "<link href=\"${s}\" type=\"text/css\" rel=\"stylesheet\">") styles}
-        <script language="javascript" src="rts.js"></script>
-        <script language="javascript" src="lib.js"></script>
-        <script language="javascript" src="out.js"></script>
       </head>
       <body>
       </body>
-      <script language="javascript" src="runmain.js" defer></script>
+      <script language="javascript" src="all.adv.min.js" defer></script>
     </html>
   '';
 
   toGhcjs = name: { pname, assets ? [], ename ? name, scripts ? [], styles ? [] }:
     let pkg = ghcjsHaskellPackages.${pname};
-    in pkgs.runCommand "ghcjs-app-${ename}" { nativeBuildInputs = [pkgs.xorg.lndir]; } ''
+    in pkgs.runCommand "ghcjs-app-${ename}" { nativeBuildInputs = [pkgs.xorg.lndir pkgs.closurecompiler]; } ''
       mkdir -p $out
       lndir ${pkg}/bin/${ename}.jsexe $out
       ln -s ${lib.concatStringsSep " " assets} $out/
       ln -fs ${ghcjsIndexHtml styles} $out/index.html
+      closure-compiler $out/all.js --compilation_level=ADVANCED_OPTIMIZATIONS --jscomp_off=checkVars --externs=$out/all.js.externs > $out/all.adv.min.js
     '';
 
 in {
