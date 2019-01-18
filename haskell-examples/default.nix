@@ -74,39 +74,57 @@ let
   wasmHaskellPackages = pkgs.haskell.packages.ghcWasm.extend (extensions true);
   ghcjsHaskellPackages = pkgs.haskell.packages.ghcjs86.extend (extensions false);
 
-  examples = {
+  reflexExamples = {
     keyboard.pname = "Keyboard";
     draganddrop.pname = "draganddrop";
-    draganddrop.assets = ["arduino.jpg"];
+    draganddrop.assets = ["${reflex-examples-src}/drag-and-drop/arduino.jpg"];
     reflex-todomvc.pname = "reflex-todomvc";
     nasapod.pname = "nasapod";
     othello.pname = "othello";
     fileinput.pname = "fileinput";
-
+  };
+  misoExamples = {
     _2048.pname = "miso";
     _2048.ename = "2048";
+    _2048.assets = [(pkgs.runCommand "2048-css" {nativeBuildInputs=[pkgs.buildPackages.sass];} "mkdir -p $out && sass ${miso-src}/examples/2048/static/main.scss $out/main.css" + /main.css)];
+    _2048.styles = ["main.css"];
     flatris.pname = "miso";
     mario.pname = "miso";
-    mario.assets = ["examples/mario/imgs"];
+    mario.assets = ["${miso-src}/examples/mario/imgs"];
     simple.pname = "miso";
     todo-mvc.pname = "miso";
   };
+  examples = reflexExamples // lib.mapAttrs (n: e: e // {
+    assets = e.assets or [] ++ ["${miso-src}/jsbits"];
+    scripts = e.scripts or [] ++ ["jsbits/delegate.js" "jsbits/diff.js" "jsbits/isomorphic.js" "jsbits/util.js"];
+  }) misoExamples;
 
-  toWasm = name: { pname, assets ? [], ename ? name }:
+  toWasm = name: { pname, assets ? [], ename ? name, scripts ? [], styles ? [] }:
     let pkg = wasmHaskellPackages.${pname};
-    in (pkgs.build-wasm-app ename pkg).overrideAttrs (old: {
-      buildCommand = ''
-        ${old.buildCommand}
-        ln -s ${lib.concatMapStringsSep " " (f: "${pkg.src}/${f}") assets} $out/
-      '';
-    });
+    in pkgs.build-wasm-app { inherit ename pkg assets scripts styles; };
 
-  toGhcjs = name: { pname, assets ? [], ename ? name }:
+  ghcjsIndexHtml = styles: builtins.toFile "index.html" ''
+    <!DOCTYPE html>
+    <html>
+      <head>
+        ${lib.concatMapStrings (s: "<link href=\"${s}\" type=\"text/css\" rel=\"stylesheet\">") styles}
+        <script language="javascript" src="rts.js"></script>
+        <script language="javascript" src="lib.js"></script>
+        <script language="javascript" src="out.js"></script>
+      </head>
+      <body>
+      </body>
+      <script language="javascript" src="runmain.js" defer></script>
+    </html>
+  '';
+
+  toGhcjs = name: { pname, assets ? [], ename ? name, scripts ? [], styles ? [] }:
     let pkg = ghcjsHaskellPackages.${pname};
     in pkgs.runCommand "ghcjs-app-${ename}" { nativeBuildInputs = [pkgs.xorg.lndir]; } ''
       mkdir -p $out
       lndir ${pkg}/bin/${ename}.jsexe $out
-      ln -s ${lib.concatMapStringsSep " " (f: "${pkg.src}/${f}") assets} $out/
+      ln -s ${lib.concatStringsSep " " assets} $out/
+      ln -fs ${ghcjsIndexHtml styles} $out/index.html
     '';
 
 in {
