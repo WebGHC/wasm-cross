@@ -6,8 +6,8 @@ let
   fromPkgs = pkgs: {
     inherit (pkgs.stdenv) cc;
     inherit (pkgs) musl-cross;
-    fib-example = pkgs.fib-example.drv;
-    hello-example = pkgs.hello-example.drv;
+    fib-example = pkgs.fib-example.pkg;
+    hello-example = pkgs.hello-example.pkg;
     inherit (pkgs.haskell.packages.integer-simple.ghc863) hello ghc;
   };
 in {
