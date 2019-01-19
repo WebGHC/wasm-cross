@@ -117,12 +117,12 @@ let
 
   toGhcjs = name: { pname, assets ? [], ename ? name, scripts ? [], styles ? [] }:
     let pkg = ghcjsHaskellPackages.${pname};
-    in pkgs.runCommand "ghcjs-app-${ename}" { nativeBuildInputs = [pkgs.xorg.lndir pkgs.closurecompiler]; } ''
+    in pkgs.runCommand "ghcjs-app-${ename}" { nativeBuildInputs = [pkgs.xorg.lndir pkgs.closurecompiler pkgs.gzip]; } ''
       mkdir -p $out
       lndir ${pkg}/bin/${ename}.jsexe $out
       ln -s ${lib.concatStringsSep " " assets} $out/
       ln -fs ${ghcjsIndexHtml styles} $out/index.html
-      closure-compiler $out/all.js --compilation_level=ADVANCED_OPTIMIZATIONS --jscomp_off=checkVars --externs=$out/all.js.externs > $out/all.adv.min.js
+      closure-compiler $out/all.js ${lib.optionalString (pname != "miso") "--compilation_level=ADVANCED_OPTIMIZATIONS --jscomp_off=checkVars --externs=$out/all.js.externs"} | tee $out/all.adv.min.js | gzip > $out/all.adv.min.js.gz
     '';
 
 in {

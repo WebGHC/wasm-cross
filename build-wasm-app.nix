@@ -34,4 +34,5 @@ in { ename, pkg, assets ? [], scripts ? [], styles ? [] }: runCommand "wasm-app-
   ${lib.concatMapStringsSep "\n" (a: "ln -s ${a} $out/") assets}
   ln -s ${indexHtml { inherit ename scripts styles; }} $out/index.html
   wasm-opt -Oz $out/${ename} -o $out/${ename}-opt
+  gzip -c $out/${ename}-opt > $out/${ename}-opt.gz
 ''
