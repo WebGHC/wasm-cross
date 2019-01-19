@@ -1,4 +1,4 @@
 import (builtins.fetchTarball {
-  url = https://github.com/WebGHC/nixpkgs/archive/ac4f980f897391e94df587cb74766c4407562a83.tar.gz;
-  sha256 = "01nignzgyd95rs7ia6gc3rgxn9bk467ydf38b3fg9m1qxic94qcx";
+  url = https://github.com/WebGHC/nixpkgs/archive/b57b10d243afe32b2d43d10b45ee1c34252e526b.tar.gz;
+  sha256 = "0bf39y7i7bvawn2y2bjnfx7hympa79v6jv2yi7hdm27srln0bg1z";
 })
