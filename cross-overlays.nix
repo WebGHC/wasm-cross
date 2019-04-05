@@ -26,8 +26,8 @@ self: super: {
           nativeBuildInputs = drv.nativeBuildInputs or [] ++ [self.buildPackages.autoreconfHook];
           src = self.buildPackages.fetchgit {
             url = "https://github.com/WebGHC/ghc.git";
-            rev = "9af15622eead357865f33eb1945bd2fe3da70c90";
-            sha256 = "08xzlasdv14hhfdszk7khjlhjifpzdlc1fybaiwgik3nrhphlkjf";
+            rev = "24ebeea76cc2b1357cfb4e9340da6b383c022d2e";
+            sha256 = "135n1vif30lplxradj1p9bixhh0rhrl4k3ap6qpzx04l1cfvhbpv";
             fetchSubmodules = true;
             preFetch = ''
               export HOME=$(pwd)
@@ -36,6 +36,15 @@ self: super: {
           };
           # Use this to test nix-build on your local GHC checkout.
           # src = lib.cleanSource ./ghc;
+          configureFlags = drv.configureFlags ++ ["--with-test-interpreter=${self.buildPackages.webghc-runner}/bin/webghc-runner"];
+          doCheck = true;
+          checkPhase = ''
+            make -j$NIX_BUILD_CORES -l$NIX_BUILD_CORES THREADS=$NIX_BUILD_CORES stage=1 test || true
+          '';
+          postInstall = ''
+            ${drv.postInstall or ""}
+            cp ./testsuite_summary.txt $out/
+          '';
           hardeningDisable = drv.hardeningDisable or []
             ++ ["stackprotector"]
             ++ lib.optional crossSystem.isWasm "pic";

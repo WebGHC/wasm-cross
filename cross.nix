@@ -103,7 +103,7 @@ in bootStages ++ [
       inherit ldFlags;
     };
     clangCross = mkClang {
-      ccFlags = "-rtlib=compiler-rt -resource-dir ${compiler-rt}";
+      ccFlags = toolPackages.lib.optionalString (!crossSystem.isWasm) "-rtlib=compiler-rt " + "-resource-dir ${compiler-rt}";
       inherit ldFlags;
       libc = musl-cross;
     };
