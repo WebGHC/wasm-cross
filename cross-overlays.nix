@@ -9,7 +9,7 @@ self: super: {
 
   haskell = let inherit (super) haskell; in haskell // {
     packages = haskell.packages // {
-      ghcWasm = haskell.packages.ghc863.override (drv: {
+      ghcWasm = haskell.packages.ghc865.override (drv: {
         ghc = (self.buildPackages.haskell.compiler.ghcHEAD.override {
           enableShared = false;
           enableRelocatedStaticLibs = false;
