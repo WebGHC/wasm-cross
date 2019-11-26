@@ -28,8 +28,8 @@ in { ename, pkg, assets ? [], scripts ? [], styles ? [] }: runCommand "wasm-app-
   passthru = { inherit pkg; };
 } ''
   mkdir -p $out
-  lndir ${buildPackages.buildPackages.webabi}/lib/node_modules/webabi/build $out
-  lndir ${buildPackages.buildPackages.webabi}/lib/node_modules/webabi/jsaddleJS $out
+  lndir ${buildPackages.webabi}/lib/node_modules/webabi/build $out
+  lndir ${buildPackages.webabi}/lib/node_modules/webabi/jsaddleJS $out
   ln -s ${pkg}/bin/${ename} $out/
   ${lib.concatMapStringsSep "\n" (a: "ln -s ${a} $out/") assets}
   ln -s ${indexHtml { inherit ename scripts styles; }} $out/index.html
