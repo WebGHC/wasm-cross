@@ -9,7 +9,7 @@ self: super: {
 
   haskell = let inherit (super) haskell; in haskell // {
     packages = haskell.packages // {
-      ghcWasm = haskell.packages.ghc865.override (drv: {
+      ghcWasm = haskell.packages.ghc881.override (drv: {
         ghc = (self.buildPackages.haskell.compiler.ghcHEAD.override {
           enableShared = false;
           enableRelocatedStaticLibs = false;
@@ -18,7 +18,7 @@ self: super: {
           dontStrip = true;
           dontUseLibFFIForAdjustors = crossSystem.isWasm;
           disableFFI = crossSystem.isWasm;
-          version = "8.6.3";
+          version = "8.8.1";
           useLLVM = true;
           buildLlvmPackages = self.buildPackages.llvmPackages_HEAD;
           llvmPackages = self.buildPackages.llvmPackages_HEAD;
@@ -26,8 +26,8 @@ self: super: {
           nativeBuildInputs = drv.nativeBuildInputs or [] ++ [self.buildPackages.autoreconfHook];
           src = self.buildPackages.fetchgit {
             url = "https://github.com/WebGHC/ghc.git";
-            rev = "26c2e9fb99d16bbea7da9f54f21c1475dc4d7999";
-            sha256 = "0dqqkarp1s5s6mjq6x7zrq7km5cjwdmfvh7f71135s2r0v71hzz0";
+            rev = "a0755fefa31adc4b451884540d08f3d5c5ea918c";
+            sha256 = "1j0rq5b06yx9cfadjfrhq4lai7kls916iy7hcb52iq4dr8hq9n2i";
             fetchSubmodules = true;
             preFetch = ''
               export HOME=$(pwd)
@@ -41,6 +41,7 @@ self: super: {
             ++ lib.optional crossSystem.isWasm "pic";
           dontDisableStatic = true;
           NIX_NO_SELF_RPATH=1;
+          patches = lib.filter (p: p.name != "loadpluginsinmodules.diff") drv.patches;
         });
         overrides = self.lib.composeExtensions (drv.overrides or (_:_:{})) (hsSelf: hsSuper: {
           primitive = self.haskell.lib.appendPatch hsSuper.primitive ./primitive.patch;
