@@ -27,7 +27,9 @@ let
       "-DSPHINX_OUTPUT_MAN=ON"
       "-DSPHINX_OUTPUT_HTML=OFF"
       "-DSPHINX_WARNINGS_AS_ERRORS=OFF"
-    ] ++ stdenv.lib.optionals enablePolly [
+    ] ++
+    (stdenv.lib.optional debugVersion "-DCMAKE_BUILD_TYPE=Debug") ++
+    stdenv.lib.optionals enablePolly [
       "-DWITH_POLLY=ON"
       "-DLINK_POLLY_INTO_TOOLS=ON"
     ];
@@ -78,6 +80,8 @@ let
     '';
 
     enableParallelBuilding = true;
+
+    dontStrip = debugVersion;
 
     passthru = {
       isClang = true;

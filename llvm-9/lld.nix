@@ -17,6 +17,8 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ cmake ];
   buildInputs = [ llvm libxml2 ];
 
+  cmakeFlags = stdenv.lib.optional debugVersion "-DCMAKE_BUILD_TYPE=Debug";
+
   outputs = [ "out" "dev" ];
 
   enableParallelBuilding = true;
