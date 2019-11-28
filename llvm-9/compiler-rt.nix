@@ -56,7 +56,8 @@ stdenv.mkDerivation rec {
 
   # Hack around weird upsream RPATH bug
   postInstall = stdenv.lib.optionalString (stdenv.hostPlatform.isDarwin || stdenv.hostPlatform.isWasm) ''
-    ln -s "$out/lib"/*/* "$out/lib"
+    mkdir -p $out/lib
+    mv lib/*/libclang_rt.builtins-*.a $out/lib/
   '' + stdenv.lib.optionalString (stdenv.hostPlatform.useLLVM or false) ''
     ln -s $out/lib/*/clang_rt.crtbegin-*.o $out/lib/crtbegin.o
     ln -s $out/lib/*/clang_rt.crtend-*.o $out/lib/crtend.o
