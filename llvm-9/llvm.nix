@@ -77,10 +77,6 @@ in stdenv.mkDerivation (rec {
   '' + ''
     patchShebangs test/BugPoint/compile-custom.ll.py
 
-    # Fix test so that no extra locale files are needed
-    substituteInPlace test/tools/llvm-ar/mri-utf8.test \
-      --replace en_US.UTF-8 C.UTF-8
-
     # Fix x86 gold test on non-x86 platforms
     # (similar fix made to others in this directory previously, FWIW)
     patch -p1 -i  ${./fix-test-on-non-x86-like-others.patch}
