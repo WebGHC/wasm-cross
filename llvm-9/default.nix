@@ -30,26 +30,10 @@ let
   in {
 
     llvm = callPackage ./llvm.nix { };
-    llvm-polly = callPackage ./llvm.nix { enablePolly = true; };
 
     clang-unwrapped = callPackage ./clang {
       inherit clang-tools-extra_src;
     };
-    clang-polly-unwrapped = callPackage ./clang {
-      inherit clang-tools-extra_src;
-      llvm = tools.llvm-polly;
-      enablePolly = true;
-    };
-
-    llvm-manpages = lowPrio (tools.llvm.override {
-      enableManpages = true;
-      python = pkgs.python;  # don't use python-boot
-    });
-
-    clang-manpages = lowPrio (tools.clang-unwrapped.override {
-      enableManpages = true;
-      python = pkgs.python;  # don't use python-boot
-    });
 
     libclang = tools.clang-unwrapped.lib;
 
@@ -185,8 +169,6 @@ let
         stdenv = overrideCC stdenv buildLlvmTools.lldClangNoLibcxx;
         libunwind = libraries.libunwind;
       }));
-
-    openmp = callPackage ./openmp.nix {};
 
     libunwind = callPackage ./libunwind.nix ({} //
       (stdenv.lib.optionalAttrs (stdenv.hostPlatform.useLLVM or false) {
