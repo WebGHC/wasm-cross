@@ -1,22 +1,23 @@
 { lowPrio, newScope, pkgs, stdenv, cmake, libstdcxxHook
-, libxml2, python, isl, fetchurl, overrideCC, wrapCCWith, wrapBintoolsWith
+, libxml2, python, isl, overrideCC, wrapCCWith, wrapBintoolsWith
 , buildLlvmTools # tools, but from the previous stage, for cross
 , targetLlvmLibraries # libraries, but from the next stage, for cross
+, debugVersion ? false
+, enableSharedLibraries ? true
 }:
 
 let
   release_version = "9.0.0";
   version = release_version; # differentiating these is important for rc's
 
-  fetch = name: sha256: fetchurl {
-    url = "https://releases.llvm.org/${release_version}/${name}-${version}.src.tar.xz";
-    inherit sha256;
-  };
+  callLibrary = newScope (buildLlvmTools.tools // libraries // {
+    inherit stdenv cmake libxml2 python isl release_version enableSharedLibraries sources debugVersion;
+  });
 
-  clang-tools-extra_src = fetch "clang-tools-extra" "045cldmcfd8s33wyjlviifgpnw52yqicd6v4ysvdg4i96p78c77a";
+  sources = callLibrary ./sources.nix {};
 
   tools = stdenv.lib.makeExtensible (tools: let
-    callPackage = newScope (tools // { inherit stdenv cmake libxml2 python isl release_version version fetch; });
+    callPackage = newScope (tools // { inherit stdenv cmake libxml2 python isl release_version version sources debugVersion; });
     mkExtraBuildCommands = cc: ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
@@ -162,7 +163,7 @@ let
   });
 
   libraries = stdenv.lib.makeExtensible (libraries: let
-    callPackage = newScope (libraries // buildLlvmTools // { inherit stdenv cmake libxml2 python isl release_version version fetch; });
+    callPackage = newScope (libraries // buildLlvmTools // { inherit stdenv cmake libxml2 python isl release_version version sources; });
   in {
 
     compiler-rt = callPackage ./compiler-rt.nix ({} //

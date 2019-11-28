@@ -1,11 +1,11 @@
-{ lib, stdenv, fetch, cmake, python, libcxxabi, fixDarwinDylibNames, version
+{ lib, stdenv, sources, cmake, python, libcxxabi, fixDarwinDylibNames, version
 , enableShared ? true }:
 
 stdenv.mkDerivation {
   pname = "libc++";
   inherit version;
 
-  src = fetch "libcxx" "136j3v7il9aq8wyp48klx6sifnl5asj4lf5c8yx08cjx5fbn4h9w";
+  src = sources.libcxx;
 
   postUnpack = ''
     unpackFile ${libcxxabi.src}

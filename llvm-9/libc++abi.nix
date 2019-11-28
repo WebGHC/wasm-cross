@@ -1,11 +1,11 @@
-{ stdenv, cmake, fetch, libcxx, libunwind, llvm, version
+{ stdenv, cmake, sources, libcxx, libunwind, llvm, version
 , enableShared ? true }:
 
 stdenv.mkDerivation {
   pname = "libc++abi";
   inherit version;
 
-  src = fetch "libcxxabi" "1s9haplqv8ashlsdx2psxiqxh50gqk2jp2vz5yn0djb56mw42l37";
+  src = sources.libcxxabi;
 
   nativeBuildInputs = [ cmake ];
   buildInputs = stdenv.lib.optional (!stdenv.isDarwin && !stdenv.isFreeBSD && !stdenv.hostPlatform.isWasm) libunwind;

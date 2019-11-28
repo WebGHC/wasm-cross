@@ -1,5 +1,5 @@
 { stdenv
-, fetch
+, sources
 , cmake
 , python
 , libffi
@@ -31,17 +31,7 @@ in stdenv.mkDerivation (rec {
   pname = "llvm";
   inherit version;
 
-  src = fetch pname "117ymdz1by2nkfq1c2p9m4050dp848kbjbiv6nsfj8hzy9f5d86n";
-  polly_src = fetch "polly" "0cyl2gsibf1dhqvkyw1qb0f8q58ib6cihzyh4f9kj9g77ll95ym4";
-
-  unpackPhase = ''
-    unpackFile $src
-    mv llvm-${version}* llvm
-    sourceRoot=$PWD/llvm
-  '' + optionalString enablePolly ''
-    unpackFile $polly_src
-    mv polly-* $sourceRoot/tools/polly
-  '';
+  src = sources.llvm;
 
   outputs = [ "out" "python" ]
     ++ optional enableSharedLibraries "lib";

@@ -1,5 +1,5 @@
 { stdenv
-, fetch
+, sources
 , cmake
 , zlib
 , ncurses
@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
   pname = "lldb";
   inherit version;
 
-  src = fetch pname "1507dl0xw03nppxpz2xsq4s30jdbkplx4w14za54ngqm3xm2yk0y";
+  src = sources.lldb;
 
   patches = [ ./lldb-procfs.patch ];
 

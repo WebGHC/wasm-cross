@@ -1,7 +1,8 @@
-{ stdenv, fetch, cmake, libxml2, llvm, version, clang-tools-extra_src, python
+{ stdenv, sources, cmake, libxml2, llvm, version, python
 , fixDarwinDylibNames
 , enableManpages ? false
 , enablePolly ? false # TODO: get this info from llvm (passthru?)
+, debugVersion
 }:
 
 let
@@ -9,15 +10,7 @@ let
     pname = "clang";
     inherit version;
 
-    src = fetch "cfe" "0426ma80i41qsgzm1qdz81mjskck426diygxi2k5vji2gkpixa3v";
-
-    unpackPhase = ''
-      unpackFile $src
-      mv cfe-${version}* clang
-      sourceRoot=$PWD/clang
-      unpackFile ${clang-tools-extra_src}
-      mv clang-tools-extra-* $sourceRoot/tools/extra
-    '';
+    src = sources.clang;
 
     nativeBuildInputs = [ cmake python ]
       ++ stdenv.lib.optional enableManpages python.pkgs.sphinx;
