@@ -42,7 +42,7 @@ in bootStages ++ [
       name = "clang-cross-wrapper";
       cc = llvmPackages.clang-unwrapped;
       bintools = toolPackages.wrapBintoolsWith {
-        bintools = llvmPackages.llvm-binutils;
+        bintools = llvmPackages.bintools;
         inherit libc;
       };
       inherit libc;
@@ -116,8 +116,8 @@ in bootStages ++ [
       stdenv = stdenv-noLibc;
     };
     compiler-rt = toolPackages.llvmPackages_HEAD.compiler-rt.override {
-      baremetal = true;
-      hostPlatform = crossSystem;
+      # baremetal = true;
+      # hostPlatform = crossSystem;
       stdenv = stdenv-noCompilerRt;
     };
   in {

@@ -9,8 +9,9 @@
 
       haskell-example = self.build-wasm-app { ename = "hello"; pkg = self.haskell.packages.ghcWasm.hello; };
 
-      llvmPackages_HEAD = self.callPackage ./llvm-head {
-        buildTools = self.buildPackages.llvmPackages_HEAD;
+      llvmPackages_HEAD = self.callPackage ./llvm-9 {
+        buildLlvmTools = self.buildPackages.llvmPackages_HEAD;
+        targetLlvmLibraries = self.buildPackages.llvmPackages_HEAD;
         debugVersion = debugLlvm;
       };
 
@@ -38,6 +39,7 @@
       config = "wasm32-unknown-unknown-wasm";
       arch = "wasm32";
       libc = null;
+      useLLVM = true;
       disableDynamicLinker = true;
       thread-model = "single";
       # target-cpu = "bleeding-edge";
