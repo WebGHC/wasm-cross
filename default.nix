@@ -24,6 +24,11 @@
       '';
 
       build-wasm-app = self.callPackage ./build-wasm-app.nix {};
+
+      # Issue happens when combining pkgsStatic & custom cross stdenv.
+      # We need to force a normal busybox here to avoid hitting a
+      # weird bootstrapping issue.
+      busybox-sandbox-shell = super.busybox-sandbox-shell.override { busybox = self.busybox; };
     })] ++ overlays;
   };
   nixpkgsCrossArgs = project.nixpkgsArgs // {
