@@ -26,6 +26,7 @@ let
 in { ename, pkg, assets ? [], scripts ? [], styles ? [] }: runCommand "wasm-app-${ename}" {
   nativeBuildInputs = [ buildPackages.xorg.lndir buildPackages.binaryen ];
   passthru = { inherit pkg; };
+  meta.platforms = ["wasm32-unknown"];
 } ''
   mkdir -p $out
   lndir ${buildPackages.webabi}/lib/node_modules/webabi/build $out
