@@ -30,6 +30,7 @@
       # weird bootstrapping issue.
       busybox-sandbox-shell = super.busybox-sandbox-shell.override { busybox = self.busybox; };
     })] ++ overlays;
+    config = { allowUnsupportedSystem = true; };
   };
   nixpkgsCrossArgs = project.nixpkgsArgs // {
     stdenvStages = import ./cross.nix haskellProfiling;
