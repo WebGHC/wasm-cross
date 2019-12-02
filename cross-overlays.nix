@@ -1,12 +1,6 @@
 haskellProfiling: { lib, crossSystem, ... }:
 
 self: super: {
-  libiconvReal =
-    if crossSystem.isWasm
-    then super.libiconvReal.overrideDerivation (attrs: {patches = [./libiconv-wasm32.patch];})
-    else super.libiconvReal;
-  libiconv = self.libiconvReal; # By default, this wants to pull stuff out of glibc or something
-
   haskell = let inherit (super) haskell; in haskell // {
     packages = haskell.packages // {
       ghcWasm = haskell.packages.ghc865.override (drv: {
