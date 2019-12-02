@@ -8,7 +8,7 @@ let
     inherit (pkgs) musl-cross;
     fib-example = pkgs.fib-example.pkg;
     hello-example = pkgs.hello-example.pkg;
-    inherit (pkgs.haskell.packages.integer-simple.ghc863) hello ghc;
+    inherit (pkgs.haskell.packages.integer-simple.ghc865) hello ghc;
   };
 in {
   inherit (nixpkgs.llvmPackages_HEAD) llvm clang clang-unwrapped compiler-rt
