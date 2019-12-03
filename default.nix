@@ -29,6 +29,12 @@
       # We need to force a normal busybox here to avoid hitting a
       # weird bootstrapping issue.
       busybox-sandbox-shell = super.busybox-sandbox-shell.override { busybox = self.busybox; };
+
+      # Cython wants gdb which needs to built a target-specific version
+      python37 = super.python37.override {
+        packageOverrides = self: super: { cython = super.cython.override { gdb = null; }; };
+      };
+
     })] ++ overlays;
   };
   nixpkgsCrossArgs = project.nixpkgsArgs // {
