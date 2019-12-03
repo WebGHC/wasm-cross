@@ -14,9 +14,6 @@
         debugVersion = debugLlvm;
       };
 
-      wabt = self.callPackage ./wabt.nix {};
-      binaryen = self.callPackage ./binaryen.nix {};
-
       webabi = self.callPackage ./webabi-nix {};
 
       webghc-runner = self.writeShellScriptBin "webghc-runner" ''
