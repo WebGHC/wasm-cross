@@ -1,15 +1,15 @@
-diff -Naur primitive-0.6.4.0/Data/Primitive/Internal/Operations.hs primitive-0.6.4.0-patched/Data/Primitive/Internal/Operations.hs
---- primitive-0.6.4.0/Data/Primitive/Internal/Operations.hs	2018-05-30 14:38:36.000000000 -0400
-+++ primitive-0.6.4.0-patched/Data/Primitive/Internal/Operations.hs	2018-07-22 17:16:32.176601099 -0400
+diff -Naur primitive-0.7.0.0/Data/Primitive/Internal/Operations.hs primitive-0.7.0.0-patched/Data/Primitive/Internal/Operations.hs
+--- primitive-0.7.0.0/Data/Primitive/Internal/Operations.hs	2018-05-30 14:38:36.000000000 -0400
++++ primitive-0.7.0.0-patched/Data/Primitive/Internal/Operations.hs	2018-07-22 17:16:32.176601099 -0400
 @@ -1,4 +1,4 @@
 -{-# LANGUAGE MagicHash, UnliftedFFITypes #-}
 +{-# LANGUAGE MagicHash, UnliftedFFITypes, CApiFFI #-}
  
  -- |
  -- Module      : Data.Primitive.Internal.Operations
-@@ -30,61 +30,61 @@
+@@ -30,65 +30,65 @@
  import Foreign.C.Types
- import GHC.Prim
+ import GHC.Exts
  
 -foreign import ccall unsafe "primitive-memops.h hsprimitive_memset_Word8"
 +foreign import capi unsafe "primitive-memops.h hsprimitive_memset_Word8"
@@ -44,6 +44,9 @@ diff -Naur primitive-0.6.4.0/Data/Primitive/Internal/Operations.hs primitive-0.6
 -foreign import ccall unsafe "primitive-memops.h hsprimitive_memset_Ptr"
 +foreign import capi unsafe "primitive-memops.h hsprimitive_memset_Ptr"
    setAddrArray# :: MutableByteArray# s -> CPtrdiff -> CSize -> Addr# -> IO ()
+-foreign import ccall unsafe "primitive-memops.h hsprimitive_memset_Ptr"
++foreign import capi unsafe "primitive-memops.h hsprimitive_memset_Ptr"
+   setStablePtrArray# :: MutableByteArray# s -> CPtrdiff -> CSize -> StablePtr# a -> IO ()
 -foreign import ccall unsafe "primitive-memops.h hsprimitive_memset_Float"
 +foreign import capi unsafe "primitive-memops.h hsprimitive_memset_Float"
    setFloatArray# :: MutableByteArray# s -> CPtrdiff -> CSize -> Float# -> IO ()
@@ -87,6 +90,9 @@ diff -Naur primitive-0.6.4.0/Data/Primitive/Internal/Operations.hs primitive-0.6
 -foreign import ccall unsafe "primitive-memops.h hsprimitive_memset_Ptr"
 +foreign import capi unsafe "primitive-memops.h hsprimitive_memset_Ptr"
    setAddrOffAddr# :: Addr# -> CPtrdiff -> CSize -> Addr# -> IO ()
+-foreign import ccall unsafe "primitive-memops.h hsprimitive_memset_Ptr"
++foreign import capi unsafe "primitive-memops.h hsprimitive_memset_Ptr"
+   setStablePtrOffAddr# :: Addr# -> CPtrdiff -> CSize -> StablePtr# a -> IO ()
 -foreign import ccall unsafe "primitive-memops.h hsprimitive_memset_Float"
 +foreign import capi unsafe "primitive-memops.h hsprimitive_memset_Float"
    setFloatOffAddr# :: Addr# -> CPtrdiff -> CSize -> Float# -> IO ()
