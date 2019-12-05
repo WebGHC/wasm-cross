@@ -1,14 +1,10 @@
 pkgs: pkgsSuper:
 
 let
-  reflex-dom-src = builtins.fetchGit {
-    url = https://github.com/reflex-frp/reflex-dom;
-    rev = "fe47268aa76ce0667fee024e501fea58f715f5c9";
-    ref = "wasm-8.6.3";
-  };
   jsaddle-src = builtins.fetchGit {
-    url = https://github.com/ghcjs/jsaddle;
-    rev = "a9acbcf966ea9fa14d36813da3e94d75bd9acf76";
+    url = https://github.com/WebGHC/jsaddle;
+    rev = "d55c7f6e04de35221e913fe2841551f6ff29b229";
+    ref = "ghc881-fixes";
   };
   reflex-examples-src = builtins.fetchGit {
     url = https://github.com/reflex-frp/reflex-examples;
@@ -21,14 +17,19 @@ let
     sha256 = "0gqf9hzvmk9lzmfcpf9bzb637c1767p0z9p86k2zn8a1p0gs8a9j";
     fetchSubmodules = true;
   };
+  dependent-sum-src = builtins.fetchGit {
+    url = https://github.com/WebGHC/dependent-sum;
+    rev = "5158a7dc5e714ca82e94c76ceec838ad85b0efab";
+    ref = "ghc-881-th-fixes";
+  };
   haskellLib = pkgs.haskell.lib;
   inherit (pkgs) lib;
   extensions = isWasm: lib.composeExtensions
     (haskellLib.packageSourceOverrides {
       jsaddle = jsaddle-src + /jsaddle;
       jsaddle-dom = builtins.fetchGit {
-        url = https://github.com/ghcjs/jsaddle-dom;
-        rev = "6ba167147476adebe7783e1521591aa3fd13da28";
+        url = https://github.com/dfordivam/jsaddle-dom;
+        rev = "1260311c1c600a95660cdec4cc88a097099ad876";
       };
       jsaddle-warp = jsaddle-src + /jsaddle-warp;
       jsaddle-wasm = builtins.fetchGit {
@@ -44,20 +45,42 @@ let
 
       miso = miso-src;
       servant = "0.15";
+
+      dependent-sum = dependent-sum-src + /dependent-sum;
+      dependent-sum-template = dependent-sum-src + /dependent-sum-template;
+      dependent-map = builtins.fetchGit {
+        url = https://github.com/WebGHC/dependent-map;
+        rev = "c28ef5350b3c03c4ff92e669703e4eb67e61ffa5";
+      };
+      monoidal-containers = "0.6";
+      lens = "4.18.1";
+      witherable = "0.3.4";
+      prim-uniq = builtins.fetchGit {
+        url = https://github.com/WebGHC/prim-uniq;
+        rev = "34570a948f7d84a1821ed6d8305ed094c4f6eb15";
+      };
     })
-    (self: super: {
+    (self: super:
+      let
+        reflex-dom-pkg = import (builtins.fetchGit {
+          url = https://github.com/dfordivam/reflex-dom;
+          rev = "6bdc206bd83d2db62eb7d98372c9bf4fd355e7da";
+          ref = "wasm-ghc-881";
+        }) self;
+      in {
       mkDerivation = args: super.mkDerivation (args // { doCheck = false; });
       ref-tf = haskellLib.doJailbreak super.ref-tf;
 
       reflex = self.callPackage (builtins.fetchGit {
-        url = https://github.com/reflex-frp/reflex;
-        rev = "185e4eaca5e32dfeb879b4bc6c5429c2f34739c0";
+        url = https://github.com/dfordivam/reflex;
+        rev = "369b9db9fc50c612123b433848b8423711847462";
+        ref = "ghc-881-fixes";
       }) { useTemplateHaskell = false; };
-      reflex-dom-core =
-        haskellLib.appendConfigureFlag
-          (self.callPackage (reflex-dom-src + /reflex-dom-core) {})
-          "-f-use-template-haskell";
-      reflex-dom = self.callPackage (reflex-dom-src + /reflex-dom) {};
+      reflex-dom-core = haskellLib.dontCheck
+        (haskellLib.appendConfigureFlag
+          (reflex-dom-pkg.reflex-dom-core)
+          "-f-use-template-haskell")  ;
+      reflex-dom = haskellLib.disableCabalFlag reflex-dom-pkg.reflex-dom "webkit2gtk";
       reflex-todomvc = self.callPackage (builtins.fetchGit {
         url = https://github.com/reflex-frp/reflex-todomvc;
         rev = "91227b8baa90a6d1e51c803eff7f966dbafe875a";
@@ -70,6 +93,13 @@ let
           patches = miso-src + /submodules.patch;
           flags = ["-fexamples"] ++ lib.optional isWasm "-fjsaddle-wasm";
         in addBuildDepends (appendPatch (appendConfigureFlags super.miso flags) patches) deps;
+
+      constraints-extras = haskellLib.disableCabalFlag super.constraints-extras "build-readme";
+
+      # the reflex-dom cabal2nix doesn't get deps correctly, so specify thse
+      chrome-test-utils = null;
+      jsaddle-webkit2gtk = null;
+
     });
   wasmHaskellPackages = pkgs.haskell.packages.ghcWasm.extend (extensions true);
   ghcjsHaskellPackages = pkgs.haskell.packages.ghcjs86.extend (extensions false);
