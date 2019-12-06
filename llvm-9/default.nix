@@ -7,7 +7,7 @@
 }:
 
 let
-  release_version = "9.0.0";
+  release_version = "10.0.0";
   version = release_version; # differentiating these is important for rc's
 
   callLibrary = newScope (buildLlvmTools.tools // libraries // {
