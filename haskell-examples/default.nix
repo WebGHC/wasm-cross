@@ -44,7 +44,6 @@ let
       othello = reflex-examples-src + /othello;
 
       miso = miso-src;
-      servant = "0.15";
 
       dependent-sum = dependent-sum-src + /dependent-sum;
       dependent-sum-template = dependent-sum-src + /dependent-sum-template;
@@ -100,6 +99,10 @@ let
       chrome-test-utils = null;
       jsaddle-webkit2gtk = null;
 
+      # Stop building servant docs, it needs cython which fails to compile
+      servant = haskellLib.overrideCabal super.servant (old: {
+        postInstall = "";
+        });
     });
   wasmHaskellPackages = pkgs.haskell.packages.ghcWasm.extend (extensions true);
   ghcjsHaskellPackages = pkgs.haskell.packages.ghcjs86.extend (extensions false);
