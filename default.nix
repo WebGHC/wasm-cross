@@ -14,9 +14,6 @@
         debugVersion = debugLlvm;
       };
 
-      wabt = self.callPackage ./wabt.nix {};
-      binaryen = self.callPackage ./binaryen.nix {};
-
       webabi = self.callPackage ./webabi-nix {};
 
       webghc-runner = self.writeShellScriptBin "webghc-runner" ''
@@ -24,6 +21,11 @@
       '';
 
       build-wasm-app = self.callPackage ./build-wasm-app.nix {};
+
+      # Issue happens when combining pkgsStatic & custom cross stdenv.
+      # We need to force a normal busybox here to avoid hitting a
+      # weird bootstrapping issue.
+      busybox-sandbox-shell = super.busybox-sandbox-shell.override { busybox = self.busybox; };
     })] ++ overlays;
   };
   nixpkgsCrossArgs = project.nixpkgsArgs // {

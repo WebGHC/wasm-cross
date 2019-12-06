@@ -1,27 +1,27 @@
-diff -ruN libiconv-1.15/build-aux/config.sub libiconv-1.15-patched/build-aux/config.sub
---- libiconv-1.15/build-aux/config.sub	2017-01-02 09:02:47.000000000 +1000
-+++ libiconv-1.15-patched/build-aux/config.sub	2017-11-22 08:38:36.995036311 +1000
-@@ -118,7 +118,7 @@
-   linux-musl* | linux-uclibc* | uclinux-uclibc* | uclinux-gnu* | kfreebsd*-gnu* | \
-   knetbsd*-gnu* | netbsd*-gnu* | netbsd*-eabi* | \
-   kopensolaris*-gnu* | cloudabi*-eabi* | \
--  storm-chaos* | os2-emx* | rtmk-nova*)
-+  storm-chaos* | os2-emx* | rtmk-nova* | unknown-wasm)
-     os=-$maybe_os
-     basic_machine=`echo $1 | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`
-     ;;
-@@ -1543,6 +1543,8 @@
+diff -ruN libiconv-1.16/build-aux/config.sub libiconv-1.16-patched/build-aux/config.sub
+--- libiconv-1.16/build-aux/config.sub	2019-04-27 03:29:05.000000000 +0900
++++ libiconv-1.16-patched/build-aux/config.sub	2019-11-23 21:36:56.794790501 +0900
+@@ -135,7 +135,7 @@
+ 			| linux-newlib* | linux-musl* | linux-uclibc* | uclinux-uclibc* \
+ 			| uclinux-gnu* | kfreebsd*-gnu* | knetbsd*-gnu* | netbsd*-gnu* \
+ 			| netbsd*-eabi* | kopensolaris*-gnu* | cloudabi*-eabi* \
+-			| storm-chaos* | os2-emx* | rtmk-nova*)
++			| storm-chaos* | os2-emx* | rtmk-nova* | unknown-wasm)
+ 				basic_machine=$field1
+ 				os=$maybe_os
+ 				;;
+@@ -1511,6 +1511,8 @@
  		;;
- 	-ios)
+ 	ios)
  		;;
-+	-unknown-wasm)
++	unknown-wasm)
 +		;;
- 	-none)
+ 	none)
  		;;
- 	*)
-diff -ruN libiconv-1.15/lib/loop_wchar.h libiconv-1.15-patched/lib/loop_wchar.h
---- libiconv-1.15/lib/loop_wchar.h	2014-01-02 17:23:02.000000000 -0500
-+++ libiconv-1.15-patched/lib/loop_wchar.h	2018-05-29 11:23:49.342538241 -0400
+ 	*-eabi)
+diff -ruN libiconv-1.16/lib/loop_wchar.h libiconv-1.16-patched/lib/loop_wchar.h
+--- libiconv-1.16/lib/loop_wchar.h	2018-09-18 01:06:14.000000000 +0900
++++ libiconv-1.16-patched/lib/loop_wchar.h	2019-11-23 21:40:43.599165612 +0900
 @@ -36,7 +36,9 @@
  # include <wchar.h>
  # define BUF_SIZE 64  /* assume MB_LEN_MAX <= 64 */
@@ -32,24 +32,24 @@ diff -ruN libiconv-1.15/lib/loop_wchar.h libiconv-1.15-patched/lib/loop_wchar.h
  # ifdef mbstate_t
  #  define mbrtowc(pwc, s, n, ps) (mbrtowc)(pwc, s, n, 0)
  #  define mbsinit(ps) 1
-diff -ruN libiconv-1.15/libcharset/build-aux/config.sub libiconv-1.15-patched/libcharset/build-aux/config.sub
---- libiconv-1.15/libcharset/build-aux/config.sub	2017-01-02 09:02:47.000000000 +1000
-+++ libiconv-1.15-patched/libcharset/build-aux/config.sub	2017-11-22 08:52:03.504787774 +1000
-@@ -118,7 +118,7 @@
-   linux-musl* | linux-uclibc* | uclinux-uclibc* | uclinux-gnu* | kfreebsd*-gnu* | \
-   knetbsd*-gnu* | netbsd*-gnu* | netbsd*-eabi* | \
-   kopensolaris*-gnu* | cloudabi*-eabi* | \
--  storm-chaos* | os2-emx* | rtmk-nova*)
-+  storm-chaos* | os2-emx* | rtmk-nova* | unknown-wasm)
-     os=-$maybe_os
-     basic_machine=`echo $1 | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`
-     ;;
-@@ -1543,6 +1543,8 @@
+diff -ruN libiconv-1.16/libcharset/build-aux/config.sub libiconv-1.16-patched/libcharset/build-aux/config.sub
+--- libiconv-1.16/libcharset/build-aux/config.sub	2019-04-27 03:29:05.000000000 +0900
++++ libiconv-1.16-patched/libcharset/build-aux/config.sub	2019-11-23 21:39:26.892696874 +0900
+@@ -135,7 +135,7 @@
+ 			| linux-newlib* | linux-musl* | linux-uclibc* | uclinux-uclibc* \
+ 			| uclinux-gnu* | kfreebsd*-gnu* | knetbsd*-gnu* | netbsd*-gnu* \
+ 			| netbsd*-eabi* | kopensolaris*-gnu* | cloudabi*-eabi* \
+-			| storm-chaos* | os2-emx* | rtmk-nova*)
++			| storm-chaos* | os2-emx* | rtmk-nova* | unknown-wasm)
+ 				basic_machine=$field1
+ 				os=$maybe_os
+ 				;;
+@@ -1511,6 +1511,8 @@
  		;;
- 	-ios)
+ 	ios)
  		;;
-+	-unknown-wasm)
++	unknown-wasm)
 +		;;
- 	-none)
+ 	none)
  		;;
- 	*)
+ 	*-eabi)
