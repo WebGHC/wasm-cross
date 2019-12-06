@@ -8,11 +8,11 @@ let
     inherit (pkgs) musl-cross;
     fib-example = pkgs.fib-example.pkg;
     hello-example = pkgs.hello-example.pkg;
-    inherit (pkgs.haskell.packages.integer-simple.ghc863) hello ghc;
+    inherit (pkgs.haskell.packages.integer-simple.ghc881) hello ghc;
   };
 in {
   inherit (nixpkgs.llvmPackages_HEAD) llvm clang clang-unwrapped compiler-rt
-    lld lldb llvm-binutils; # libcxx libcxx-headers libcxxabi libunwind
+    lld bintools; # lldb libcxx libcxx-headers libcxxabi libunwind
   inherit (nixpkgs) binaryen cmake wabt webabi;
 
   wasm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsWasm // {
@@ -23,7 +23,7 @@ in {
     primitive = nixpkgsWasm.haskell.packages.ghcWasm.primitive;
   });
   # rpi = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsRpi);
-  arm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsArm);
+  # arm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsArm);
 
   examples = nixpkgs.recurseIntoAttrs {
     inherit (nixpkgsWasm.examples) wasm;
