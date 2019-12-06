@@ -7,9 +7,9 @@ let
     ref = "ghc881-fixes";
   };
   reflex-examples-src = builtins.fetchGit {
-    url = https://github.com/reflex-frp/reflex-examples;
-    rev = "debb45a94556bcb244ab8b61233c9b1a827ab0b9";
-    ref = "webghc";
+    url = https://github.com/dfordivam/reflex-examples;
+    rev = "5cb9bed97f9441bd925117b9d743574cab66f017";
+    ref = "patch-1";
   };
   miso-src = pkgs.fetchgit {
     url = https://github.com/WebGHC/miso;
