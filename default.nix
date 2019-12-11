@@ -9,7 +9,7 @@
 
       haskell-example = self.build-wasm-app { ename = "hello"; pkg = self.haskell.packages.ghcWasm.hello; };
 
-      llvmPackages_HEAD = self.callPackage ./llvm-9 {
+      llvmPackages_HEAD = self.callPackage ./llvm-head {
         buildLlvmTools = self.buildPackages.llvmPackages_HEAD;
         targetLlvmLibraries = self.buildPackages.llvmPackages_HEAD;
         debugVersion = debugLlvm;
