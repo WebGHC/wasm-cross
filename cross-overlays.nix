@@ -26,8 +26,8 @@ self: super: {
           nativeBuildInputs = drv.nativeBuildInputs or [] ++ [self.buildPackages.autoreconfHook];
           src = self.buildPackages.fetchgit {
             url = "https://github.com/WebGHC/ghc.git";
-            rev = "a0755fefa31adc4b451884540d08f3d5c5ea918c";
-            sha256 = "1j0rq5b06yx9cfadjfrhq4lai7kls916iy7hcb52iq4dr8hq9n2i";
+            rev = "b631c4d47c8813816e3a6531cc76ef45ab279da8";
+            sha256 = "13jf1l3lcia6kgy9zbwvl2vrh7r3i97zv13a54pz5kpfr930s5dr";
             fetchSubmodules = true;
             preFetch = ''
               export HOME=$(pwd)
