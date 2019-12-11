@@ -1,37 +1,74 @@
-{ stdenv, sources, cmake, libxml2, libedit, llvm, release_version, python, debugVersion }:
+{ stdenv, sources, cmake, libxml2, llvm, version, python
+, fixDarwinDylibNames
+, enableManpages ? false
+, enablePolly ? false # TODO: get this info from llvm (passthru?)
+, debugVersion
+}:
 
 let
-  gcc = if stdenv.cc.isGNU then stdenv.cc.cc else stdenv.cc.cc.gcc;
-  self = stdenv.mkDerivation {
-    name = "clang";
+  self = stdenv.mkDerivation ({
+    pname = "clang";
+    inherit version;
 
     src = sources.clang;
 
-    buildInputs = [ cmake libedit libxml2 llvm python ];
+    nativeBuildInputs = [ cmake python ]
+      ++ stdenv.lib.optional enableManpages python.pkgs.sphinx;
+
+    buildInputs = [ libxml2 llvm ]
+      ++ stdenv.lib.optional stdenv.isDarwin fixDarwinDylibNames;
 
     cmakeFlags = [
-      "-DCMAKE_CXX_FLAGS=-std=c++11"
+      "-DCMAKE_CXX_FLAGS=-std=c++14"
+      "-DCLANGD_BUILD_XPC=OFF"
+    ] ++ stdenv.lib.optionals enableManpages [
+      "-DCLANG_INCLUDE_DOCS=ON"
+      "-DLLVM_ENABLE_SPHINX=ON"
+      "-DSPHINX_OUTPUT_MAN=ON"
+      "-DSPHINX_OUTPUT_HTML=OFF"
+      "-DSPHINX_WARNINGS_AS_ERRORS=OFF"
     ] ++
     (stdenv.lib.optional debugVersion "-DCMAKE_BUILD_TYPE=Debug") ++
-    # Maybe with compiler-rt this won't be needed?
-    # (stdenv.lib.optional stdenv.isLinux "-DGCC_INSTALL_PREFIX=${gcc}") ++
-    (stdenv.lib.optional (stdenv.cc.libc != null) "-DC_INCLUDE_DIRS=${stdenv.cc.libc}/include");
+    stdenv.lib.optionals enablePolly [
+      "-DWITH_POLLY=ON"
+      "-DLINK_POLLY_INTO_TOOLS=ON"
+    ];
 
-    patches = [ ./purity.patch ];
+    patches = [
+      ./purity.patch
+      # https://reviews.llvm.org/D51899
+      ./compiler-rt-baremetal.patch
+    ];
 
     postPatch = ''
-      sed -i -e 's/DriverArgs.hasArg(options::OPT_nostdlibinc)/true/' lib/Driver/ToolChains/*.cpp
-      sed -i -e 's/Args.hasArg(options::OPT_nostdlibinc)/true/' lib/Driver/ToolChains/*.cpp
+      sed -i -e 's/DriverArgs.hasArg(options::OPT_nostdlibinc)/true/' \
+             -e 's/Args.hasArg(options::OPT_nostdlibinc)/true/' \
+             lib/Driver/ToolChains/*.cpp
+
+      # Patch for standalone doc building
+      sed -i '1s,^,find_package(Sphinx REQUIRED)\n,' docs/CMakeLists.txt
+    '' + stdenv.lib.optionalString stdenv.hostPlatform.isMusl ''
+      sed -i -e 's/lgcc_s/lgcc_eh/' lib/Driver/ToolChains/*.cpp
+    '' + stdenv.lib.optionalString stdenv.hostPlatform.isDarwin ''
+      substituteInPlace tools/extra/clangd/CMakeLists.txt \
+        --replace "NOT HAVE_CXX_ATOMICS64_WITHOUT_LIB" FALSE
     '';
 
-    outputs = [ "out" "python" ];
+    outputs = [ "out" "lib" "python" ];
 
     # Clang expects to find LLVMgold in its own prefix
-    # Clang expects to find sanitizer libraries in its own prefix
     postInstall = ''
-      ln -sv ${llvm}/lib/LLVMgold.so $out/lib
-      ln -sv ${llvm}/lib/clang/${release_version}/lib $out/lib/clang/${release_version}/
+      if [ -e ${llvm}/lib/LLVMgold.so ]; then
+        ln -sv ${llvm}/lib/LLVMgold.so $out/lib
+      fi
+
       ln -sv $out/bin/clang $out/bin/cpp
+
+      # Move libclang to 'lib' output
+      moveToOutput "lib/libclang.*" "$lib"
+      moveToOutput "lib/libclang-cpp.*" "$lib"
+      substituteInPlace $out/lib/cmake/clang/ClangTargets-release.cmake \
+          --replace "\''${_IMPORT_PREFIX}/lib/libclang." "$lib/lib/libclang."
 
       mkdir -p $python/bin $python/share/clang/
       mv $out/bin/{git-clang-format,scan-view} $python/bin
@@ -39,7 +76,6 @@ let
         mv $out/bin/set-xcode-analyzer $python/bin
       fi
       mv $out/share/clang/*.py $python/share/clang
-
       rm $out/bin/c-index-test
     '';
 
@@ -48,11 +84,10 @@ let
     dontStrip = debugVersion;
 
     passthru = {
-      lib = self; # compatibility with gcc, so that `stdenv.cc.cc.lib` works on both
       isClang = true;
       inherit llvm;
-    } // stdenv.lib.optionalAttrs stdenv.isLinux {
-      inherit gcc;
+    } // stdenv.lib.optionalAttrs (stdenv.targetPlatform.isLinux || (stdenv.cc.isGNU && stdenv.cc.cc ? gcc)) {
+      gcc = if stdenv.cc.isGNU then stdenv.cc.cc else stdenv.cc.cc.gcc;
     };
 
     meta = {
@@ -61,5 +96,23 @@ let
       license     = stdenv.lib.licenses.ncsa;
       platforms   = stdenv.lib.platforms.all;
     };
-  };
+  } // stdenv.lib.optionalAttrs enableManpages {
+    pname = "clang-manpages";
+
+    buildPhase = ''
+      make docs-clang-man
+    '';
+
+    installPhase = ''
+      mkdir -p $out/share/man/man1
+      # Manually install clang manpage
+      cp docs/man/*.1 $out/share/man/man1/
+    '';
+
+    outputs = [ "out" ];
+
+    doCheck = false;
+
+    meta.description = "man page for Clang ${version}";
+  });
 in self
