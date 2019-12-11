@@ -1,26 +1,23 @@
 { stdenv
-, fetchFromGitHub
-, cmake
-, zlib
-, llvm
-, python
-, libxml2
 , sources
+, cmake
+, libxml2
+, llvm
+, version
 , debugVersion
 }:
 
-stdenv.mkDerivation {
-  name = "lld";
+stdenv.mkDerivation rec {
+  pname = "lld";
+  inherit version;
 
   src = sources.lld;
 
+
   nativeBuildInputs = [ cmake ];
+  buildInputs = [ llvm libxml2 ];
 
   cmakeFlags = stdenv.lib.optional debugVersion "-DCMAKE_BUILD_TYPE=Debug";
-
-  dontStrip = debugVersion;
-
-  buildInputs = [ llvm libxml2 ];
 
   outputs = [ "out" "dev" ];
 
