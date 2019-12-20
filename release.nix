@@ -20,13 +20,13 @@ in {
     fib-example-web = nixpkgsWasm.fib-example;
     hello-example-web = nixpkgsWasm.hello-example;
     haskell-example-web = nixpkgsWasm.haskell-example;
-    primitive = nixpkgsWasm.haskell.packages.ghcWasm.primitive;
+    # primitive = nixpkgsWasm.haskell.packages.ghcWasm.primitive;
   });
   # rpi = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsRpi);
   # arm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsArm);
 
-  examples = nixpkgs.recurseIntoAttrs {
-    inherit (nixpkgsWasm.examples) wasm;
-    inherit (nixpkgs.examples) ghcjs;
-  };
+  #examples = nixpkgs.recurseIntoAttrs {
+  #  inherit (nixpkgsWasm.examples) wasm;
+  #  inherit (nixpkgs.examples) ghcjs;
+  #};
 }
