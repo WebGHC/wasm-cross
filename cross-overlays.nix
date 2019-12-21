@@ -19,6 +19,7 @@ self: super: {
           dontUseLibFFIForAdjustors = crossSystem.isWasm;
           disableFFI = crossSystem.isWasm;
           version = "8.8.1";
+          ghcFlavour = "quick-cross";
           useLLVM = true;
           buildLlvmPackages = self.buildPackages.llvmPackages_HEAD;
           llvmPackages = self.buildPackages.llvmPackages_HEAD;
