@@ -163,6 +163,7 @@ let
     '';
 
 in {
+  inherit wasmHaskellPackages;
   examples.wasm = pkgs.recurseIntoAttrs (lib.mapAttrs toWasm examples);
   examples.ghcjs = pkgs.recurseIntoAttrs (lib.mapAttrs toGhcjs examples);
 }
