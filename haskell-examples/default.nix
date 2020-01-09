@@ -33,11 +33,7 @@ let
         sha256 = "0jcz8qmvbybd55g845dydkm7yxw3q2pq507c0ifkiamj630jlxnc";
       };
       jsaddle-warp = jsaddle-src + /jsaddle-warp;
-      jsaddle-wasm = pkgs.fetchgit {
-        url = https://github.com/WebGHC/jsaddle-wasm;
-        rev = "4079c78aec6dc7d96ff21580971406fe914ad038";
-        sha256 = "0sswsq5aig1d0z715zc2c3kshsjbp59fsls816rcfni0wdfx01xz";
-      };
+      jsaddle-wasm = /home/divam/repos/wasm/work/jsaddle-wasm-1;
 
       Keyboard = reflex-examples-src + /Keyboard;
       draganddrop = reflex-examples-src + /drag-and-drop;
@@ -85,9 +81,9 @@ let
           "-f-use-template-haskell")  ;
       reflex-dom = haskellLib.disableCabalFlag reflex-dom-pkg.reflex-dom "webkit2gtk";
       reflex-todomvc = self.callPackage (pkgs.fetchgit {
-        url = https://github.com/reflex-frp/reflex-todomvc;
-        rev = "91227b8baa90a6d1e51c803eff7f966dbafe875a";
-        sha256 = "0sbpkzxv96z2a11k3nzjw6ik4998si64vspkhii7i00rv0yxc33k";
+        url = https://github.com/dfordivam/reflex-dom-todomvc-jsaddlewasm.git;
+        rev = "95da461b1a966dcea321a3981a6100afaaed18a0";
+        sha256 = "1kny7y927qfligvbj8w7c469m7iplbrm72xpzaabv3cssva7qw5i";
       }) {};
 
       miso = with haskellLib;

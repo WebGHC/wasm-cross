@@ -13,11 +13,11 @@ let
         <script src="jsaddle.js"></script>
         ${lib.concatMapStrings (s: "<script src=\"${s}\"></script>") scripts}
         <script>
-          var jsaddleVals = jsaddleJsInit();
           const worker = new Worker("worker_runner.js");
+          var jsaddleVals = jsaddleJsInit(worker);
           worker.postMessage({ url: "${ename}-opt"
                              , jsaddleVals: jsaddleVals }
-                             , [jsaddleVals.jsaddleListener]);
+                             , [jsaddleVals.jsaddleChannelPort]);
         </script>
       </body>
     </html>
