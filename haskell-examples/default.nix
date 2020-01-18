@@ -35,8 +35,8 @@ let
       jsaddle-warp = jsaddle-src + /jsaddle-warp;
       jsaddle-wasm = pkgs.fetchgit {
         url = https://github.com/WebGHC/jsaddle-wasm;
-        rev = "4079c78aec6dc7d96ff21580971406fe914ad038";
-        sha256 = "0sswsq5aig1d0z715zc2c3kshsjbp59fsls816rcfni0wdfx01xz";
+        rev = "01334b7fd88e62489557be77e9bad832b8243b4a";
+        sha256 = "1aczxlyb7hclb3gwl89ss2qa33wrgkqlhl9i1sh5n8cvg3gcr9y3";
       };
 
       Keyboard = reflex-examples-src + /Keyboard;
