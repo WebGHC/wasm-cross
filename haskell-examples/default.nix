@@ -22,6 +22,12 @@ let
     rev = "5158a7dc5e714ca82e94c76ceec838ad85b0efab";
     sha256 = "0k9z63snfdz5rl6lndy2nclk4wpqv60mkbjs8l4jy42ammk8554r";
   };
+  jsaddle-stress-tests-src = pkgs.fetchgit {
+    url = https://github.com/dfordivam/jsaddle-stress-tests;
+    rev = "6b4b13c302e17f62c6c7e858bc4f17161901299d";
+    sha256 = "1y3xxd4fb24qqq6bi32ypk3m9lx6m8npc2rdav5b7w32ra1rbjn4";
+  };
+
   haskellLib = pkgs.haskell.lib;
   inherit (pkgs) lib;
   extensions = isWasm: lib.composeExtensions
@@ -45,6 +51,7 @@ let
       nasapod = reflex-examples-src + /nasa-pod;
       othello = reflex-examples-src + /othello;
 
+      bench-wasm = jsaddle-stress-tests-src + /bench-wasm;
       miso = miso-src;
 
       dependent-sum = dependent-sum-src + /dependent-sum;
@@ -119,6 +126,8 @@ let
     nasapod.pname = "nasapod";
     othello.pname = "othello";
     fileinput.pname = "fileinput";
+    # Some tests to benchmark wasm code
+    bench-wasm.pname = "bench-wasm";
   };
   misoExamples = {
     _2048.pname = "miso";
