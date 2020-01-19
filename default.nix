@@ -9,12 +9,6 @@
 
       haskell-example = self.build-wasm-app { ename = "hello"; pkg = self.haskell.packages.ghcWasm.hello; };
 
-      llvmPackages_HEAD = self.callPackage ./llvm-head {
-        buildLlvmTools = self.buildPackages.llvmPackages_HEAD;
-        targetLlvmLibraries = self.buildPackages.llvmPackages_HEAD;
-        debugVersion = debugLlvm;
-      };
-
       webabi = self.callPackage ./webabi-nix {};
 
       webghc-runner = self.writeShellScriptBin "webghc-runner" ''

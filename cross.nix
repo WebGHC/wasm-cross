@@ -33,7 +33,7 @@ in bootStages ++ [
   # Run Packages
   (toolPackages: let
     prefix = "${crossSystem.config}-";
-    llvmPackages = toolPackages.llvmPackages_HEAD;
+    llvmPackages = toolPackages.llvmPackages_9;
     ldFlags =
       if crossSystem.isWasm
         then "--allow-undefined-file=${musl-cross}/lib/wasm.syms"
@@ -115,7 +115,7 @@ in bootStages ++ [
       hostPlatform = crossSystem;
       stdenv = stdenv-noLibc;
     };
-    compiler-rt = toolPackages.llvmPackages_HEAD.compiler-rt.override {
+    compiler-rt = toolPackages.llvmPackages_9.compiler-rt.override {
       # baremetal = true;
       # hostPlatform = crossSystem;
       stdenv = stdenv-noCompilerRt;

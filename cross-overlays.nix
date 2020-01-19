@@ -20,8 +20,8 @@ self: super: {
           disableFFI = crossSystem.isWasm;
           version = "8.8.1";
           useLLVM = true;
-          buildLlvmPackages = self.buildPackages.llvmPackages_HEAD;
-          llvmPackages = self.buildPackages.llvmPackages_HEAD;
+          buildLlvmPackages = self.buildPackages.llvmPackages_9;
+          llvmPackages = self.buildPackages.llvmPackages_9;
         }).overrideAttrs (drv: {
           nativeBuildInputs = drv.nativeBuildInputs or [] ++ [self.buildPackages.autoreconfHook];
           src = self.buildPackages.fetchgit {
