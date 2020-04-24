@@ -1,5 +1,4 @@
 { baseNixpkgs ? import ./nixpkgs
-, debugLlvm ? false
 , haskellProfiling ? false
 , overlays ? []
 }:
