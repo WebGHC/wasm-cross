@@ -1,9 +1,11 @@
-haskellProfiling:
-
+ghcSrc: ghcVersion: haskellProfiling:
 self: super: {
-  haskell = let inherit (super) haskell; in haskell // {
+  haskell =
+  let inherit (super) haskell;
+      ghcPkgName = "ghc" + super.lib.strings.stringAsChars (x: if x == "." then "" else x) ghcVersion;
+  in haskell // {
     packages = haskell.packages // {
-      ghcWasm = haskell.packages.ghc881.override (drv: {
+      ghcWasm = haskell.packages.${ghcPkgName}.override (drv: {
         ghc = (self.buildPackages.haskell.compiler.ghcHEAD.override {
           enableShared = false;
           enableRelocatedStaticLibs = false;
@@ -12,22 +14,13 @@ self: super: {
           dontStrip = true;
           dontUseLibFFIForAdjustors = true;
           disableFFI = true;
-          version = "8.8.1";
+          version = ghcVersion;
           useLLVM = true;
           buildLlvmPackages = self.buildPackages.llvmPackages_8;
           llvmPackages = self.buildPackages.llvmPackages_8;
         }).overrideAttrs (drv: {
           nativeBuildInputs = drv.nativeBuildInputs or [] ++ [self.buildPackages.autoreconfHook];
-          src = self.buildPackages.fetchgit {
-            url = "https://github.com/WebGHC/ghc.git";
-            rev = "b631c4d47c8813816e3a6531cc76ef45ab279da8";
-            sha256 = "13jf1l3lcia6kgy9zbwvl2vrh7r3i97zv13a54pz5kpfr930s5dr";
-            fetchSubmodules = true;
-            preFetch = ''
-              export HOME=$(pwd)
-              git config --global url."https://github.com/WebGHC/packages-".insteadOf   https://github.com/WebGHC/packages/
-            '';
-          };
+          src = ghcSrc;
           # Use this to test nix-build on your local GHC checkout.
           # src = self.lib.cleanSource ./ghc;
           hardeningDisable = drv.hardeningDisable or []
