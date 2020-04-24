@@ -1,4 +1,7 @@
-{ debugLlvm ? false, haskellProfiling ? false, overlays ? [] }:
+{ debugLlvm ? false
+, haskellProfiling ? false
+, overlays ? []
+}:
 
 (import ./nixpkgs {}).lib.makeExtensible (project: {
   nixpkgsArgs = {
@@ -24,8 +27,12 @@
     })] ++ overlays;
     config = { allowBroken = true; };
   };
+
   nixpkgsCrossArgs = project.nixpkgsArgs // {
-    stdenvStages = import ./cross.nix haskellProfiling;
+    stdenvStages = import ./cross.nix project.nixpkgs
+      [ (import ./cross-overlays-libiconv.nix)
+        (import ./cross-overlays-haskell.nix haskellProfiling)
+      ];
   };
 
   nixpkgs = import ./nixpkgs project.nixpkgsArgs;
@@ -40,10 +47,4 @@
       # target-cpu = "bleeding-edge";
     };
   });
-  nixpkgsArm = import ./nixpkgs (project.nixpkgsCrossArgs // {
-    crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix" { inherit (project.nixpkgs) lib; }).aarch64-multiplatform;
-  });
-  # nixpkgsRpi = import ./nixpkgs (project.nixpkgsCrossArgs // {
-  #   crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix" { inherit (project.nixpkgs) lib; }).raspberryPi // { disableDynamicLinker = true; };
-  # });
 })

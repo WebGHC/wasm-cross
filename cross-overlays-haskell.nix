@@ -1,12 +1,6 @@
-haskellProfiling: { lib, crossSystem, ... }:
+haskellProfiling:
 
 self: super: {
-  libiconvReal =
-    if crossSystem.isWasm
-    then super.libiconvReal.overrideDerivation (attrs: {patches = [./libiconv-wasm32.patch];})
-    else super.libiconvReal;
-  libiconv = self.libiconvReal; # By default, this wants to pull stuff out of glibc or something
-
   haskell = let inherit (super) haskell; in haskell // {
     packages = haskell.packages // {
       ghcWasm = haskell.packages.ghc881.override (drv: {
@@ -14,14 +8,14 @@ self: super: {
           enableShared = false;
           enableRelocatedStaticLibs = false;
           enableIntegerSimple = true;
-          enableTerminfo = !crossSystem.isWasm;
+          enableTerminfo = false;
           dontStrip = true;
-          dontUseLibFFIForAdjustors = crossSystem.isWasm;
-          disableFFI = crossSystem.isWasm;
+          dontUseLibFFIForAdjustors = true;
+          disableFFI = true;
           version = "8.8.1";
           useLLVM = true;
-          buildLlvmPackages = self.buildPackages.llvmPackages_9;
-          llvmPackages = self.buildPackages.llvmPackages_9;
+          buildLlvmPackages = self.buildPackages.llvmPackages_8;
+          llvmPackages = self.buildPackages.llvmPackages_8;
         }).overrideAttrs (drv: {
           nativeBuildInputs = drv.nativeBuildInputs or [] ++ [self.buildPackages.autoreconfHook];
           src = self.buildPackages.fetchgit {
@@ -35,23 +29,22 @@ self: super: {
             '';
           };
           # Use this to test nix-build on your local GHC checkout.
-          # src = lib.cleanSource ./ghc;
+          # src = self.lib.cleanSource ./ghc;
           hardeningDisable = drv.hardeningDisable or []
-            ++ ["stackprotector"]
-            ++ lib.optional crossSystem.isWasm "pic";
+            ++ ["stackprotector" "pic"];
           dontDisableStatic = true;
           NIX_NO_SELF_RPATH=1;
-          patches = lib.filter (p: p.name != "loadpluginsinmodules.diff") drv.patches;
+          patches = self.lib.filter (p: p.name != "loadpluginsinmodules.diff") drv.patches;
         });
         overrides = self.lib.composeExtensions (drv.overrides or (_:_:{})) (hsSelf: hsSuper: {
-          primitive = self.haskell.lib.appendPatch hsSuper.primitive ./primitive.patch;
+          primitive = self.haskell.lib.appendPatch hsSuper.primitive ./primitive-0.7.0.patch;
           mkDerivation = args: hsSuper.mkDerivation (args // {
             dontStrip = true;
             enableSharedExecutables = false;
             enableSharedLibraries = false;
             enableDeadCodeElimination = false;
-            doHaddock = !crossSystem.isWasm;
-            doCheck = !crossSystem.isWasm;
+            doHaddock = false;
+            doCheck = false;
             enableLibraryProfiling = haskellProfiling;
           });
         });
@@ -59,4 +52,3 @@ self: super: {
     };
   };
 }
-

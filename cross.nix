@@ -1,4 +1,4 @@
-haskellProfiling:
+nixpkgs: postOverlays :
 
 { lib
 , localSystem, crossSystem, config, overlays, crossOverlays ? []
@@ -7,7 +7,7 @@ haskellProfiling:
 assert crossSystem != null;
 
 let
-  bootStages = import "${(import ./nixpkgs {}).path}/pkgs/stdenv" {
+  bootStages = import "${nixpkgs.path}/pkgs/stdenv" {
     inherit lib localSystem overlays;
 
     crossSystem = localSystem;
@@ -33,7 +33,7 @@ in bootStages ++ [
   # Run Packages
   (toolPackages: let
     prefix = "${crossSystem.config}-";
-    llvmPackages = toolPackages.llvmPackages_9;
+    llvmPackages = toolPackages.llvmPackages_8;
     ldFlags =
       if crossSystem.isWasm
         then "--allow-undefined-file=${musl-cross}/lib/wasm.syms"
@@ -115,7 +115,7 @@ in bootStages ++ [
       hostPlatform = crossSystem;
       stdenv = stdenv-noLibc;
     };
-    compiler-rt = toolPackages.llvmPackages_9.compiler-rt.override {
+    compiler-rt = toolPackages.llvmPackages_8.compiler-rt.override {
       # baremetal = true;
       # hostPlatform = crossSystem;
       stdenv = stdenv-noCompilerRt;
@@ -126,8 +126,7 @@ in bootStages ++ [
       (self: super: {
         inherit compiler-rt musl-cross clangCross-noLibc clangCross-noCompilerRt clangCross;
       })
-      (import ./cross-overlays.nix haskellProfiling args)
-    ];
+    ] ++ postOverlays;
     selfBuild = false;
     stdenv = mkStdenv clangCross;
   })
