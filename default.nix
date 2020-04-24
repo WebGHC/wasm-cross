@@ -1,9 +1,10 @@
-{ debugLlvm ? false
+{ baseNixpkgs ? import ./nixpkgs
+, debugLlvm ? false
 , haskellProfiling ? false
 , overlays ? []
 }:
 
-(import ./nixpkgs {}).lib.makeExtensible (project: {
+(baseNixpkgs {}).lib.makeExtensible (project: {
   nixpkgsArgs = {
     overlays = [(self: super: {
       fib-example = self.callPackage ./fib-example {};
@@ -35,8 +36,8 @@
       ];
   };
 
-  nixpkgs = import ./nixpkgs project.nixpkgsArgs;
-  nixpkgsWasm = import ./nixpkgs (project.nixpkgsCrossArgs // {
+  nixpkgs = baseNixpkgs project.nixpkgsArgs;
+  nixpkgsWasm = baseNixpkgs (project.nixpkgsCrossArgs // {
     crossSystem = {
       config = "wasm32-unknown-unknown-wasm";
       arch = "wasm32";
