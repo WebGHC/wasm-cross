@@ -1,6 +1,6 @@
 {}:
 
-with import ./. { overlays = [(import ./haskell-examples)]; };
+with import ./. { overlays = [(import ./common-overlays.nix) (import ./haskell-examples)]; };
 let
   inherit (nixpkgs) lib;
   fromPkgs = pkgs: {
