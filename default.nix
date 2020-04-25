@@ -31,6 +31,7 @@ let
 in (baseNixpkgs {}).lib.makeExtensible (project: {
   nixpkgsArgs = {
     overlays = overlays;
+    # XXX This is required just to build some haskell packages with ghcjs. (ie to build release.nix completely)
     config = { allowBroken = true; };
   };
 
