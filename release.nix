@@ -15,7 +15,6 @@ in {
     lld bintools;
   inherit (nixpkgs) binaryen cmake wabt webabi;
   inherit (nixpkgsWasm) wasmHaskellPackages;
-  wasmHaskellPackages865 = nixpkgsWasm865.wasmHaskellPackages;
 
   wasm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsWasm // {
     inherit (nixpkgsWasm.haskell.packages.ghcWasm) hello ghc;
@@ -33,9 +32,9 @@ in {
     primitive = nixpkgsWasm865.haskell.packages.ghcWasm.primitive;
   });
 
+  # TODO: fix compilation of examples with ghc 865
   examples = nixpkgs.recurseIntoAttrs {
     inherit (nixpkgsWasm.examples) wasm;
-    wasm865 = nixpkgsWasm865.examples.wasm;
     inherit (nixpkgs.examples) ghcjs;
   };
 }
