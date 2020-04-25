@@ -30,7 +30,7 @@ self: super: {
           patches = self.lib.filter (p: p.name != "loadpluginsinmodules.diff") drv.patches;
         });
         overrides = self.lib.composeExtensions (drv.overrides or (_:_:{})) (hsSelf: hsSuper: {
-          primitive = self.haskell.lib.appendPatch hsSuper.primitive ./primitive-0.7.0.patch;
+          primitive = self.haskell.lib.appendPatch hsSuper.primitive (if ghcVersion == "8.6.5" then ./primitive-0.6.4.patch else ./primitive-0.7.0.patch);
           mkDerivation = args: hsSuper.mkDerivation (args // {
             dontStrip = true;
             enableSharedExecutables = false;

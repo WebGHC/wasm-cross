@@ -15,6 +15,7 @@ in {
     lld bintools;
   inherit (nixpkgs) binaryen cmake wabt webabi;
   inherit (nixpkgsWasm) wasmHaskellPackages;
+  wasmHaskellPackages865 = nixpkgsWasm865.wasmHaskellPackages;
 
   wasm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsWasm // {
     inherit (nixpkgsWasm.haskell.packages.ghcWasm) hello ghc;
@@ -24,8 +25,17 @@ in {
     primitive = nixpkgsWasm.haskell.packages.ghcWasm.primitive;
   });
 
+  wasm865 = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsWasm865 // {
+    inherit (nixpkgsWasm865.haskell.packages.ghcWasm) hello ghc;
+    fib-example-web = nixpkgsWasm865.fib-example;
+    hello-example-web = nixpkgsWasm865.hello-example;
+    haskell-example-web = nixpkgsWasm865.haskell-example;
+    primitive = nixpkgsWasm865.haskell.packages.ghcWasm.primitive;
+  });
+
   examples = nixpkgs.recurseIntoAttrs {
     inherit (nixpkgsWasm.examples) wasm;
+    wasm865 = nixpkgsWasm865.examples.wasm;
     inherit (nixpkgs.examples) ghcjs;
   };
 }
