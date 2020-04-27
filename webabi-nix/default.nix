@@ -12,8 +12,8 @@ let
   webabiSrc = pkgs.fetchFromGitHub {
     owner = "WebGHC";
     repo = "webabi";
-    rev = "944a6234495c1767cca50217dd840329a051f955";
-    sha256 = "0l4psw0nqiw328xjsl1w16f0jc7n0ndk9bzmsl96jv74iw1cn6vn";
+    rev = "666af48756dc9f49f0320d56731ef355534292c2";
+    sha256 = "1brs0b0ybfaa0fcw4cbb7vmbpf7x48niv5y5hskvk6s9zgj1yp5j";
   };
 
 in (callNode2nix "webabi" webabiSrc).package.overrideAttrs (old: {

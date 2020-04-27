@@ -10,6 +10,24 @@ let
       </head>
 
       <body>
+        ${lib.concatMapStrings (s: "<script src=\"${s}\"></script>") scripts}
+        <script type="text/javascript">var wasmFile = '${ename}-opt';</script>
+        <script defer="defer" src="jsaddle_core.js" type="text/javascript"></script>
+        <script defer="defer" src="jsaddle_mainthread_interface.js" type="text/javascript"></script>
+        <script defer="defer" src="mainthread_runner.js" type="text/javascript"></script>
+      </body>
+    </html>
+  '';
+
+  indexHtmlWorker = { ename, scripts, styles }: builtins.toFile "index.html" ''
+    <!doctype html>
+    <html>
+      <head>
+        <meta charset="utf-8"></meta>
+        ${lib.concatMapStrings (s: "<link href=\"${s}\" type=\"text/css\" rel=\"stylesheet\">") styles}
+      </head>
+
+      <body>
         <script src="jsaddle.js"></script>
         ${lib.concatMapStrings (s: "<script src=\"${s}\"></script>") scripts}
         <script>
