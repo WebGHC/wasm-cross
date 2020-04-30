@@ -39,11 +39,12 @@ let
         sha256 = "0jcz8qmvbybd55g845dydkm7yxw3q2pq507c0ifkiamj630jlxnc";
       };
       jsaddle-warp = jsaddle-src + /jsaddle-warp;
-      jsaddle-wasm = pkgs.fetchgit {
-        url = https://github.com/WebGHC/jsaddle-wasm;
-        rev = "54c66ac302942ff3d420f400d66a19b88044a964";
-        sha256 = "0qbwzpgzrswbmjzfdk4zhkh6q1fwpkw9qbcpgjqqcacs9ymyspni";
-      };
+      jsaddle-wasm = pkgs.fetchFromGitHub (
+        let json = builtins.fromJSON (builtins.readFile ../jsaddle-wasm/github.json);
+        in { inherit (json) owner repo rev sha256;
+             private = json.private or false;
+           }
+      );
 
       Keyboard = reflex-examples-src + /Keyboard;
       draganddrop = reflex-examples-src + /drag-and-drop;

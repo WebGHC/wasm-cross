@@ -5,7 +5,7 @@ self: super: {
 
   haskell-example = self.build-wasm-app { ename = "hello"; pkg = self.haskell.packages.ghcWasm.hello; };
 
-  webabi = self.callPackage ./webabi-nix {};
+  webabi = self.callPackage ./webabi {};
 
   webghc-runner = self.writeShellScriptBin "webghc-runner" ''
     exec ${self.nodejs-8_x}/bin/node ${self.webabi}/lib/node_modules/webabi/build/node_runner.js "$@"
