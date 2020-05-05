@@ -41,8 +41,10 @@ let
     </html>
   '';
 
+# On certain apps like reflex-todomvc, doing wasm-strip first and then wasm-opt gives
+# smaller size files.
 in { ename, pkg, assets ? [], scripts ? [], styles ? [] }: runCommand "wasm-app-${ename}" {
-  nativeBuildInputs = [ buildPackages.xorg.lndir buildPackages.binaryen ];
+  nativeBuildInputs = [ buildPackages.xorg.lndir buildPackages.binaryen buildPackages.wabt];
   passthru = { inherit pkg; };
   meta.platforms = ["wasm32-unknown"];
 } ''
@@ -52,6 +54,10 @@ in { ename, pkg, assets ? [], scripts ? [], styles ? [] }: runCommand "wasm-app-
   ln -s ${pkg}/bin/${ename} $out/
   ${lib.concatMapStringsSep "\n" (a: "ln -s ${a} $out/") assets}
   ln -s ${indexHtml { inherit ename scripts styles; }} $out/index.html
-  wasm-opt -Oz $out/${ename} -o $out/${ename}-opt
+  cp ${pkg}/bin/${ename} $out/${ename}-tmp
+  chmod u+w $out/${ename}-tmp
+  wasm-strip $out/${ename}-tmp
+  wasm-opt -Oz $out/${ename}-tmp -o $out/${ename}-opt
+  rm $out/${ename}-tmp
   gzip -c $out/${ename}-opt > $out/${ename}-opt.gz
 ''
