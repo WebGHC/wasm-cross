@@ -12,7 +12,7 @@ let
 
       <body>
         ${lib.concatMapStrings (s: "<script src=\"${s}\"></script>") scripts}
-        <script type="text/javascript">var wasmFile = '${ename}-opt';</script>
+        <script type="text/javascript">var WASM_URL_FOR_MAINTHREAD_RUNNER_JS = '${ename}-opt';</script>
         <script defer="defer" src="jsaddle_core.js" type="text/javascript"></script>
         <script defer="defer" src="jsaddle_mainthread_interface.js" type="text/javascript"></script>
         <script defer="defer" src="mainthread_runner.js" type="text/javascript"></script>
