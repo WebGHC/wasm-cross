@@ -1,4 +1,5 @@
-{ lib, buildPackages, runCommand }:
+{ lib, runCommand, lndir, binaryen, wabt, webabi, gzip
+}:
 
 let
   indexHtml = { ename, scripts, styles }: builtins.toFile "index.html" ''
@@ -42,13 +43,16 @@ let
   '';
 
 in { ename, pkg, assets ? [], scripts ? [], styles ? [] }: runCommand "wasm-app-${ename}" {
-  nativeBuildInputs = [ buildPackages.xorg.lndir buildPackages.binaryen ];
+  nativeBuildInputs = [ lndir binaryen ];
   passthru = { inherit pkg; };
-  meta.platforms = ["wasm32-unknown"];
 } ''
+  if [ ! -f "${pkg}/bin/${ename}" ]; then
+    echo "The pkg: ${pkg} does not have the executable named ${ename}"
+    exit 1
+  fi
   mkdir -p $out
-  lndir ${buildPackages.buildPackages.webabi}/lib/node_modules/webabi/build $out
-  lndir ${buildPackages.buildPackages.webabi}/lib/node_modules/webabi/jsaddleJS $out
+  lndir ${webabi}/lib/node_modules/webabi/build $out
+  lndir ${webabi}/lib/node_modules/webabi/jsaddleJS $out
   ln -s ${pkg}/bin/${ename} $out/
   ${lib.concatMapStringsSep "\n" (a: "ln -s ${a} $out/") assets}
   ln -s ${indexHtml { inherit ename scripts styles; }} $out/index.html
