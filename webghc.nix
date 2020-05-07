@@ -2,31 +2,22 @@
 {
   ghc881Src = fetchgit {
     url = "https://github.com/WebGHC/ghc.git";
-    rev = "b631c4d47c8813816e3a6531cc76ef45ab279da8";
-    sha256 = "13jf1l3lcia6kgy9zbwvl2vrh7r3i97zv13a54pz5kpfr930s5dr";
+    rev = "daebc38ffb78c21904eb3b508790f43291fe2e87";
+    sha256 = "1dwlxpna0bp0gnj0lrzwcdpzjvcyg1j55r1dajpxpxhf71i74iqg";
     fetchSubmodules = true;
-    preFetch = ''
-      export HOME=$(pwd)
-      git config --global url."https://github.com/WebGHC/packages-".insteadOf   https://github.com/WebGHC/packages/
-    '';
   };
 
   ghc865Src = fetchgit {
     url = "https://github.com/WebGHC/ghc.git";
-    rev = "c34a766da0858960cf810eaac779052347d6e9f4";
-    sha256 = "1ignbbfaxli1waa1bhvs61nzgcyl0mljy3q4cg31zpcdja31c8kg";
+    rev = "9f0543186dc8a423d5dbe48502b19282816e024f";
+    sha256 = "0qpvaaccqd14dpq66b16vmaakily0chyk87hcalh63iym02qdspw";
     fetchSubmodules = true;
-    preFetch = ''
-      export HOME=$(pwd)
-      git config --global url."https://github.com/WebGHC/packages-".insteadOf   https://github.com/WebGHC/packages/
-    '';
   };
 
   ghc865SplicesSrc = fetchgit {
     url = "https://github.com/WebGHC/ghc.git";
-    rev = "746a6e61c69f57ba6441a922bd7b6fe807b2dd2f";
-    sha256 = "0ghza2ix9lp5di7mgqzahlbxm9i0w4l10nxi99ls2n6xm2g231j3";
+    rev = "1d4026e91ec844ccbe23dacc26a399e250b8fd11";
+    sha256 = "061rnv15yqg83y8cx85294jl29bmvd2cb9h7zfz4bihr79m0ln0n";
     fetchSubmodules = true;
-    # No preFetch needed here as the submodule URIs have been made absolute
   };
 }
