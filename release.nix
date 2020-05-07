@@ -1,6 +1,15 @@
 {}:
 
-with import ./. { overlays = [(import ./common-overlays.nix) (import ./haskell-examples)]; };
+let
+  nixpkgsBuildStuff = (import ./. { overlays = [ (import ./build-stuff-overlay.nix) ]; }).nixpkgs;
+  inherit (nixpkgsBuildStuff) build-wasm-app webabi;
+in with import ./. {
+  overlays = [
+    (import ./common-overlays.nix { inherit build-wasm-app; })
+    (import ./haskell-examples)
+    ];
+  };
+
 let
   inherit (nixpkgs) lib;
   fromPkgs = pkgs: {
@@ -13,8 +22,9 @@ let
 in {
   inherit (nixpkgs.llvmPackages_8) llvm clang clang-unwrapped compiler-rt
     lld bintools;
-  inherit (nixpkgs) binaryen cmake wabt webabi;
+  inherit (nixpkgs) binaryen cmake wabt;
   inherit (nixpkgsWasm) wasmHaskellPackages;
+  inherit webabi;
 
   wasm = nixpkgs.recurseIntoAttrs (fromPkgs nixpkgsWasm // {
     inherit (nixpkgsWasm.haskell.packages.ghcWasm) hello ghc;
