@@ -2,9 +2,9 @@ pkgs: pkgsSuper:
 
 let
   jsaddle-src = pkgs.fetchgit {
-    url = https://github.com/WebGHC/jsaddle;
-    rev = "d55c7f6e04de35221e913fe2841551f6ff29b229";
-    sha256 = "061b93705ybvph8nh2j3bplw9qgshnb5l4njixdb4df3aa9wvvip";
+    url = https://github.com/ghcjs/jsaddle;
+    rev = "4b135448f425edf968d5058b901b57064c9d2b7a";
+    sha256 = "0xpsv1pp1a13vq5vk1wjj1iq0cfnq9cv7lkrv2rl6yd47slwmn2a";
   };
   reflex-examples-src = pkgs.fetchgit {
     url = https://github.com/dfordivam/reflex-examples;
@@ -34,9 +34,9 @@ let
     (haskellLib.packageSourceOverrides {
       jsaddle = jsaddle-src + /jsaddle;
       jsaddle-dom = pkgs.fetchgit {
-        url = https://github.com/dfordivam/jsaddle-dom;
-        rev = "1260311c1c600a95660cdec4cc88a097099ad876";
-        sha256 = "0jcz8qmvbybd55g845dydkm7yxw3q2pq507c0ifkiamj630jlxnc";
+        url = https://github.com/ghcjs/jsaddle-dom;
+        rev = "da15a025eb06888cabf2e463b4f87ce14f65742b";
+        sha256 = "0rdwn3g2yy247am714xz3rid98d8j7ccjq8hhsp3mpvpf2w5ipmj";
       };
       jsaddle-warp = jsaddle-src + /jsaddle-warp;
       jsaddle-wasm = pkgs.fetchFromGitHub (
