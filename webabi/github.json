@@ -1,8 +1,8 @@
 {
   "owner": "WebGHC",
   "repo": "webabi",
-  "branch": "split-worker-and-main-thread-code",
+  "branch": "jsaddle-core2-1",
   "private": false,
-  "rev": "5aee539cfd29982f9fd2680ad9df0c741375796c",
-  "sha256": "1bcka8g0xljgcrj5ga8vi47n0nnnvk3m2k0y99hqa7knk7jzzdw4"
+  "rev": "562cc1bc999ec5d91edcfba5328a675fa01653d5",
+  "sha256": "0ggmw8lwd0p3nq0inrcpqbcgnzs5z9ayp16v7c40wmvsz5ap8p4r"
 }

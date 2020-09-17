@@ -1,7 +1,8 @@
 {
   "owner": "WebGHC",
   "repo": "jsaddle-wasm",
-  "branch": "export-apis",
-  "rev": "54c66ac302942ff3d420f400d66a19b88044a964",
-  "sha256": "0qbwzpgzrswbmjzfdk4zhkh6q1fwpkw9qbcpgjqqcacs9ymyspni"
+  "branch": "jsaddle-core2-1",
+  "private": false,
+  "rev": "eecade17fb395a4b159b0e91a10372f55a52a054",
+  "sha256": "1qydhnzc8yqcjnzf4fsda6k34vq2pjimp906y5qjx85zwr1r2z6c"
 }
