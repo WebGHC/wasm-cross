@@ -1,19 +1,15 @@
 pkgs: pkgsSuper:
 
 let
-  reflex-dom-src = builtins.fetchGit {
-    url = https://github.com/reflex-frp/reflex-dom;
-    rev = "fe47268aa76ce0667fee024e501fea58f715f5c9";
-    ref = "wasm-8.6.3";
-  };
-  jsaddle-src = builtins.fetchGit {
+  jsaddle-src = pkgs.fetchgit {
     url = https://github.com/ghcjs/jsaddle;
-    rev = "a9acbcf966ea9fa14d36813da3e94d75bd9acf76";
+    rev = "4b135448f425edf968d5058b901b57064c9d2b7a";
+    sha256 = "0xpsv1pp1a13vq5vk1wjj1iq0cfnq9cv7lkrv2rl6yd47slwmn2a";
   };
-  reflex-examples-src = builtins.fetchGit {
-    url = https://github.com/reflex-frp/reflex-examples;
-    rev = "debb45a94556bcb244ab8b61233c9b1a827ab0b9";
-    ref = "webghc";
+  reflex-examples-src = pkgs.fetchgit {
+    url = https://github.com/dfordivam/reflex-examples;
+    rev = "5cb9bed97f9441bd925117b9d743574cab66f017";
+    sha256 = "1s9kksj61v8zfv7vkg420mi8kqg2q68w6qg62930amfbf9cjbb72";
   };
   miso-src = pkgs.fetchgit {
     url = https://github.com/WebGHC/miso;
@@ -21,20 +17,34 @@ let
     sha256 = "0gqf9hzvmk9lzmfcpf9bzb637c1767p0z9p86k2zn8a1p0gs8a9j";
     fetchSubmodules = true;
   };
+  dependent-sum-src = pkgs.fetchgit {
+    url = https://github.com/WebGHC/dependent-sum;
+    rev = "5158a7dc5e714ca82e94c76ceec838ad85b0efab";
+    sha256 = "0k9z63snfdz5rl6lndy2nclk4wpqv60mkbjs8l4jy42ammk8554r";
+  };
+  jsaddle-stress-tests-src = pkgs.fetchgit {
+    url = https://github.com/dfordivam/jsaddle-stress-tests;
+    rev = "6b4b13c302e17f62c6c7e858bc4f17161901299d";
+    sha256 = "1y3xxd4fb24qqq6bi32ypk3m9lx6m8npc2rdav5b7w32ra1rbjn4";
+  };
+
   haskellLib = pkgs.haskell.lib;
   inherit (pkgs) lib;
   extensions = isWasm: lib.composeExtensions
     (haskellLib.packageSourceOverrides {
       jsaddle = jsaddle-src + /jsaddle;
-      jsaddle-dom = builtins.fetchGit {
+      jsaddle-dom = pkgs.fetchgit {
         url = https://github.com/ghcjs/jsaddle-dom;
-        rev = "6ba167147476adebe7783e1521591aa3fd13da28";
+        rev = "da15a025eb06888cabf2e463b4f87ce14f65742b";
+        sha256 = "0rdwn3g2yy247am714xz3rid98d8j7ccjq8hhsp3mpvpf2w5ipmj";
       };
       jsaddle-warp = jsaddle-src + /jsaddle-warp;
-      jsaddle-wasm = builtins.fetchGit {
-        url = https://github.com/WebGHC/jsaddle-wasm;
-        rev = "4079c78aec6dc7d96ff21580971406fe914ad038";
-      };
+      jsaddle-wasm = pkgs.fetchFromGitHub (
+        let json = builtins.fromJSON (builtins.readFile ../jsaddle-wasm/github.json);
+        in { inherit (json) owner repo rev sha256;
+             private = json.private or false;
+           }
+      );
 
       Keyboard = reflex-examples-src + /Keyboard;
       draganddrop = reflex-examples-src + /drag-and-drop;
@@ -42,26 +52,50 @@ let
       nasapod = reflex-examples-src + /nasa-pod;
       othello = reflex-examples-src + /othello;
 
+      bench-wasm = jsaddle-stress-tests-src + /bench-wasm;
       miso = miso-src;
-      servant = "0.15";
+
+      dependent-sum = dependent-sum-src + /dependent-sum;
+      dependent-sum-template = dependent-sum-src + /dependent-sum-template;
+      dependent-map = pkgs.fetchgit {
+        url = https://github.com/WebGHC/dependent-map;
+        rev = "c28ef5350b3c03c4ff92e669703e4eb67e61ffa5";
+        sha256 = "1a1ha24bsm15pywd51d50gax6ssydhvjr1fcz53vb7i2xpr7iv3f";
+      };
+      monoidal-containers = "0.6";
+      lens = "4.18.1";
+      witherable = "0.3.4";
+      prim-uniq = pkgs.fetchgit {
+        url = https://github.com/WebGHC/prim-uniq;
+        rev = "34570a948f7d84a1821ed6d8305ed094c4f6eb15";
+        sha256 = "15xm0ky6dgndn714m99vgxyd4cr782gn0rf8zyf7v8mnj7mhcrc0";
+      };
     })
-    (self: super: {
+    (self: super:
+      let
+        reflex-dom-pkg = import (pkgs.fetchgit {
+          url = https://github.com/dfordivam/reflex-dom;
+          rev = "6bdc206bd83d2db62eb7d98372c9bf4fd355e7da";
+          sha256 = "0wa8pzmmyqk31d0rvhwg2hzmrj3rji655lag253l8xdhlc6561sw";
+        }) self;
+      in {
       mkDerivation = args: super.mkDerivation (args // { doCheck = false; });
       ref-tf = haskellLib.doJailbreak super.ref-tf;
 
-      reflex = self.callPackage (builtins.fetchGit {
-        url = https://github.com/reflex-frp/reflex;
-        rev = "185e4eaca5e32dfeb879b4bc6c5429c2f34739c0";
+      reflex = self.callPackage (pkgs.fetchgit {
+        url = https://github.com/dfordivam/reflex;
+        rev = "369b9db9fc50c612123b433848b8423711847462";
+        sha256 = "0jbizndl408n5df65fx5haxc60y2vph4wpiznkqr0a92f6ijf94r";
       }) { useTemplateHaskell = false; };
-      reflex-dom-core =
-        haskellLib.appendConfigureFlag
-          (self.callPackage (reflex-dom-src + /reflex-dom-core) {})
-          "-f-use-template-haskell";
-      reflex-dom = self.callPackage (reflex-dom-src + /reflex-dom) {};
-      reflex-todomvc = self.callPackage (builtins.fetchGit {
+      reflex-dom-core = haskellLib.dontCheck
+        (haskellLib.appendConfigureFlag
+          (reflex-dom-pkg.reflex-dom-core)
+          "-f-use-template-haskell")  ;
+      reflex-dom = haskellLib.disableCabalFlag reflex-dom-pkg.reflex-dom "webkit2gtk";
+      reflex-todomvc = self.callPackage (pkgs.fetchgit {
         url = https://github.com/reflex-frp/reflex-todomvc;
         rev = "91227b8baa90a6d1e51c803eff7f966dbafe875a";
-        ref = "wasm-8.6.3";
+        sha256 = "0sbpkzxv96z2a11k3nzjw6ik4998si64vspkhii7i00rv0yxc33k";
       }) {};
 
       miso = with haskellLib;
@@ -70,6 +104,17 @@ let
           patches = miso-src + /submodules.patch;
           flags = ["-fexamples"] ++ lib.optional isWasm "-fjsaddle-wasm";
         in addBuildDepends (appendPatch (appendConfigureFlags super.miso flags) patches) deps;
+
+      constraints-extras = haskellLib.disableCabalFlag super.constraints-extras "build-readme";
+
+      # the reflex-dom cabal2nix doesn't get deps correctly, so specify thse
+      chrome-test-utils = null;
+      jsaddle-webkit2gtk = null;
+
+      # Stop building servant docs, it needs cython which fails to compile
+      servant = haskellLib.overrideCabal super.servant (old: {
+        postInstall = "";
+        });
     });
   wasmHaskellPackages = pkgs.haskell.packages.ghcWasm.extend (extensions true);
   ghcjsHaskellPackages = pkgs.haskell.packages.ghcjs86.extend (extensions false);
@@ -82,6 +127,8 @@ let
     nasapod.pname = "nasapod";
     othello.pname = "othello";
     fileinput.pname = "fileinput";
+    # Some tests to benchmark wasm code
+    bench-wasm.pname = "bench-wasm";
   };
   misoExamples = {
     _2048.pname = "miso";
@@ -126,6 +173,7 @@ let
     '';
 
 in {
+  inherit wasmHaskellPackages;
   examples.wasm = pkgs.recurseIntoAttrs (lib.mapAttrs toWasm examples);
   examples.ghcjs = pkgs.recurseIntoAttrs (lib.mapAttrs toGhcjs examples);
 }

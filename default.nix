@@ -1,40 +1,23 @@
-{ debugLlvm ? false, haskellProfiling ? false, overlays ? [] }:
+{ nixpkgsFunc ? import ./nixpkgs
+, haskellProfiling ? false
+, overlays ? []
+}:
 
-(import ./nixpkgs {}).lib.makeExtensible (project: {
+let
+  webghc = import ./webghc.nix { inherit ((nixpkgsFunc {}).buildPackages) fetchgit; };
+
+in (nixpkgsFunc {}).lib.makeExtensible (project: {
   nixpkgsArgs = {
-    overlays = [(self: super: {
-      fib-example = self.callPackage ./fib-example {};
-
-      hello-example = self.callPackage ./hello-example {};
-
-      haskell-example = self.build-wasm-app { ename = "hello"; pkg = self.haskell.packages.ghcWasm.hello; };
-
-      llvmPackages_HEAD = self.callPackage ./llvm-head {
-        buildLlvmTools = self.buildPackages.llvmPackages_HEAD;
-        targetLlvmLibraries = self.buildPackages.llvmPackages_HEAD;
-        debugVersion = debugLlvm;
-      };
-
-      webabi = self.callPackage ./webabi-nix {};
-
-      webghc-runner = self.writeShellScriptBin "webghc-runner" ''
-        exec ${self.nodejs-8_x}/bin/node ${self.webabi}/lib/node_modules/webabi/build/node_runner.js "$@"
-      '';
-
-      build-wasm-app = self.callPackage ./build-wasm-app.nix {};
-
-      # Issue happens when combining pkgsStatic & custom cross stdenv.
-      # We need to force a normal busybox here to avoid hitting a
-      # weird bootstrapping issue.
-      busybox-sandbox-shell = super.busybox-sandbox-shell.override { busybox = self.busybox; };
-    })] ++ overlays;
-  };
-  nixpkgsCrossArgs = project.nixpkgsArgs // {
-    stdenvStages = import ./cross.nix haskellProfiling;
+    overlays = overlays;
+    # XXX This is required just to build some haskell packages with ghcjs. (ie to build release.nix completely)
+    config = { allowBroken = true; };
   };
 
-  nixpkgs = import ./nixpkgs project.nixpkgsArgs;
-  nixpkgsWasm = import ./nixpkgs (project.nixpkgsCrossArgs // {
+  nixpkgsCrossArgs = ghcSrc: ghcVersion: {
+    stdenvStages = import ./cross.nix (nixpkgsFunc {})
+      [ (import ./cross-overlays-libiconv.nix)
+        (import ./cross-overlays-haskell.nix ghcSrc ghcVersion haskellProfiling)
+      ];
     crossSystem = {
       config = "wasm32-unknown-unknown-wasm";
       arch = "wasm32";
@@ -44,11 +27,11 @@
       thread-model = "single";
       # target-cpu = "bleeding-edge";
     };
-  });
-  nixpkgsArm = import ./nixpkgs (project.nixpkgsCrossArgs // {
-    crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix" { inherit (project.nixpkgs) lib; }).aarch64-multiplatform;
-  });
-  # nixpkgsRpi = import ./nixpkgs (project.nixpkgsCrossArgs // {
-  #   crossSystem = (import "${(import ./nixpkgs {}).path}/lib/systems/examples.nix" { inherit (project.nixpkgs) lib; }).raspberryPi // { disableDynamicLinker = true; };
-  # });
+  };
+
+  nixpkgs = nixpkgsFunc project.nixpkgsArgs;
+  nixpkgsWasm = nixpkgsFunc (project.nixpkgsArgs //
+    project.nixpkgsCrossArgs webghc.ghc881Src "8.8.1");
+  nixpkgsWasm865 = nixpkgsFunc (project.nixpkgsArgs //
+    project.nixpkgsCrossArgs webghc.ghc865Src "8.6.5");
 })
